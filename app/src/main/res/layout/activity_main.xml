@@ -6,14 +6,74 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MainActivity">
-
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:id="@+id/accountBTN"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/TitleTXT"
+            app:layout_constraintBottom_toBottomOf="@+id/cartBTN"
+            android:background="@drawable/rounded_btn" android:foreground="@drawable/owned_clothes_icon"/>
     <TextView
+            android:text="@string/app_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hello World!"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
-
+            android:id="@+id/TitleTXT" app:layout_constraintEnd_toStartOf="@+id/accountBTN"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" android:textColor="@color/colorPrimaryText"
+            android:textSize="30sp"/>
+    <Button
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:id="@+id/cartBTN"
+            app:layout_constraintTop_toBottomOf="@+id/TitleTXT" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" android:background="@drawable/rounded_btn"
+            android:foreground="@drawable/cart_icon"/>
+    <TextView
+            android:text="£0.00"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/totalTXT" app:layout_constraintStart_toEndOf="@+id/cartBTN"
+            android:layout_marginStart="8dp"
+            app:layout_constraintTop_toTopOf="@+id/cartBTN" android:textColor="@color/colorPrimaryText"
+            android:textSize="24sp" app:layout_constraintBottom_toBottomOf="@+id/cartBTN"/>
+    <ImageView
+            android:layout_width="0dp"
+            android:layout_height="0dp" app:srcCompat="@drawable/test_jacket"
+            android:id="@+id/topIV"
+            app:layout_constraintTop_toBottomOf="@+id/cartBTN" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintBottom_toTopOf="@+id/bottomIV"
+            app:layout_constraintHorizontal_bias="0.5" android:layout_marginBottom="8dp"/>
+    <ImageView
+            android:layout_width="0dp"
+            android:layout_height="0dp" app:srcCompat="@drawable/test_shirt"
+            android:id="@+id/bottomIV"
+            app:layout_constraintStart_toStartOf="@+id/topIV" app:layout_constraintEnd_toEndOf="@+id/topIV"
+            app:layout_constraintHorizontal_bias="0.5" app:layout_constraintTop_toBottomOf="@+id/topIV"
+            app:layout_constraintBottom_toTopOf="@+id/likeBTN" android:layout_marginTop="8dp"/>
+    <Button
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:id="@+id/likeBTN" android:layout_marginStart="8dp" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toStartOf="@+id/dislikeBTN"
+            app:layout_constraintHorizontal_chainStyle="spread_inside" android:background="@drawable/rounded_btn"
+            android:foreground="@drawable/like_icon"/>
+    <Button
+            android:layout_width="100dp"
+            android:layout_height="0dp"
+            android:id="@+id/dislikeBTN"
+            app:layout_constraintTop_toTopOf="@+id/likeBTN" app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/likeBTN" app:layout_constraintStart_toEndOf="@+id/likeBTN"
+            app:layout_constraintHorizontal_bias="0.5" android:background="@drawable/rounded_btn"
+            android:foreground="@drawable/dislike_icon"/>
+    <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp" app:srcCompat="@drawable/plus_icon"
+            android:id="@+id/plusIV"
+            app:layout_constraintTop_toTopOf="@+id/topIV" android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/bottomIV"
+            app:layout_constraintEnd_toEndOf="@+id/topIV" app:layout_constraintStart_toStartOf="@+id/topIV"
+            android:layout_marginStart="8dp" android:layout_marginTop="8dp" android:layout_marginEnd="8dp"/>
 </android.support.constraint.ConstraintLayout>
