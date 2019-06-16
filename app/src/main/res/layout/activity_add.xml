@@ -10,10 +10,10 @@
     <ImageView
             android:layout_width="0dp"
             android:layout_height="0dp" app:srcCompat="@drawable/test_shirt"
-            android:id="@+id/imageView" android:layout_marginTop="8dp"
+            android:id="@+id/pictureIV" android:layout_marginTop="8dp"
             app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp" app:layout_constraintBottom_toTopOf="@+id/colourBTN"/>
+            android:layout_marginBottom="80dp" app:layout_constraintBottom_toTopOf="@+id/saveBTN"/>
     <Button
             android:layout_width="80dp"
             android:layout_height="80dp"
@@ -21,6 +21,7 @@
             app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
             android:background="@drawable/rounded_btn" android:foreground="@drawable/save_icon"/>
+    <!--
     <Button
             android:layout_width="100dp"
             android:layout_height="100dp"
@@ -40,10 +41,34 @@
             android:id="@+id/seasonBTN" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
             app:layout_constraintTop_toTopOf="@+id/colourBTN" app:layout_constraintBottom_toBottomOf="@+id/colourBTN"
             app:layout_constraintStart_toEndOf="@+id/colourBTN" app:layout_constraintHorizontal_bias="0.5"/>
+            -->
     <Button
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:id="@+id/cameraBTN" app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
-            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp" android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/colourBTN"/>
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            android:background="@drawable/rounded_btn" android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/pictureIV" android:foreground="@drawable/camera_icon"/>
+    <Spinner
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/colourSPN"
+            app:layout_constraintBottom_toTopOf="@+id/saveBTN"
+            app:layout_constraintTop_toBottomOf="@+id/cameraBTN" app:layout_constraintVertical_bias="0.100000024"
+            app:layout_constraintStart_toEndOf="@+id/typeSPN" app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintEnd_toStartOf="@+id/seasonSPN"/>
+    <Spinner
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/typeSPN"
+            app:layout_constraintTop_toTopOf="@+id/colourSPN" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" app:layout_constraintBottom_toBottomOf="@+id/colourSPN"
+            app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toStartOf="@+id/colourSPN"/>
+    <Spinner
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/seasonSPN" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            app:layout_constraintTop_toTopOf="@+id/colourSPN"
+            app:layout_constraintBottom_toBottomOf="@+id/colourSPN" app:layout_constraintStart_toEndOf="@+id/colourSPN"
+            app:layout_constraintHorizontal_bias="0.5"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

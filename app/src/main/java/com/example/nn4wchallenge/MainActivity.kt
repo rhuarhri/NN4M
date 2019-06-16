@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity() {
         //testTXT.setTextColor(titleColor)
 
 
-        testWorkManager()
+       // testWorkManager()
     }
 
 

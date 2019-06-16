@@ -1,4 +1,4 @@
-package com.example.nn4wchallenge
+package com.example.nn4wchallenge.colourMatcherCode
 
 class colour {
 
