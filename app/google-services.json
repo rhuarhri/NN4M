@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1000969460177",
+    "firebase_url": "https://nn4mfashion.firebaseio.com",
+    "project_id": "nn4mfashion",
+    "storage_bucket": "nn4mfashion.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1000969460177:android:910ca4395d8530b0",
+        "android_client_info": {
+          "package_name": "com.example.nn4wchallenge"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1000969460177-q7707a9u5e0m4od40l7oe99fie4nffq4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAub9tKP1UH5h-5MHbYNQUxtfX8bLf9-cI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1000969460177-q7707a9u5e0m4od40l7oe99fie4nffq4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
