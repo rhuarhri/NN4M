@@ -47,6 +47,13 @@ class AddClothingHandler (var context : Context) {
         if (error == "")
         {
             //run save clothing item thread
+
+            val inputData = workDataOf("new" to newClothingItem)
+
+            val saveClothingThread = OneTimeWorkRequestBuilder<AddClothingThreadManager>()
+                .setInputData(inputData)
+                .build()
+            WorkManager.getInstance().enqueue(saveClothingThread)
         }
 
         return error

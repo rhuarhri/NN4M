@@ -13,6 +13,10 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+    }
+    android {
+        useLibrary 'org.apache.http.legacy'
     }
     buildTypes {
         release {
@@ -52,4 +56,9 @@ dependencies {
     //firestore
     implementation 'com.google.firebase:firebase-firestore:19.0.2'
 
+    //json gathering
+    implementation 'org.apache.httpcomponents:httpcore:4.4.10'
+    //implementation 'org.apache.httpcomponents:httpclient:4.5.6'
+
+    implementation 'com.android.support:multidex:1.0.3'
 }

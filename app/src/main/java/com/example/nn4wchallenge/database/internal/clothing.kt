@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 class clothing {
 
     @PrimaryKey(autoGenerate = true) var id : Int = 0
-    @ColumnInfo(name = "type") var clothingType : String? = null
+    @ColumnInfo(name = "type") var clothingType : String = ""
     @ColumnInfo(name = "colorRedAmount") var clothingColorRed : Int = 0
     @ColumnInfo(name = "colorGreenAmount") var clothingColorGreen : Int = 0
     @ColumnInfo(name = "colorBlueAmount") var clothingColorBlue : Int = 0

@@ -10,8 +10,8 @@ class user {
     @PrimaryKey(autoGenerate = true) var id : Int = 0
     @ColumnInfo(name = "gender") var userGender : String = ""
     @ColumnInfo(name = "age") var userAge : String = ""
-    @ColumnInfo(name = "chest") var userChestMeasurement : Double = 0.0
-    @ColumnInfo(name = "waist") var userWaistMeasurement : Double = 0.0
+    @ColumnInfo(name = "chest") var userChestMeasurement : String = ""
+    @ColumnInfo(name = "waist") var userWaistMeasurement : String = ""
     @ColumnInfo(name = "shoeSize") var userShoeSize : Int = 0
 
     //information below will be encrypted or hashed if used

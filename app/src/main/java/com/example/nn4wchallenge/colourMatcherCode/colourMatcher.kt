@@ -41,6 +41,14 @@ class colourMatcher {
 
     }
 
+    public fun doesColourMatch(red : Int, green : Int, blue : Int) : Boolean
+    {
+
+        var newColor = setupToBasicColour(red, green, blue)
+
+        return colours.contains(newColor)
+    }
+
     //public for testing
     public fun findAdjacent(newColor: colour)
     {

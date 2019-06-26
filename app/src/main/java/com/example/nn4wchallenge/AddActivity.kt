@@ -89,8 +89,14 @@ class AddActivity : AppCompatActivity() {
         saveBTN = findViewById(R.id.saveBTN)
         saveBTN.setOnClickListener {
 
-            Toast.makeText(applicationContext, "Saved", Toast.LENGTH_SHORT).show()
-            AddManager.saveClothingItem()
+            var error = AddManager.saveClothingItem()
+
+            if (error == "")
+            {
+                error = "Saved"
+            }
+            Toast.makeText(applicationContext, error, Toast.LENGTH_SHORT).show()
+
 
             goToUserClothesActivity()
         }

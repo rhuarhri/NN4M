@@ -1,8 +1,19 @@
 package com.example.nn4wchallenge
 
+import com.example.nn4wchallenge.colourMatcherCode.*
+import com.example.nn4wchallenge.database.external.dataTranslation
+import com.example.nn4wchallenge.database.external.onlineDatabase
+import com.example.nn4wchallenge.database.external.searchItem
+import com.example.nn4wchallenge.database.external.searchManager
+import com.example.nn4wchallenge.database.internal.SetupManager
+import com.example.nn4wchallenge.database.internal.clothing
+import com.example.nn4wchallenge.database.internal.user
 import org.junit.Test
 
 import org.junit.Assert.*
+import java.io.File
+import java.io.FileInputStream
+import java.io.InputStream
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -198,5 +209,236 @@ class ExampleUnitTest {
     }
 
     //tests for colour matcher
+
+    //tests for setup activity's setup procedure
+    @Test
+    fun testSetupProcedure()
+    {
+        var setupM : SetupManager = SetupManager(null)
+
+        val expectGender : Int = 2
+
+        var resultGender = setupM.getTitleList(setupM.GENDER).size
+
+        assertEquals("gender size test", expectGender, resultGender)
+
+        val expectAge : Int = 4
+
+        var resultAge = setupM.getTitleList(setupM.AGE).size
+
+        assertEquals("age size test", expectAge, resultAge)
+
+        val expectChest : Int = 7
+
+        var resultChest = setupM.getTitleList(setupM.CHEST).size
+
+        assertEquals("chest size test", expectChest, resultChest)
+
+        val expectWaist : Int = 7
+
+        var resultWaist = setupM.getTitleList(setupM.WAIST).size
+
+        assertEquals("Waist size test", expectWaist, resultWaist)
+
+        val expectShoe : Int = 9
+
+        var resultShoe = setupM.getTitleList(setupM.SHOE).size
+
+        assertEquals("gender size test", expectShoe, resultShoe)
+    }
+
+    //data translation tests
+    @Test
+    fun convertStringToColourTest()
+    {
+        var test : dataTranslation = dataTranslation()
+
+        var testValue : String = "0x0000ff"
+
+        test.StringToRGB(testValue)
+
+        var expectedBlue : Int = 255
+
+        var colour : Int = test.blueAmount
+
+        assertEquals("colour test", expectedBlue, colour)
+
+    }
+
+    //end of data translation tests
+
+    //search manager tests
+
+    public fun setupUserInfo() : user
+    {
+        var testUser : user = user()
+
+        testUser.userAge = "adult"
+        testUser.userGender = "female"
+        testUser.userShoeSize = 5
+        testUser.userWaistMeasurement = "10"
+        testUser.userChestMeasurement = "10"
+
+        return testUser
+    }
+
+    public fun setupClothingInfo() : clothing
+    {
+        var testClothing : clothing = clothing()
+
+        testClothing.clothingType = "dress"
+        testClothing.clothingSeason = "summer"
+        testClothing.clothingColorBlue = 0
+        testClothing.clothingColorGreen = 0
+        testClothing.clothingColorRed = 255
+        testClothing.clothingImageLocation = "testImage"
+
+        return testClothing
+    }
+
+    @Test
+    fun searchManagerTest()
+    {
+
+        var clothingItems : ArrayList<searchItem> = ArrayList()
+
+        var item1 : searchItem = searchItem()
+        item1.age = "adult"
+        item1.colour = "0x000000"//colour black
+        item1.gender = "female"
+        item1.type = "shoe"
+        item1.minSize = "3"
+        item1.maxSize = "10"
+        item1.season = "summer"
+        item1.imageURL = "test item 1 image location"
+        item1.descriptionURL = "test item 1 description location"
+
+        clothingItems.add(item1)
+
+        var item2 : searchItem = searchItem()
+        item2.age = "adult"
+        item2.colour = "0x00FFFF"//colour light blue
+        item2.gender = "female"
+        item2.type = "shoe"
+        item2.minSize = "3"
+        item2.maxSize = "10"
+        item2.season = "summer"
+        item2.imageURL = "test item 2 image location"
+        item2.descriptionURL = "test item 2 description location"
+
+        clothingItems.add(item2)
+
+        var item3 : searchItem = searchItem()
+        item3.age = "adult"
+        item3.colour = "0x00FFFF"//colour light blue
+        item3.gender = "male"
+        item3.type = "shoe"
+        item3.minSize = "3"
+        item3.maxSize = "10"
+        item3.season = "summer"
+        item3.imageURL = "test item 3 image location"
+        item3.descriptionURL = "test item 3 description location"
+
+        clothingItems.add(item3)
+
+        var testSearch : searchManager = searchManager()
+
+        testSearch.setupUserInfo(setupUserInfo())
+
+        testSearch.setupClothingInfo(setupClothingInfo())
+
+        var testResult = testSearch.search(clothingItems)
+
+        val expected = "test item 2 image location"
+
+        assertEquals("search item based on colour ", expected, testResult[0].image)
+    }
+
+    @Test
+    fun searchManagerTestMatchColour()
+    {
+
+        var item1 : searchItem = searchItem()
+        item1.age = "adult"
+        item1.colour = "0x000000"//colour black
+        item1.gender = "female"
+        item1.type = "shoe"
+        item1.minSize = "3"
+        item1.maxSize = "10"
+        item1.season = "summer"
+        item1.imageURL = "test item 1 image location"
+        item1.descriptionURL = "test item 1 description location"
+
+        var testSearch : searchManager = searchManager()
+
+        testSearch.setupUserInfo(setupUserInfo())
+
+        testSearch.setupClothingInfo(setupClothingInfo())
+
+        var result = testSearch.matchesColor(item1.colour)
+
+        val expected = false
+
+        assertEquals("search manager colour matcher test ", expected, result)
+    }
+
+    @Test
+    fun searchManagerTestMatchUserDescription()
+    {
+
+        var item1 : searchItem = searchItem()
+        item1.age = "adult"
+        item1.colour = "0x000000"//colour black
+        item1.gender = "female"
+        item1.type = "shoe"
+        item1.minSize = "3"
+        item1.maxSize = "10"
+        item1.season = "summer"
+        item1.imageURL = "test item 1 image location"
+        item1.descriptionURL = "test item 1 description location"
+
+
+        var testSearch : searchManager = searchManager()
+
+        testSearch.setupUserInfo(setupUserInfo())
+
+        testSearch.setupClothingInfo(setupClothingInfo())
+
+        var result = testSearch.matchesUserDescription(item1)
+
+        val expected = true
+
+        assertEquals("search manager user description matcher test ", expected, result)
+    }
+
+    @Test
+    fun searchManagerTestMatchUserSize()
+    {
+
+        var item1 : searchItem = searchItem()
+        item1.age = "adult"
+        item1.colour = "0x000000"//colour black
+        item1.gender = "female"
+        item1.type = "shoe"
+        item1.minSize = "3"
+        item1.maxSize = "10"
+        item1.season = "summer"
+        item1.imageURL = "test item 1 image location"
+        item1.descriptionURL = "test item 1 description location"
+
+
+        var testSearch : searchManager = searchManager()
+
+        testSearch.setupUserInfo(setupUserInfo())
+
+        testSearch.setupClothingInfo(setupClothingInfo())
+
+        var result = testSearch.matchesColor(item1.colour)
+
+        val expected = true
+
+        assertEquals("search manager user size matcher test ", expected, result)
+    }
+//end of search manager tests
 
 }
