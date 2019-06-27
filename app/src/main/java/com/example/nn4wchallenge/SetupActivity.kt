@@ -1,5 +1,6 @@
 package com.example.nn4wchallenge
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -115,11 +116,18 @@ class SetupActivity : AppCompatActivity() {
             if (error == "")
             {
                 error = "Saved"
+                goToAddClothingScreen()
             }
 
             Toast.makeText(applicationContext, error, Toast.LENGTH_SHORT).show()
         }
 
+    }
+
+    private fun goToAddClothingScreen()
+    {
+        val goTo = Intent(applicationContext, AddActivity::class.java)
+        startActivity(goTo)
     }
 
     private fun setUpSpinner(currentSPN : Spinner, list : ArrayList<String>)

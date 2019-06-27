@@ -5,7 +5,7 @@ import androidx.room.*
 interface userDao {
 
     @Query("SELECT * FROM user")
-    fun getAll(): ArrayList<user>
+    fun getAll(): Array<user>
 
     @Insert
     fun insert(vararg newUser: user)

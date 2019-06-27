@@ -34,6 +34,46 @@ class permissionsHandler(var currentActivity : Activity, var appContext : Contex
         return isPermissionGranted(checkInternetPermission)
     }
 
+    public fun cameraPermission() {
+        var accessInternet = Manifest.permission.CAMERA
+
+        if (isPermissionGranted(accessInternet))
+        {
+            //permission grant no action
+        }
+        else{
+            var Title : String = "Camera"
+            var message : String = "Used to save capture images of your clothes"
+            askForPermission(accessInternet, Title, message)
+        }
+    }
+
+    public fun checkCameraPermission() : Boolean{
+        var checkInternetPermission = Manifest.permission.CAMERA
+
+        return isPermissionGranted(checkInternetPermission)
+    }
+
+    public fun internalStoragePermission() {
+        var accessInternet = Manifest.permission.WRITE_EXTERNAL_STORAGE
+
+        if (isPermissionGranted(accessInternet))
+        {
+            //permission grant no action
+        }
+        else{
+            var Title : String = "Internal storage"
+            var message : String = "This is necessary for saving your data"
+            askForPermission(accessInternet, Title, message)
+        }
+    }
+
+    public fun checkInternalStoragePermission() : Boolean{
+        var checkInternetPermission = Manifest.permission.INTERNET
+
+        return isPermissionGranted(checkInternetPermission)
+    }
+
     private fun askForPermission(permission: String, Title: String, message: String) {
         if (ActivityCompat.shouldShowRequestPermissionRationale(currentActivity, permission)) {
             showAlertMessage(Title, message, permission)

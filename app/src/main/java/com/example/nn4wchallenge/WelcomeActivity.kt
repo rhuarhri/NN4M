@@ -13,11 +13,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkInfo
-import androidx.work.WorkManager
+import androidx.work.*
 import com.example.nn4wchallenge.database.external.onlineDatabase
 import com.example.nn4wchallenge.database.external.searchItem
+import com.example.nn4wchallenge.database.internal.databaseChecker
 import com.example.nn4wchallenge.database.matchClothingHandler
 import java.io.BufferedInputStream
 import java.io.File
@@ -45,7 +44,7 @@ class WelcomeActivity : AppCompatActivity() {
     this section could have a log in section to make buying cloths quicker
      */
 
-    private var MY_PERMISSIONS_REQUEST_INTERNET : Int = 1
+    private lateinit var checkUserDatabaseWorker : OneTimeWorkRequest
 
     private lateinit var searchBTN : Button
     private lateinit var shoppingBTN : Button
@@ -56,15 +55,65 @@ class WelcomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_welcome)
 
+        checkSetup()
+
         searchBTN = findViewById(R.id.quickSearchBTN)
         searchBTN.setOnClickListener {
 
-            testPermissions()
+            testTXT.setText("test started")
+
+            testDatabase()
+
+            /*
+            WorkManager.getInstance().getWorkInfoByIdLiveData(checkUserDatabaseWorker.id)
+                .observe(this, Observer { workInfo ->
+                    if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED)
+                    {
+                        var output : Boolean = workInfo.outputData.getBoolean("empty", true)
+
+                        if (output)
+                        {
+                            //setup required
+                            goToSetupScreen()
+                        }
+                        else
+                        {
+                            goToQuickSearch()
+                        }
+                    }
+                    //thread that check if data base is empty currently running or waiting to run
+                    else if (workInfo != null && (workInfo.state == WorkInfo.State.RUNNING || workInfo.state == WorkInfo.State.ENQUEUED))
+                    {
+                        //do nothing this prevents the user doing anything without information from the thread
+                    }
+                })*/
+
         }
         shoppingBTN = findViewById(R.id.shopBTN)
         shoppingBTN.setOnClickListener {
 
-            goToShoppingScreen()
+            WorkManager.getInstance().getWorkInfoByIdLiveData(checkUserDatabaseWorker.id)
+                .observe(this, Observer { workInfo ->
+                    if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED)
+                    {
+                        var output : Boolean = workInfo.outputData.getBoolean("empty", true)
+
+                        if (output)
+                        {
+                            //setup required
+                            goToSetupScreen()
+                        }
+                        else
+                        {
+                            goToShoppingScreen()
+                        }
+                    }
+                    //thread that check if data base is empty currently running or waiting to run
+                    else if (workInfo != null && (workInfo.state == WorkInfo.State.RUNNING || workInfo.state == WorkInfo.State.ENQUEUED))
+                    {
+                        //do nothing this prevents the user doing anything without information from the thread
+                    }
+                })
         }
 
         testTXT = findViewById(R.id.testTXT)
@@ -72,175 +121,70 @@ class WelcomeActivity : AppCompatActivity() {
 
     private fun goToShoppingScreen()
     {
-        var goTo = Intent(applicationContext, MainActivity::class.java)
+        val goTo = Intent(applicationContext, MainActivity::class.java)
         startActivity(goTo)
     }
 
-    private fun testPermissions()
+    private fun goToSetupScreen()
     {
-        //var MY_PERMISSIONS_REQUEST_INTERNET : Int = 1
-
-        //var testPermission : permissionsHandler = permissionsHandler()
-
-        //testPermission.internetPremission(this, applicationContext)
-
-        var accessInternet : permissionsHandler = permissionsHandler(this, applicationContext)
-
-        accessInternet.internetPermission()
-
-        if (accessInternet.checkInternetPermission())
-        {
-            testTXT.setText("permission granted")
-            getJson()
-        }
-        else{
-            testTXT.setText("permission not granted")
-        }
-
-/*
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            // Permission is not granted
-
-
-        } else {
-
-        }*/
+        val goTo = Intent(applicationContext, SetupActivity::class.java)
+        startActivity(goTo)
     }
 
-    private fun getJson()
+    private fun goToQuickSearch()
     {
-        /*
-        var jsonOnline : onlineDatabase = onlineDatabase()
+        //might be implemented in the future
+        Toast.makeText(applicationContext, "Functionality not available", Toast.LENGTH_SHORT).show()
+    }
 
-        try{
-            var result : ArrayList<searchItem> = jsonOnline.getAvailableClothes()
+    private fun checkSetup()
+    {
+        val accessInternalStorage : permissionsHandler = permissionsHandler(this, applicationContext)
 
-            testTXT.setText("result size is ${result.size}")
-        }
-        catch(e : Exception)
+        accessInternalStorage.internalStoragePermission()
+
+        if (accessInternalStorage.checkInternetPermission())
         {
-            testTXT.setText("json $e")
-        }*/
 
-        val testWorkRequest = OneTimeWorkRequestBuilder<matchClothingHandler>()
+            val input : Data = Data.Builder().putString("database", "user").build()
+
+            checkUserDatabaseWorker = OneTimeWorkRequestBuilder<databaseChecker>()
+                .setInputData(input)
+                .build()
+
+            WorkManager.getInstance().enqueue(checkUserDatabaseWorker)
+
+
+        }
+    }
+
+    private fun testDatabase()
+    {
+
+        val testDatabase = OneTimeWorkRequestBuilder<testWorker>()
             .build()
 
-        WorkManager.getInstance().enqueue(testWorkRequest)
+        WorkManager.getInstance().enqueue(testDatabase)
 
-        WorkManager.getInstance().getWorkInfoByIdLiveData(testWorkRequest.id)
+        WorkManager.getInstance().getWorkInfoByIdLiveData(testDatabase.id)
             .observe(this, Observer { workInfo ->
-                if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED) {
 
-                    var output : String? = workInfo.outputData.getString("message")
+                if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED)
+                {
+                    testTXT.setText("done")
+
+                    var output : String? = workInfo.outputData.getString("result")
 
                     if (output == null)
                     {
-                        testTXT.setText("no return value")
+                        testTXT.setText("no result found")
                     }
                     else
                     {
-                        testTXT.setText(output)
+                        testTXT.setText("result $output")
                     }
                 }
+
             })
-
-    }
-
-    private fun testing()
-    {
-        try {
-            //var testOnline = onlineDatabase(testTXT, applicationContext)
-
-            //var inStream : InputStream = applicationContext.getResources().openRawResource(R.raw.register)
-            
-            //var fileIn : File = File("src/main/res/raw/")
-
-            //var inStream : InputStream = FileInputStream(fileIn)
-
-            //var result = "" + inStream.available()
-
-            /*
-            if (inStream == 0)
-            {
-                result = "empty"
-            }
-            else{
-                result = "something"
-            }*/
-
-
-
-            //var testJsonParse : jsonParser = jsonParser()
-
-            //result = testJsonParse.convertStreamToString(inStream)
-
-            //var testResult: ArrayList<searchItem> =
-                //testOnline.getAvailableClothes(inStream)
-
-            //var result = testResult[0].season
-
-            //testTXT.text = result
-        }
-        catch(e : Exception)
-        {
-            testTXT.setText("Json " + e.printStackTrace().toString())
-        }
-
-
-    }
-
-    public fun internetPremission() {
-// Here, thisActivity is the current activity
-        if (ContextCompat.checkSelfPermission(
-                applicationContext,
-                Manifest.permission.INTERNET
-            )
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-
-            // Permission is not granted
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    this,
-                    Manifest.permission.INTERNET
-                )
-            ) {
-                AlertDialog.Builder(applicationContext)
-                    .setTitle("Internet permission")
-                    .setMessage("must have")
-                    .setPositiveButton("ok", DialogInterface.OnClickListener { dialogInterface, i ->
-                        ActivityCompat.requestPermissions(
-                            this,
-                            arrayOf(Manifest.permission.INTERNET),
-                            MY_PERMISSIONS_REQUEST_INTERNET
-                        )
-                    })
-                    .setNegativeButton("cancel", DialogInterface.OnClickListener { dialogInterface, i ->
-                        dialogInterface.dismiss()
-                    }).create().show()
-                //add alert box
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.INTERNET),
-                    MY_PERMISSIONS_REQUEST_INTERNET
-                )
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-        } else {
-            // Permission has already been granted
-        }
-
-
-
     }
 }

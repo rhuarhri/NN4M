@@ -97,12 +97,9 @@ class searchManager  {
             {
                 if (item.season == ClothingInfo.clothingSeason) {
                     if (matchesColor(item.colour)) {
-                        if (matchesUserDescription(item))
-                        {
-                            if (matchClothing.matcher(ClothingInfo.clothingType, item.type))
-                            {
-                                if (doesFit(item.type, item.maxSize.toInt(), item.minSize.toInt()))
-                                {
+                        if (matchesUserDescription(item)) {
+                            if (matchClothing.matcher(ClothingInfo.clothingType, item.type)) {
+                                if (doesFit(item.type, item.maxSize.toInt(), item.minSize.toInt())) {
                                     //matches with user
                                     var newPair : matchedPairs = matchedPairs()
                                     newPair.createPair(item.imageURL, item.descriptionURL)

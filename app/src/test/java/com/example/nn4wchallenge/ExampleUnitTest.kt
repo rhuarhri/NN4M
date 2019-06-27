@@ -1,5 +1,6 @@
 package com.example.nn4wchallenge
 
+import com.example.nn4wchallenge.clothingMatcherCode.clothingMatcher
 import com.example.nn4wchallenge.colourMatcherCode.*
 import com.example.nn4wchallenge.database.external.dataTranslation
 import com.example.nn4wchallenge.database.external.onlineDatabase
@@ -23,6 +24,21 @@ import java.io.InputStream
 class ExampleUnitTest {
 
     //tests for colour matcher
+
+    @Test
+    fun testColourMatcher()
+    {
+        var colourM : colourMatcher = colourMatcher()
+
+        colourM.matchColour(255, 0, 0) //red
+
+        var result = colourM.doesColourMatch(0, 255, 255) //light blue
+
+        var expected = true //as red and light blue should be contrasting colours
+
+        assertEquals("colour matcher test ", expected, result)
+    }
+
     @Test
     fun findCorrectAdjacentColoursForBaseColour()
     {
@@ -253,7 +269,7 @@ class ExampleUnitTest {
     {
         var test : dataTranslation = dataTranslation()
 
-        var testValue : String = "0x0000ff"
+        var testValue : String = "0x0000FF"
 
         test.StringToRGB(testValue)
 
@@ -351,7 +367,11 @@ class ExampleUnitTest {
 
         val expected = "test item 2 image location"
 
-        assertEquals("search item based on colour ", expected, testResult[0].image)
+        val expected2 = false
+
+        assertEquals("search result empty ", expected2, testResult.isEmpty())
+
+        assertEquals("search item ", expected, testResult[0].image)
     }
 
     @Test
@@ -360,7 +380,7 @@ class ExampleUnitTest {
 
         var item1 : searchItem = searchItem()
         item1.age = "adult"
-        item1.colour = "0x000000"//colour black
+        item1.colour = "0x00FFFF"//colour light blue
         item1.gender = "female"
         item1.type = "shoe"
         item1.minSize = "3"
@@ -377,7 +397,7 @@ class ExampleUnitTest {
 
         var result = testSearch.matchesColor(item1.colour)
 
-        val expected = false
+        val expected = true
 
         assertEquals("search manager colour matcher test ", expected, result)
     }
@@ -433,12 +453,54 @@ class ExampleUnitTest {
 
         testSearch.setupClothingInfo(setupClothingInfo())
 
-        var result = testSearch.matchesColor(item1.colour)
+        var result = testSearch.doesFit(item1.type, item1.maxSize.toInt(), item1.minSize.toInt())
 
         val expected = true
 
         assertEquals("search manager user size matcher test ", expected, result)
     }
+
+    @Test
+    fun searchManagerTestUserDescription()
+    {
+        var item1 : searchItem = searchItem()
+        item1.age = "adult"
+        item1.colour = "0x000000"//colour black
+        item1.gender = "female"
+        item1.type = "shoe"
+        item1.minSize = "3"
+        item1.maxSize = "10"
+        item1.season = "summer"
+        item1.imageURL = "test item 1 image location"
+        item1.descriptionURL = "test item 1 description location"
+
+
+        var testSearch : searchManager = searchManager()
+
+        testSearch.setupUserInfo(setupUserInfo())
+
+        testSearch.setupClothingInfo(setupClothingInfo())
+
+        var result = testSearch.matchesUserDescription(item1)
+
+        val expected = true
+
+        assertEquals("search manager user description test", expected, result)
+    }
+
 //end of search manager tests
+
+    //clothing type matcher tests
+    @Test
+    fun testClothingMatcher()
+    {
+        var testMatcher : clothingMatcher = clothingMatcher()
+
+        var result = testMatcher.matcher("dress", "shoe")
+
+        var expected = true
+
+        assertEquals("clothing matcher test ", expected, result)
+    }
 
 }

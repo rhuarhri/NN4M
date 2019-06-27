@@ -46,7 +46,20 @@ class colourMatcher {
 
         var newColor = setupToBasicColour(red, green, blue)
 
-        return colours.contains(newColor)
+        return listContainsColour(newColor)
+    }
+
+    private fun listContainsColour(newColour : colour) :Boolean
+    {
+        for (item in colours)
+        {
+            if (item.equal(newColour))
+            {
+                return true
+            }
+        }
+
+        return false
     }
 
     //public for testing

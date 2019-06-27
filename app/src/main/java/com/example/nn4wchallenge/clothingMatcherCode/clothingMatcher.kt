@@ -2,15 +2,6 @@ package com.example.nn4wchallenge.clothingMatcherCode
 
 class clothingMatcher {
 
-    private var ChestSize : Int = 0
-    private var matchChestSize : Boolean = false
-
-    private var WaistSize : Int = 0
-    private var matchWaistSize : Boolean = false
-
-    private var ShoeSize : Int = 0
-    private var matchShoeSize : Boolean = false
-
     public fun matcher(matchClothing : String, withClothing : String) : Boolean
     {
         var matches : ArrayList<String> = ArrayList()
@@ -29,15 +20,6 @@ class clothingMatcher {
 
         return matches.contains(withClothing)
     }
-
-    public fun setUserSize(chestSize : Int, waistSize : Int, shoeSize : Int)
-    {
-        ChestSize = chestSize
-        WaistSize = waistSize
-        ShoeSize = shoeSize
-    }
-
-
 
     private fun getDressMatches() : ArrayList<String>
     {

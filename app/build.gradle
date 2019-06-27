@@ -4,6 +4,8 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+apply plugin: 'kotlin-kapt'
+
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -39,7 +41,7 @@ dependencies {
 
     //room library
     implementation "androidx.room:room-runtime:2.1.0-rc01"
-    annotationProcessor "androidx.room:room-compiler:2.1.0-rc01"
+    kapt "androidx.room:room-compiler:2.1.0-rc01"
     implementation "androidx.room:room-ktx:2.1.0-rc01"
 
     //work manager

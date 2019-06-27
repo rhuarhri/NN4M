@@ -18,7 +18,7 @@ class AddClothingThreadManager (appContext: Context, workerParams: WorkerParamet
         val accessDB = Room.databaseBuilder(applicationContext, clothingDatabase::class.java,
         "user-clothes-database").build()
 
-        accessDB.clothingDao().insert()
+        accessDB.clothingDao().insert(newClothing)
 
         return Result.success()
     }

@@ -9,7 +9,7 @@ import androidx.room.Query
 interface clothingDao {
 
     @Query("SELECT * FROM clothing")
-    fun getAll(): ArrayList<clothing>
+    fun getAll(): Array<clothing>
 
     @Insert
     fun insert(vararg newClothing: clothing)
