@@ -1,30 +1,29 @@
 package com.example.nn4wchallenge
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
 import android.widget.*
-import androidx.core.content.FileProvider
+import androidx.work.Data
 import com.example.nn4wchallenge.AddActivitySpinners.addActivityItem
 import com.example.nn4wchallenge.AddActivitySpinners.addColourItem
 import com.example.nn4wchallenge.AddActivitySpinners.addSpinnerAdapter
 import com.example.nn4wchallenge.database.internal.AddClothingHandler
-import java.io.File
-import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.*
+import com.example.nn4wchallenge.imageHandling.retrieveImageHandler
+import com.example.nn4wchallenge.imageHandling.saveImageHandler
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import kotlin.collections.ArrayList
 
 class AddActivity : AppCompatActivity() {
 
     private lateinit var AddManager : AddClothingHandler
 
-
+    private lateinit var savedImage : saveImageHandler
 
     private lateinit var cameraBTN : Button
     private lateinit var saveBTN : Button
@@ -36,6 +35,7 @@ class AddActivity : AppCompatActivity() {
 
         AddManager = AddClothingHandler(applicationContext)
 
+        savedImage = saveImageHandler(applicationContext)
 
         var colourList : ArrayList<addColourItem> = ArrayList()
         colourList.add(addColourItem("black", R.color.colorBlack, 0, 0, 0))
@@ -70,13 +70,18 @@ class AddActivity : AppCompatActivity() {
         setUpTypeSpinner(typeList)
         setUpSeasonSpinner(seasonList)
 
+
         clothingPictureIV = findViewById(R.id.pictureIV)
 
+
+        val accessCamera: permissionsHandler = permissionsHandler(this, applicationContext)
+
+        accessCamera.cameraPermission()
         cameraBTN = findViewById(R.id.cameraBTN)
         cameraBTN.setOnClickListener {
 
             //The camera could not be tested in the emulator but it could work but unknown without testing
-            Toast.makeText(applicationContext, "camera not available", Toast.LENGTH_LONG).show()
+            //Toast.makeText(applicationContext, "camera not available", Toast.LENGTH_LONG).show()
 
             //remove this function if camera feacture in use
             AddManager.setPicture()
@@ -84,28 +89,68 @@ class AddActivity : AppCompatActivity() {
             //The camera functionality would have been handled by
             //launchCamera()
 
+            /*
+            if (accessCamera.checkCameraPermission()) {
+                Toast.makeText(applicationContext, "camera access granted", Toast.LENGTH_SHORT).show()
+                launchCamera()
+            }
+            else
+            {
+                Toast.makeText(applicationContext, "camera access not granted", Toast.LENGTH_SHORT).show()
+                accessCamera.cameraPermission()
+            }*/
+
+            //imageTest()
+
+            /*
+            var savedImage = saveImageHandler(applicationContext)
+            var fileLocation : String = ""
+
+
+            try {
+                var file = savedImage.createImageFile()
+                fileLocation = "file location is ${savedImage.savedPhotoPath}"
+            }
+            catch(e : Exception)
+            {
+                fileLocation = "error ${e.toString()}"
+            }
+
+*/
+            Toast.makeText(applicationContext, "picture added", Toast.LENGTH_LONG).show()
 
         }
         saveBTN = findViewById(R.id.saveBTN)
         saveBTN.setOnClickListener {
 
-            var error = AddManager.saveClothingItem()
-
-            if (error == "")
-            {
-                error = "Saved"
+            try {
+                var error = AddManager.saveClothingItem()
+                goToHomeActivity()
             }
-            Toast.makeText(applicationContext, error, Toast.LENGTH_SHORT).show()
+            catch (e : Exception)
+            {
+                Toast.makeText(applicationContext, "error ${e.toString()}", Toast.LENGTH_LONG).show()
+            }
+
+            /*
+            if (error == "") {
+                error = "Saved"
+
+                Toast.makeText(applicationContext, error, Toast.LENGTH_SHORT).show()
 
 
-            goToUserClothesActivity()
+                //goToHomeActivity()
+            }
+            else{
+                Toast.makeText(applicationContext, error, Toast.LENGTH_SHORT).show()
+            }*/
         }
 
     }
 
-    private fun goToUserClothesActivity()
+    private fun goToHomeActivity()
     {
-        val goTo : Intent = Intent(applicationContext, UserClothingDisplayActivity::class.java)
+        val goTo : Intent = Intent(applicationContext, MainActivity::class.java)
         startActivity(goTo)
     }
 
@@ -133,7 +178,7 @@ class AddActivity : AppCompatActivity() {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
                 var colourItem : addColourItem = itemList.get(position)
                 AddManager.setClothingColour(colourItem.amountOfRed, colourItem.amountOfGreen, colourItem.amountOfBlue)
-                Toast.makeText(applicationContext, "Clothing colour updated", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(applicationContext, "Clothing colour updated", Toast.LENGTH_SHORT).show()
             }
 
         }
@@ -161,7 +206,7 @@ class AddActivity : AppCompatActivity() {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
                 var typeItem : addActivityItem = itemList.get(position)
                 AddManager.setClothingType(typeItem.itemTitle)
-                Toast.makeText(applicationContext, "Clothing type updated", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(applicationContext, "Clothing type updated", Toast.LENGTH_SHORT).show()
             }
 
         }
@@ -190,10 +235,30 @@ class AddActivity : AppCompatActivity() {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
                 var seasonItem : addActivityItem = itemList.get(position)
                 AddManager.setClothingSeason(seasonItem.itemTitle)
-                Toast.makeText(applicationContext, "Clothing season updated", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(applicationContext, "Clothing season updated", Toast.LENGTH_SHORT).show()
             }
 
         }
+
+    }
+
+    /**
+     * test code for retriving image from url
+     * */
+    private fun imageTest()
+    {
+        val input : Data = Data.Builder()
+            .putInt("height", clothingPictureIV.height)
+            .putInt("width", clothingPictureIV.width)
+            .putString("url", "https://images.riverisland.com//is//image//RiverIsland//739288_rollover")
+            .putString("file", "")
+            .build()
+
+        var requiredHeight : Int = clothingPictureIV.height
+        var requiredWidth : Int = clothingPictureIV.width
+        var imageURL : String = "https://images.riverisland.com//is//image//RiverIsland//739288_rollover"
+        var appContext : Context = applicationContext
+
 
     }
 
@@ -212,9 +277,11 @@ class AddActivity : AppCompatActivity() {
 
             //capture image and save to file
             takePictureIntent.resolveActivity(packageManager)?.also {
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, AddManager.getFileLocation())
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, savedImage.getFileLocation())
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
             }
+
+
         }
 
     }

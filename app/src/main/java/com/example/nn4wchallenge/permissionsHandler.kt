@@ -82,9 +82,11 @@ class permissionsHandler(var currentActivity : Activity, var appContext : Contex
         }
     }
 
+
     private fun isPermissionGranted(permission: String): Boolean {
         return ContextCompat.checkSelfPermission(appContext, permission) == PackageManager.PERMISSION_GRANTED
     }
+
 
     private fun grantPermission(permission: String) {
         ActivityCompat.requestPermissions(

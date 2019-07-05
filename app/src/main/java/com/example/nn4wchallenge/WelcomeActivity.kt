@@ -16,8 +16,11 @@ import androidx.lifecycle.Observer
 import androidx.work.*
 import com.example.nn4wchallenge.database.external.onlineDatabase
 import com.example.nn4wchallenge.database.external.searchItem
+import com.example.nn4wchallenge.database.internal.AddClothingHandler
+import com.example.nn4wchallenge.database.internal.SetupManager
 import com.example.nn4wchallenge.database.internal.databaseChecker
 import com.example.nn4wchallenge.database.matchClothingHandler
+import com.example.nn4wchallenge.database.matchClothingInterface
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileInputStream
@@ -44,27 +47,23 @@ class WelcomeActivity : AppCompatActivity() {
     this section could have a log in section to make buying cloths quicker
      */
 
-    private lateinit var checkUserDatabaseWorker : OneTimeWorkRequest
+    private lateinit var checkUserDatabaseWorker: OneTimeWorkRequest
 
-    private lateinit var searchBTN : Button
-    private lateinit var shoppingBTN : Button
+    private lateinit var searchBTN: Button
+    private lateinit var shoppingBTN: Button
 
-    private lateinit var testTXT : TextView
+    private lateinit var testTXT: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_welcome)
 
+        testTXT = findViewById(R.id.testTXT)
         checkSetup()
 
         searchBTN = findViewById(R.id.quickSearchBTN)
         searchBTN.setOnClickListener {
 
-            testTXT.setText("test started")
-
-            testDatabase()
-
-            /*
             WorkManager.getInstance().getWorkInfoByIdLiveData(checkUserDatabaseWorker.id)
                 .observe(this, Observer { workInfo ->
                     if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED)
@@ -86,7 +85,7 @@ class WelcomeActivity : AppCompatActivity() {
                     {
                         //do nothing this prevents the user doing anything without information from the thread
                     }
-                })*/
+                })
 
         }
         shoppingBTN = findViewById(R.id.shopBTN)
@@ -116,37 +115,44 @@ class WelcomeActivity : AppCompatActivity() {
                 })
         }
 
-        testTXT = findViewById(R.id.testTXT)
+        
     }
 
-    private fun goToShoppingScreen()
-    {
+    private fun goToShoppingScreen() {
         val goTo = Intent(applicationContext, MainActivity::class.java)
         startActivity(goTo)
     }
 
-    private fun goToSetupScreen()
-    {
+    private fun goToSetupScreen() {
         val goTo = Intent(applicationContext, SetupActivity::class.java)
         startActivity(goTo)
     }
 
-    private fun goToQuickSearch()
-    {
+    private fun goToQuickSearch() {
         //might be implemented in the future
         Toast.makeText(applicationContext, "Functionality not available", Toast.LENGTH_SHORT).show()
     }
 
-    private fun checkSetup()
-    {
-        val accessInternalStorage : permissionsHandler = permissionsHandler(this, applicationContext)
+    private fun checkSetup() {
 
-        accessInternalStorage.internalStoragePermission()
 
-        if (accessInternalStorage.checkInternetPermission())
-        {
+        val accessPermissions: permissionsHandler = permissionsHandler(this, applicationContext)
 
-            val input : Data = Data.Builder().putString("database", "user").build()
+
+            accessPermissions.internetPermission()
+
+            if (accessPermissions.checkInternetPermission()) {
+                testTXT.setText("internet access granted")
+            } else {
+                testTXT.setText("internet access ")
+            }
+
+
+        accessPermissions.internalStoragePermission()
+
+        if (accessPermissions.checkInternetPermission()) {
+
+            val input: Data = Data.Builder().putString("database", "user").build()
 
             checkUserDatabaseWorker = OneTimeWorkRequestBuilder<databaseChecker>()
                 .setInputData(input)
@@ -156,11 +162,83 @@ class WelcomeActivity : AppCompatActivity() {
 
 
         }
+
+
     }
 
-    private fun testDatabase()
+
+    private fun testData()
+    {
+        var addClothing : AddClothingHandler = AddClothingHandler(applicationContext)
+        addClothing.setClothingSeason("summer")
+        addClothing.setClothingType("dress")
+        addClothing.setClothingColour(0, 0, 0)
+        addClothing.setPicture()
+
+        try {
+            addClothing.saveClothingItem()
+        }
+        catch(e : Exception)
+        {
+            testTXT.setText("error clothing data base ${e.toString()}")
+        }
+
+
+        var setupUser : SetupManager = SetupManager()
+
+        setupUser.setAge(3)
+        setupUser.setGender(1)
+        setupUser.setChest(3)
+        setupUser.setWaist(3)
+        setupUser.setShoe(1)
+        setupUser.saveUserData()
+
+
+        testTXT.setText("data added")
+    }
+
+
+    private fun testSearch()
     {
 
+        val testSearch : matchClothingInterface = matchClothingInterface()
+
+        val thread = testSearch.search()
+
+        WorkManager.getInstance().getWorkInfoByIdLiveData(thread)
+            .observe(this, Observer { workInfo ->
+                /*try{
+                    val size = testSearch.handleOutput(workInfo).size
+
+                    testTXT.setText("size $size")
+                }
+                catch(e: Exception)
+                {
+                    testTXT.setText("error ${e.cause.toString()}")
+                }*/
+
+                if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED) {
+                    //var clothingImages : Array<String> = workInfo.outputData.getStringArray("images") as Array<String>
+                    //var clothingDescriptions : Array<String> = workInfo.outputData.getStringArray("descriptions") as Array<String>
+                    //var userClothingImage : Array<String> = workInfo.outputData.getStringArray("userClothing") as Array<String>
+                    var error : String? = workInfo.outputData.getString("error")
+
+                    testTXT.setText("error $error ")
+                    
+                }
+
+                /*
+                if (workInfo != null && workInfo.state == WorkInfo.State.FAILED)
+                {
+                    var error : String? = workInfo.outputData.getString("error")
+
+                    testTXT.setText("error $error ")
+                }*/
+
+            })
+
+
+/*
         val testDatabase = OneTimeWorkRequestBuilder<testWorker>()
             .build()
 
@@ -186,5 +264,6 @@ class WelcomeActivity : AppCompatActivity() {
                 }
 
             })
+            */
     }
 }

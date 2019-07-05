@@ -10,6 +10,7 @@ import androidx.room.Room
 import androidx.work.Data
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import com.example.nn4wchallenge.database.external.onlineDatabase
 import com.example.nn4wchallenge.database.internal.clothing
 import com.example.nn4wchallenge.database.internal.clothingDatabase
 import com.example.nn4wchallenge.database.internal.user
@@ -42,6 +43,15 @@ class testWorker (appContext: Context, workerParams: WorkerParameters)
             result += " clothing data base error ${e.toString()}"
         }
 
+        try
+        {
+            result += ("  " + testOnlineDB())
+        }
+        catch (e : Exception)
+        {
+            result += " online data base error ${e.toString()}"
+        }
+
         var output : Data = Data.Builder().putString("result", result).build()
 
         return Result.success(output)
@@ -56,7 +66,7 @@ class testWorker (appContext: Context, workerParams: WorkerParameters)
         val accessUserDB = Room.databaseBuilder(applicationContext, userDatabase::class.java,
             "user-info-database").build()
 
-        val newUser : user = user()
+        /*val newUser : user = user()
 
         newUser.userAge = "abult"
         newUser.userGender = "male"
@@ -64,7 +74,7 @@ class testWorker (appContext: Context, workerParams: WorkerParameters)
         newUser.userWaistMeasurement = "10"
         newUser.userShoeSize = 9
 
-        accessUserDB.userDao().insert(newUser)
+        accessUserDB.userDao().insert(newUser)*/
 
         var inDatabase = accessUserDB.userDao().getAll()
 
@@ -92,6 +102,7 @@ class testWorker (appContext: Context, workerParams: WorkerParameters)
         val accessClothingDB = Room.databaseBuilder(applicationContext, clothingDatabase::class.java,
             "user-clothes-database").build()
 
+        /*
         var newClothing : clothing = clothing()
 
         newClothing.clothingColorRed = 255
@@ -101,7 +112,7 @@ class testWorker (appContext: Context, workerParams: WorkerParameters)
         newClothing.clothingSeason = "summer"
         newClothing.clothingType = "dress"
 
-        accessClothingDB.clothingDao().insert(newClothing)
+        accessClothingDB.clothingDao().insert(newClothing)*/
 
         var inDatabase = accessClothingDB.clothingDao().getAll()
 
@@ -123,6 +134,15 @@ class testWorker (appContext: Context, workerParams: WorkerParameters)
     {
         var result = ""
 
+        var testOnline = onlineDatabase()
+
+        try {
+            result = testOnline.getAvailableClothes()[0].type
+        }
+        catch (e : Exception)
+        {
+            result = "online error ${e.toString()}"
+        }
 
 
         return result

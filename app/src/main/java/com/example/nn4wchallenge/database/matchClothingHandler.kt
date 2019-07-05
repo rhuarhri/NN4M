@@ -23,15 +23,16 @@ that is shown to the user
 class matchClothingHandler (appContext: Context, workerParams: WorkerParameters)
     : Worker(appContext, workerParams) {
 
-    var availableClothing : ArrayList<searchItem> = ArrayList()
-    var allUserInfo : ArrayList<user> = ArrayList()
-    var allUserClothes : ArrayList<clothing> = ArrayList()
+    private var availableClothing : ArrayList<searchItem> = ArrayList()
+    private var allUserInfo : Array<user>? = null
+    private var allUserClothes : Array<clothing>? = null
 
-    var searcher : searchManager = searchManager()
+    private var searcher : searchManager = searchManager()
 
-    var error : String = ""
-    var imageURLList : ArrayList<String> = ArrayList()
-    var itemDescriptionURLList : ArrayList<String> = ArrayList()
+    private var error : String = ""
+    private var imageURLList : ArrayList<String> = ArrayList()
+    private var itemDescriptionURLList : ArrayList<String> = ArrayList()
+    private var userClothingImage : ArrayList<String> = ArrayList()
 
 
     override fun doWork(): Result {
@@ -42,25 +43,31 @@ class matchClothingHandler (appContext: Context, workerParams: WorkerParameters)
 
         getUserClothesInformation()
 
-        var userInfo : user = allUserInfo[0]
 
-        searcher.setupUserInfo(userInfo)
+            var userInfo: user = allUserInfo?.get(0)!!
 
-        for (item in allUserClothes)
-        {
+            searcher.setupUserInfo(userInfo)
 
-            searcher.setupClothingInfo(item)
 
-            var searchResults = searcher.search(availableClothing)
+                for (item in allUserClothes!!.iterator()) {
 
-            for (searchItem in searchResults)
-            {
-                imageURLList.add(searchItem.image)
-                itemDescriptionURLList.add(searchItem.descriptionLocation)
-            }
-        }
+                    searcher.setupClothingInfo(item)
+
+                    var searchResults = searcher.search(availableClothing)
+
+
+                    for (searchItem in searchResults) {
+                        imageURLList.add(searchItem.image)
+                        itemDescriptionURLList.add(searchItem.descriptionLocation)
+                        userClothingImage.add(item.clothingImageLocation.toString())
+
+                    }
+                }
+
+
 
         return setupOutput()
+
     }
 
     private fun getOnlineData()
@@ -74,36 +81,46 @@ class matchClothingHandler (appContext: Context, workerParams: WorkerParameters)
             }
             catch(e: Exception)
             {
-                error = "Error in data gathering is $e"
+                error = "Error in data gathering is ${e.toString()}"
             }
         }
     }
+
 
     private fun getUserInformation()
     {
         val accessDB = Room.databaseBuilder(applicationContext, userDatabase::class.java,
             "user-info-database").build()
-        allUserInfo = Arrays.asList(accessDB.userDao().getAll()) as ArrayList<user>
+        allUserInfo = accessDB.userDao().getAll()
     }
+
 
     private fun getUserClothesInformation()
     {
         val accessDB = Room.databaseBuilder(applicationContext, clothingDatabase::class.java,
             "user-clothes-database").build()
 
-        allUserClothes = Arrays.asList(accessDB.clothingDao().getAll()) as ArrayList<clothing>
+        allUserClothes = accessDB.clothingDao().getAll()
     }
 
 
     private fun setupOutput() : Result
     {
+
+        var imageArray : Array<String?> = resultToArray(imageURLList)
+        var descriptionArray : Array<String?> = resultToArray(itemDescriptionURLList)
+        var userClothingArray : Array<String?> = resultToArray(userClothingImage)
+
         var output : Data = Data.Builder()
             .putString("error", error)
-            .putStringArray("images", imageURLList.toArray() as Array<out String>)
-            .putStringArray("descriptions", itemDescriptionURLList.toArray() as Array<out String>)
+            .putStringArray("images", imageArray)
+            .putStringArray("descriptions", descriptionArray)
+            .putStringArray("userClothing", userClothingArray)
             .build()
 
-        if (error == "")
+
+
+        if (error == "" || error == null)
         {
             return Result.success(output)
         }
@@ -112,5 +129,18 @@ class matchClothingHandler (appContext: Context, workerParams: WorkerParameters)
             return Result.failure(output)
         }
 
+        //return Result.success(output)
+    }
+
+    //the thread had problems with converting array lists to arrays hence why this exists
+    private fun resultToArray(result : ArrayList<String>) : Array<String?>
+    {
+        var resultArray : Array<String?> = arrayOfNulls(result.size)
+        var iterator : Int = 0
+        for (item in result)
+        {
+            resultArray[iterator] = item
+        }
+        return resultArray
     }
 }

@@ -11,10 +11,13 @@ class AddUserThreadManager (appContext: Context, workerParams: WorkerParameters)
 {
     override fun doWork(): Result {
 
+        var newUser : user = user()
+        newUser.userGender = inputData.getString("gender").toString()
+        newUser.userAge = inputData.getString("age").toString()
+        newUser.userChestMeasurement = inputData.getInt("chest",0)
+        newUser.userWaistMeasurement = inputData.getInt("waist",0)
+        newUser.userShoeSize = inputData.getInt("shoe",0)
 
-        var input : MutableMap<String, Any> = inputData.keyValueMap
-
-        var newUser : user = input["new"] as user
 
         val accessDB = Room.databaseBuilder(applicationContext, userDatabase::class.java,
             "user-info-database").build()

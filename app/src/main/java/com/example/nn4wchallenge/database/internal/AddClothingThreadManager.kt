@@ -11,9 +11,14 @@ class AddClothingThreadManager (appContext: Context, workerParams: WorkerParamet
 {
     override fun doWork(): Result {
 
-        var input : MutableMap<String, Any> = inputData.keyValueMap
+        var newClothing : clothing = clothing()
+        newClothing.clothingType = inputData.getString("type").toString()
+        newClothing.clothingSeason = inputData.getString("season").toString()
+        newClothing.clothingImageLocation = inputData.getString("picture").toString()
+        newClothing.clothingColorBlue = inputData.getInt("blue",0)
+        newClothing.clothingColorGreen = inputData.getInt("green", 0)
+        newClothing.clothingColorRed = inputData.getInt("red",0)
 
-        var newClothing : clothing = input["new"] as clothing
 
         val accessDB = Room.databaseBuilder(applicationContext, clothingDatabase::class.java,
         "user-clothes-database").build()

@@ -16,10 +16,20 @@ import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
+import com.example.nn4wchallenge.database.matchClothingHandler
+import com.example.nn4wchallenge.database.matchClothingInterface
+import com.example.nn4wchallenge.imageHandling.retrieveImageHandler
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import java.io.ByteArrayOutputStream
 
 class MainActivity : AppCompatActivity() {
 
+    //available clothing items
+    private var clothingImages : Array<String>? = null
+    private var clothingDescriptions : Array<String>? = null
+    private var userClothingImage : Array<String>? = null
+    private var currentClothingItem : Int = 0
 
     private lateinit var accountBTN : Button
     private lateinit var cartBTN : Button
@@ -28,17 +38,16 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var totalCostTXT : TextView
 
+
     private lateinit var topIV : ImageView
     private lateinit var bottomIV : ImageView
-    /*
-    topIV will display clothes that normally are above or on top of
-    the clothes displayed in the bottomIV for example shirt will be displayed
-    on the topIV and trouser will be displayed in the bottomIV
-     */
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        setupSearchThread()
 
         accountBTN = findViewById(R.id.accountBTN)
         accountBTN.setOnClickListener {
@@ -58,12 +67,26 @@ class MainActivity : AppCompatActivity() {
         likeBTN = findViewById(R.id.likeBTN)
         likeBTN.setOnClickListener {
 
+            if (clothingDescriptions != null){
+            showItemDescription(clothingDescriptions!![currentClothingItem])
+            }
+            else{
+                Toast.makeText(applicationContext, "no description available", Toast.LENGTH_LONG).show()
+            }
 
         }
 
         dislikeBTN = findViewById(R.id.dislikeBTN)
         dislikeBTN.setOnClickListener {
 
+            currentClothingItem++
+            if (currentClothingItem >= clothingImages!!.size)
+            {
+                currentClothingItem = 0
+            }
+
+            setTopImage(clothingImages?.get(currentClothingItem))
+            setBottomImage(userClothingImage?.get(currentClothingItem))
 
         }
 
@@ -73,59 +96,80 @@ class MainActivity : AppCompatActivity() {
 
         bottomIV = findViewById(R.id.bottomIV)
 
-
-        //val p = Palette.from(picture).generate()
-
-        //val vibrant = p.vibrantSwatch
-// In Kotlin, check for null before accessing properties on the vibrant swatch.
-        //val titleColor : Int = vibrant!!.titleTextColor
-
-        //testTXT.setTextColor(titleColor)
-
-
-       // testWorkManager()
     }
 
-
-
-    @SuppressLint("RestrictedApi")
-    private fun testWorkManager()
+    private fun showItemDescription(descriptionURL : String)
     {
-
-
-        val inputData : Data = Data.fromByteArray(setUpImage())
-
-
-
-
-        val testWorkRequest = OneTimeWorkRequestBuilder<testWorker>()
-            .setInputData(inputData)
-            .build()
-
-        WorkManager.getInstance().enqueue(testWorkRequest)
-
-
-
-        WorkManager.getInstance().getWorkInfoByIdLiveData(testWorkRequest.id)
-            .observe(this, Observer { workInfo ->
-                if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED) {
-
-                    var output : Int = workInfo.outputData.getInt("color", 0)
-                    Toast.makeText(applicationContext, "Thread done and output is $output", Toast.LENGTH_LONG).show()
-                }
-            })
+        val goToItemDescriptionScreen : Intent = Intent(applicationContext, ItemDescriptionActivity::class.java)
+        goToItemDescriptionScreen.putExtra("description", descriptionURL)
+        startActivity(goToItemDescriptionScreen)
     }
 
-    private fun setUpImage() : ByteArray
+    //this will display the image of the clothing the user can buy
+    private fun setTopImage(location : String?)
     {
-        var picture : Bitmap = BitmapFactory.decodeResource(resources, R.drawable.test_shirt)
+        doAsync {
 
-        var stream : ByteArrayOutputStream = ByteArrayOutputStream()
+            val getImage : retrieveImageHandler = retrieveImageHandler(applicationContext)
 
-        picture.compress(Bitmap.CompressFormat.PNG, 100, stream)
+            val foundImage : Bitmap = getImage.getBitmapFromURL(location, topIV.height, topIV.width)
 
-        var rawData : ByteArray = stream.toByteArray()
+            uiThread {
+                topIV.setImageBitmap(foundImage)
+            }
+        }
+    }
 
-        return rawData
+    //this will display the image of the clothing the user already has
+    private fun setBottomImage(location : String?)
+    {
+        doAsync {
+
+            val getImage : retrieveImageHandler = retrieveImageHandler(applicationContext)
+
+            val foundImage : Bitmap = getImage.getBitmapFromURL(location, bottomIV.height, bottomIV.width)
+
+            uiThread {
+                bottomIV.setImageBitmap(foundImage)
+            }
+        }
+    }
+
+    private fun setupSearchThread()
+    {
+            val searchWorkRequest = OneTimeWorkRequestBuilder<matchClothingHandler>()
+                .build()
+
+            WorkManager.getInstance().enqueue(searchWorkRequest)
+
+            WorkManager.getInstance().getWorkInfoByIdLiveData(searchWorkRequest.id)
+                .observe(this, Observer { workInfo ->
+                    if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED) {
+                        //val availableClothesImages : Array<String>? = workInfo.outputData.getStringArray("images")
+                        //val availableClothesDescriptions = workInfo.outputData.getStringArray("descriptions")
+                        //val ownedClothesImage = workInfo.outputData.getStringArray("userClothing")
+
+                        clothingImages = workInfo.outputData.getStringArray("images")//= availableClothesImages
+                        clothingDescriptions = workInfo.outputData.getStringArray("descriptions")// = availableClothesDescriptions
+                        userClothingImage = workInfo.outputData.getStringArray("userClothing")//= ownedClothesImage
+
+                        if (clothingImages != null && userClothingImage != null) {
+                            setTopImage(clothingImages?.get(currentClothingItem))
+                            setBottomImage(userClothingImage?.get(currentClothingItem))
+                        }
+                        else{
+                            Toast.makeText(applicationContext, "no matches found", Toast.LENGTH_LONG).show()
+                        }
+
+                    }
+
+                    if (workInfo != null && workInfo.state == WorkInfo.State.FAILED)
+                    {
+                        var error : String? = workInfo.outputData.getString("error")
+
+                        Toast.makeText(applicationContext, "search error : ${error.toString()}", Toast.LENGTH_LONG).show()
+                    }
+                })
+
     }
 }

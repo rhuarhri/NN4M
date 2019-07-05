@@ -4,9 +4,11 @@ import android.content.Context
 import android.net.Uri
 import android.os.Environment
 import androidx.core.content.FileProvider
+import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
+import com.example.nn4wchallenge.colourMatcherCode.colour
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -16,29 +18,43 @@ class AddClothingHandler (var context : Context) {
 
     private var savedPhotoPath: String = ""
 
-    private var newClothingItem : clothing = clothing()
+    //private var newClothingItem : clothing = clothing()
 
+    private var inputData : Data.Builder = Data.Builder()
+
+
+    private var typeAdded : Boolean = false
     public fun setClothingType(type : String)
     {
-        newClothingItem.clothingType = type
+        inputData.putString("type", type)
+        typeAdded = true
     }
 
+    private var colourAdded : Boolean = false
     public fun setClothingColour(redAmount : Int, greenAmount : Int, blueAmount : Int)
     {
-        newClothingItem.clothingColorRed = redAmount
-        newClothingItem.clothingColorGreen = greenAmount
-        newClothingItem.clothingColorBlue = blueAmount
+
+        inputData.putInt("red", redAmount)
+        inputData.putInt("green", greenAmount)
+        inputData.putInt("blue", blueAmount)
+
+        colourAdded = true
     }
 
+    private var seasonAdded : Boolean = false
     public fun setClothingSeason(season : String)
     {
-        newClothingItem.clothingSeason = season
+        inputData.putString("season", season)
+        seasonAdded = true
     }
 
+    private var pictureAdded = false
     public fun setPicture()
     {
-        savedPhotoPath = "test"
+        savedPhotoPath = ""
+        pictureAdded = true
     }
+
 
     public fun saveClothingItem() : String
     {
@@ -48,10 +64,10 @@ class AddClothingHandler (var context : Context) {
         {
             //run save clothing item thread
 
-            val inputData = workDataOf("new" to newClothingItem)
+            val DataForThread : Data = inputData.build()
 
             val saveClothingThread = OneTimeWorkRequestBuilder<AddClothingThreadManager>()
-                .setInputData(inputData)
+                .setInputData(DataForThread)
                 .build()
             WorkManager.getInstance().enqueue(saveClothingThread)
         }
@@ -63,23 +79,28 @@ class AddClothingHandler (var context : Context) {
     {
         var error : String = ""
 
-        if (newClothingItem.clothingType == "")
+        if (!typeAdded)
         {
             error = "No type selected"
         }
 
-        if (newClothingItem.clothingSeason == "")
+        if (!seasonAdded)
         {
             error = "No season selected"
         }
 
-        if (savedPhotoPath == "")
+        if (!colourAdded)
+        {
+            error = "No colour added"
+        }
+
+        if (!pictureAdded)
         {
             error = "No picture"
         }
         else
         {
-            newClothingItem.clothingImageLocation = savedPhotoPath
+            inputData.putString("picture", savedPhotoPath)
         }
 
 
@@ -129,7 +150,7 @@ class AddClothingHandler (var context : Context) {
     private fun runUpdateDatabaseThread()
     {
 
-        val newClothingItem = workDataOf("new" to newClothingItem)
+        val newClothingItem = inputData.build()
         val addToClothingDatabase = OneTimeWorkRequestBuilder<AddClothingThreadManager>()
             .setInputData(newClothingItem)
             .build()

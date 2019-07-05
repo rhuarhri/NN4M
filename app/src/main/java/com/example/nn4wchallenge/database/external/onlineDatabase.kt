@@ -139,4 +139,267 @@ class onlineDatabase () {
         return count <= 1
         
     }
+
+    //get item description
+    @Throws (Exception::class)
+    public fun getItemDescription(descriptionURL : String) : itemDescription
+    {
+        var returnedItemDescription : itemDescription = itemDescription()
+
+        val userLocation = getLocation()
+
+        var inStream: InputStream = getInputStream(descriptionURL)
+
+        reader = JsonReader(InputStreamReader(inStream, "UTF-8"))
+
+
+        reader.beginObject()
+
+        while (reader.hasNext())
+        {
+            var name: String = reader.nextName()
+
+            var notFound = true
+
+            if(name == "name")
+            {
+                returnedItemDescription.name = reader.nextString()
+                notFound = false
+            }
+            else if(name == "description")
+            {
+                returnedItemDescription.description = reader.nextString()
+                notFound = false
+            }
+
+            /*these values would be double as that represents a price better than an int
+             (i.e. £9.99), however all of the cost values
+            don't have a decimal place which may cause errors if the app
+            is looking for double but is only finding ints*/
+            var cost : Int = 0
+            var wasCost : Int = 0
+
+            when (userLocation) {
+                "UK" -> {
+                    if (name == "cost")
+                    {
+                        cost = reader.nextInt()
+                        returnedItemDescription.cost = cost.toDouble()
+                        notFound = false
+                    }
+                    else if (name == "wascost")
+                    {
+                        //the value is often empty
+                        var fromFile = reader.nextString()
+                        if (fromFile == "")
+                        {
+                            wasCost = cost
+                        }
+                        else
+                        {
+                            wasCost = fromFile.toInt()
+                        }
+
+                        returnedItemDescription.setReduction(cost.toDouble(), wasCost.toDouble())
+                        notFound = false
+                    }
+                }
+                "EU" -> {
+                    if (name == "costEUR")
+                    {
+                        cost = reader.nextInt()
+                        returnedItemDescription.cost = cost.toDouble()
+                        notFound = false
+                    }
+                    else if (name == "wascostEUR")
+                    {
+                        //the value is often empty
+                        var fromFile = reader.nextString()
+                        if (fromFile == "")
+                        {
+                            wasCost = cost
+                        }
+                        else
+                        {
+                            wasCost = fromFile.toInt()
+                        }
+
+                        returnedItemDescription.setReduction(cost.toDouble(), wasCost.toDouble())
+                        notFound = false
+                    }
+                }
+                "DEN"/*Denmark*/ ->
+                {
+                    //I have not idea what WER stands for
+                    if (name == "costWER")
+                    {
+                        cost = reader.nextInt()
+                        returnedItemDescription.cost = cost.toDouble()
+                        notFound = false
+                    }
+                    else if (name == "wascostWER")
+                    {
+                        //the value is often empty
+                        var fromFile = reader.nextString()
+                        if (fromFile == "")
+                        {
+                            wasCost = cost
+                        }
+                        else
+                        {
+                            wasCost = fromFile.toInt()
+                        }
+
+                        returnedItemDescription.setReduction(cost.toDouble(), wasCost.toDouble())
+                        notFound = false
+                    }
+                }
+                "US" -> {
+                    if (name == "costUSD")
+                    {
+                        cost = reader.nextInt()
+                        returnedItemDescription.cost = cost.toDouble()
+                        notFound = false
+                    }
+                    else if (name == "wascostUSD")
+                    {
+                        //the value is often empty
+                        var fromFile = reader.nextString()
+                        if (fromFile == "")
+                        {
+                            wasCost = cost
+                        }
+                        else
+                        {
+                            wasCost = fromFile.toInt()
+                        }
+
+                        returnedItemDescription.setReduction(cost.toDouble(), wasCost.toDouble())
+                        notFound = false
+                    }
+                }
+                "AU" -> {
+                    if (name == "costAUD")
+                    {
+                        cost = reader.nextInt()
+                        returnedItemDescription.cost = cost.toDouble()
+                    }
+                    else if (name == "wascostAUD")
+                    {
+                        //the value is often empty
+                        var fromFile = reader.nextString()
+                        if (fromFile == "")
+                        {
+                            wasCost = cost
+                        }
+                        else
+                        {
+                            wasCost = fromFile.toInt()
+                        }
+
+                        returnedItemDescription.setReduction(cost.toDouble(), wasCost.toDouble())
+                        notFound = false
+                    }
+                }
+                "SW"//i.e. sweden
+                -> {
+                    if (name == "costSEK")
+                    {
+                        cost = reader.nextInt()
+                        returnedItemDescription.cost = cost.toDouble()
+                        notFound = false
+                    }
+                    else if (name == "wascostSEK")
+                    {
+                        //the value is often empty
+                        var fromFile = reader.nextString()
+                        if (fromFile == "")
+                        {
+                            wasCost = cost
+                        }
+                        else
+                        {
+                            wasCost = fromFile.toInt()
+                        }
+
+                        returnedItemDescription.setReduction(cost.toDouble(), wasCost.toDouble())
+                        notFound = false
+                    }
+                }
+                else -> {
+                    if (name == "costWEK")
+                    {
+                        cost = reader.nextInt()
+                        returnedItemDescription.cost = cost.toDouble()
+                        notFound = false
+                    }
+                    else if (name == "wascostWEK")
+                    {
+                        //the value is often empty
+                        var fromFile = reader.nextString()
+                        if (fromFile == "")
+                        {
+                            wasCost = cost
+                        }
+                        else
+                        {
+                            wasCost = fromFile.toInt()
+                        }
+
+                        returnedItemDescription.setReduction(cost.toDouble(), wasCost.toDouble())
+                        notFound = false
+                    }
+                }
+            }
+
+            if (name == "allImages")
+            {
+                returnedItemDescription.images = getAllImages(reader)
+                notFound = false
+            }
+
+            if (notFound)
+            {
+                //value in json file does not match any of the above
+                reader.skipValue()
+            }
+
+        }
+
+        reader.endObject()
+        reader.close()
+
+        return returnedItemDescription
+    }
+
+    private fun getAllImages(reader: JsonReader) : ArrayList<String>
+    {
+        var imageList : ArrayList<String> = ArrayList()
+
+        reader.beginArray()
+
+        while (reader.hasNext())
+        {
+            imageList.add(reader.nextString())
+        }
+
+        reader.endArray()
+
+        return imageList
+    }
+
+    private fun getLocation() : String
+    {
+        /*
+        This function would identify which country the user is in
+        in order to change the currency value to match i.e. pound if in
+        uk euro in france.
+        This was not implemented as it would be out of scope for this
+        prototype project.
+         */
+
+        return "UK"
+    }
+
+
 }

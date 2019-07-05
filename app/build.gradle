@@ -63,4 +63,7 @@ dependencies {
     //implementation 'org.apache.httpcomponents:httpclient:4.5.6'
 
     implementation 'com.android.support:multidex:1.0.3'
+
+    //asycn tasks
+    implementation "org.jetbrains.anko:anko-commons:0.10.4"
 }

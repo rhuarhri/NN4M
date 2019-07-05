@@ -156,10 +156,10 @@ class searchManager  {
     public fun doesFit(clothingItem : String, maxSize : Int, minSize : Int) : Boolean
     {
 
-        var chestSize : Int = UserInfo.userChestMeasurement.toInt()
+        var chestSize : Int = UserInfo.userChestMeasurement
         var matchChestSize : Boolean = false
 
-        var waistSize : Int = UserInfo.userWaistMeasurement.toInt()
+        var waistSize : Int = UserInfo.userWaistMeasurement
         var matchWaistSize : Boolean = false
 
         var shoeSize : Int = UserInfo.userShoeSize
@@ -175,7 +175,7 @@ class searchManager  {
             "skirt" -> matchWaistSize = true
             "top" -> matchChestSize = true
             "trousers" -> matchWaistSize = true
-            "shoe" -> matchShoeSize = true
+            "shoes" -> matchShoeSize = true
         }
 
         if (matchChestSize)

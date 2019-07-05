@@ -25,7 +25,7 @@ class clothingMatcher {
     {
         var dressMatches : ArrayList<String> = ArrayList()
 
-        dressMatches.add("shoe")
+        dressMatches.add("shoes")
 
         return dressMatches
     }

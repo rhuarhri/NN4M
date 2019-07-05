@@ -1,11 +1,13 @@
 package com.example.nn4wchallenge.database.internal
 
 import android.content.Context
+import android.provider.ContactsContract
+import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 
-class SetupManager (var context: Context?){
+class SetupManager (/*var context: Context?*/){
 
     //Code for setup procedure
     private var genderList : ArrayList<item> = ArrayList()
@@ -153,36 +155,42 @@ class SetupManager (var context: Context?){
     //end of code related to setup procedure
     //code related to saving information
 
-    private var newUser : user = user()
+    private var inputData : Data.Builder = Data.Builder()
 
+    private var genderAdded = false
     public fun setGender(position : Int)
     {
-        newUser.userGender = genderList[position].description
-
+        inputData.putString("gender", genderList[position].description)
+        genderAdded = true
     }
 
+    private var ageAdded = false
     public fun setAge(position : Int)
     {
-        newUser.userAge = ageList[position].description
+        inputData.putString("age", ageList[position].description)
+        ageAdded = true
 
     }
 
+    private var chestSizeAdded = false
     public fun setChest(position: Int)
     {
-        newUser.userChestMeasurement = chestSizeList[position].description
-
+        inputData.putInt("chest", chestSizeList[position].description.toInt())
+        chestSizeAdded = true
     }
 
+    private var waistSizeAdded = false
     public fun setWaist(position: Int)
     {
-        newUser.userWaistMeasurement = waistSizeList[position].description
-
+        inputData.putInt("waist", waistSizeList[position].description.toInt())
+        waistSizeAdded = true
     }
 
+    private var shoeSizeAdded = false
     public fun setShoe(position: Int)
     {
-        newUser.userShoeSize = shoeSizeList[position].description.toInt()
-
+        inputData.putInt("shoe", shoeSizeList[position].description.toInt())
+        shoeSizeAdded = true
     }
 
     public fun saveUserData() : String
@@ -193,10 +201,10 @@ class SetupManager (var context: Context?){
         {
             //run save user thread
 
-            val inputData = workDataOf("new" to newUser)
+            val newUser : Data = inputData.build()
 
             val saveUser = OneTimeWorkRequestBuilder<AddUserThreadManager>()
-                .setInputData(inputData)
+                .setInputData(newUser)
                 .build()
 
             WorkManager.getInstance().enqueue(saveUser)
@@ -207,23 +215,23 @@ class SetupManager (var context: Context?){
 
     private fun checkForErrors() : String
     {
-        if (newUser.userGender == "")
+        if (!genderAdded)
         {
             return "user gender not set"
         }
-        else if (newUser.userAge == "")
+        else if (!ageAdded)
         {
             return "user age not set"
         }
-        else if (newUser.userChestMeasurement == "")
+        else if (!chestSizeAdded)
         {
             return "user chest size not set"
         }
-        else if (newUser.userWaistMeasurement == "")
+        else if (!waistSizeAdded)
         {
             return "user waist size not set"
         }
-        else if (newUser.userShoeSize == 0)
+        else if (!shoeSizeAdded)
         {
             return "user shoe size not set"
         }

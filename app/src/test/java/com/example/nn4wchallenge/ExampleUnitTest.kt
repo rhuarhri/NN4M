@@ -230,7 +230,7 @@ class ExampleUnitTest {
     @Test
     fun testSetupProcedure()
     {
-        var setupM : SetupManager = SetupManager(null)
+        var setupM : SetupManager = SetupManager()
 
         val expectGender : Int = 2
 
@@ -292,8 +292,8 @@ class ExampleUnitTest {
         testUser.userAge = "adult"
         testUser.userGender = "female"
         testUser.userShoeSize = 5
-        testUser.userWaistMeasurement = "10"
-        testUser.userChestMeasurement = "10"
+        testUser.userWaistMeasurement = 10
+        testUser.userChestMeasurement = 10
 
         return testUser
     }
@@ -372,6 +372,67 @@ class ExampleUnitTest {
         assertEquals("search result empty ", expected2, testResult.isEmpty())
 
         assertEquals("search item ", expected, testResult[0].image)
+    }
+
+    @Test
+    fun searchManagerTestNoPossibleMatches()
+    {
+
+        var clothingItems : ArrayList<searchItem> = ArrayList()
+
+        var item1 : searchItem = searchItem()
+        item1.age = "adult"
+        item1.colour = "0x000000"//colour black
+        item1.gender = "female"
+        item1.type = "shoe"
+        item1.minSize = "3"
+        item1.maxSize = "10"
+        item1.season = "summer"
+        item1.imageURL = "test item 1 image location"
+        item1.descriptionURL = "test item 1 description location"
+
+        clothingItems.add(item1)
+
+        var item2 : searchItem = searchItem()
+        item2.age = "adult"
+        item2.colour = "0x00FFFF"//colour light blue
+        item2.gender = "female"
+        item2.type = "shoe"
+        item2.minSize = "3"
+        item2.maxSize = "10"
+        item2.season = "winter"
+        item2.imageURL = "test item 2 image location"
+        item2.descriptionURL = "test item 2 description location"
+
+        clothingItems.add(item2)
+
+        var item3 : searchItem = searchItem()
+        item3.age = "adult"
+        item3.colour = "0x00FFFF"//colour light blue
+        item3.gender = "male"
+        item3.type = "shoe"
+        item3.minSize = "3"
+        item3.maxSize = "10"
+        item3.season = "summer"
+        item3.imageURL = "test item 3 image location"
+        item3.descriptionURL = "test item 3 description location"
+
+        clothingItems.add(item3)
+
+        var testSearch : searchManager = searchManager()
+
+        testSearch.setupUserInfo(setupUserInfo())
+
+        testSearch.setupClothingInfo(setupClothingInfo())
+
+        var testResult = testSearch.search(clothingItems)
+
+
+        val expected = false
+
+        assertEquals("search result empty ", expected, testResult.isEmpty())
+
+
     }
 
     @Test

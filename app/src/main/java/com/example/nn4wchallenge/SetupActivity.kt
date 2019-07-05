@@ -14,7 +14,7 @@ class SetupActivity : AppCompatActivity() {
     were to measure.
      */
 
-    private var setupM : SetupManager = SetupManager(applicationContext)
+    private var setupM : SetupManager = SetupManager(/*applicationContext*/)
 
     private lateinit var genderSPN : Spinner
     private lateinit var ageSPN : Spinner
@@ -135,6 +135,8 @@ class SetupActivity : AppCompatActivity() {
 
         var adapter : ArrayAdapter<String> = ArrayAdapter(applicationContext, android.R.layout.simple_spinner_item, list)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        adapter.notifyDataSetChanged()
 
         currentSPN.adapter = adapter
 
