@@ -14,10 +14,12 @@ import androidx.work.WorkManager
 import com.example.nn4wchallenge.database.external.GetItemDescription
 import com.example.nn4wchallenge.database.internal.AddToCartThreadHandler
 import com.example.nn4wchallenge.database.internal.cartItem
+import com.example.nn4wchallenge.imageHandling.retrieveImageHandler
 
 class ItemDescriptionActivity : AppCompatActivity() {
 
     private lateinit var clothingIV : ImageView
+    private lateinit var imageHandler : retrieveImageHandler
 
     private lateinit var descriptionTXT : TextView
     private lateinit var nameTXT : TextView
@@ -40,6 +42,7 @@ class ItemDescriptionActivity : AppCompatActivity() {
 
         val descriptionlocation : String = intent.getStringExtra("description")
 
+        imageHandler = retrieveImageHandler(applicationContext)
         clothingIV = findViewById(R.id.clothingPicture)
         descriptionTXT = findViewById(R.id.descriptionTXT)
         nameTXT = findViewById(R.id.nameTXT)
@@ -48,7 +51,20 @@ class ItemDescriptionActivity : AppCompatActivity() {
         imageSearchSB = findViewById(R.id.searchPictureSB)
         cartBTN = findViewById(R.id.cartBTN)
 
-        val inputData : Data = Data.Builder().putString("url", descriptionlocation).build()
+        if (descriptionlocation == "" || descriptionlocation == "null")
+        {
+            descriptionTXT.setText("no description")
+        }
+        else{
+            setupDescription(descriptionlocation)
+        }
+
+    }
+
+    private fun setupDescription(descriptionURL : String)
+    {
+
+        val inputData : Data = Data.Builder().putString("url", descriptionURL).build()
 
         val GetDescriptionWorker = OneTimeWorkRequestBuilder<GetItemDescription>()
             .setInputData(inputData)
@@ -78,7 +94,8 @@ class ItemDescriptionActivity : AppCompatActivity() {
 
                     if (imageURLs.isNotEmpty())
                     {
-                        itemImage = imageURLs[0]
+                        //itemImage = imageURLs[0]
+                        setupSeekBar()
                     }
 
                     cartBTN.setOnClickListener {
@@ -92,7 +109,26 @@ class ItemDescriptionActivity : AppCompatActivity() {
                     descriptionTXT.setText(workInfo.outputData.getString("error").toString())
                 }
             })
+    }
 
+    private fun setupSeekBar()
+    {
+        imageSearchSB.max = imageURLs.size
+
+        imageSearchSB.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener
+        {
+            override fun onStartTrackingTouch(p0: SeekBar?) {
+
+            }
+
+            override fun onStopTrackingTouch(p0: SeekBar?) {
+
+            }
+
+            override fun onProgressChanged(p0: SeekBar?, position: Int, p2: Boolean) {
+                imageHandler.getBitmapFromURL(imageURLs[position], clothingIV.height, clothingIV.width)
+            }
+        })
     }
 
     private fun addToCart()

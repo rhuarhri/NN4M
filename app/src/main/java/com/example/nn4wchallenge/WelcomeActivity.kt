@@ -14,6 +14,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.work.*
+import com.example.nn4wchallenge.database.external.GetItemDescription
 import com.example.nn4wchallenge.database.external.onlineDatabase
 import com.example.nn4wchallenge.database.external.searchItem
 import com.example.nn4wchallenge.database.internal.AddClothingHandler
@@ -113,6 +114,7 @@ class WelcomeActivity : AppCompatActivity() {
                         //do nothing this prevents the user doing anything without information from the thread
                     }
                 })
+            //setupDescription("https://firebasestorage.googleapis.com/v0/b/nn4mfashion.appspot.com/o/black%20print%20playsuit.json?alt=media&token=e341d428-e109-471c-bc81-a8d28af1d335")
         }
 
         
@@ -163,107 +165,49 @@ class WelcomeActivity : AppCompatActivity() {
 
         }
 
-
     }
 
 
-    private fun testData()
-    {
-        var addClothing : AddClothingHandler = AddClothingHandler(applicationContext)
-        addClothing.setClothingSeason("summer")
-        addClothing.setClothingType("dress")
-        addClothing.setClothingColour(0, 0, 0)
-        addClothing.setPicture()
-
-        try {
-            addClothing.saveClothingItem()
-        }
-        catch(e : Exception)
-        {
-            testTXT.setText("error clothing data base ${e.toString()}")
-        }
-
-
-        var setupUser : SetupManager = SetupManager()
-
-        setupUser.setAge(3)
-        setupUser.setGender(1)
-        setupUser.setChest(3)
-        setupUser.setWaist(3)
-        setupUser.setShoe(1)
-        setupUser.saveUserData()
-
-
-        testTXT.setText("data added")
-    }
-
-
-    private fun testSearch()
+    private fun setupDescription(descriptionURL : String)
     {
 
-        val testSearch : matchClothingInterface = matchClothingInterface()
+        val inputData : Data = Data.Builder().putString("url", descriptionURL).build()
 
-        val thread = testSearch.search()
-
-        WorkManager.getInstance().getWorkInfoByIdLiveData(thread)
-            .observe(this, Observer { workInfo ->
-                /*try{
-                    val size = testSearch.handleOutput(workInfo).size
-
-                    testTXT.setText("size $size")
-                }
-                catch(e: Exception)
-                {
-                    testTXT.setText("error ${e.cause.toString()}")
-                }*/
-
-                if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED) {
-                    //var clothingImages : Array<String> = workInfo.outputData.getStringArray("images") as Array<String>
-                    //var clothingDescriptions : Array<String> = workInfo.outputData.getStringArray("descriptions") as Array<String>
-                    //var userClothingImage : Array<String> = workInfo.outputData.getStringArray("userClothing") as Array<String>
-                    var error : String? = workInfo.outputData.getString("error")
-
-                    testTXT.setText("error $error ")
-                    
-                }
-
-                /*
-                if (workInfo != null && workInfo.state == WorkInfo.State.FAILED)
-                {
-                    var error : String? = workInfo.outputData.getString("error")
-
-                    testTXT.setText("error $error ")
-                }*/
-
-            })
-
-
-/*
-        val testDatabase = OneTimeWorkRequestBuilder<testWorker>()
+        val GetDescriptionWorker = OneTimeWorkRequestBuilder<GetItemDescription>()
+            .setInputData(inputData)
             .build()
 
-        WorkManager.getInstance().enqueue(testDatabase)
+        WorkManager.getInstance().enqueue(GetDescriptionWorker)
 
-        WorkManager.getInstance().getWorkInfoByIdLiveData(testDatabase.id)
+        WorkManager.getInstance().getWorkInfoByIdLiveData(GetDescriptionWorker.id)
             .observe(this, Observer { workInfo ->
+                if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED) {
 
-                if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED)
-                {
-                    testTXT.setText("done")
+                    val name : String = workInfo.outputData.getString("name").toString()
 
-                    var output : String? = workInfo.outputData.getString("result")
 
-                    if (output == null)
+                    val description : String = workInfo.outputData.getString("description").toString()
+
+                    val price : Double = workInfo.outputData.getDouble("cost", 0.0)
+
+
+                    val reduction : Int = workInfo.outputData.getInt("reduction", 0)
+                    /*if (reduction > 0)
                     {
-                        testTXT.setText("no result found")
-                    }
-                    else
-                    {
-                        testTXT.setText("result $output")
-                    }
+                        reducedPriceTXT.setText("$reduction off")
+                    }*/
+
+                    val imageURLs : Array<String> = workInfo.outputData.getStringArray("images") as Array<String>
+
+                    testTXT.setText("name: $name description: $description price: $price reduction: $reduction images amount: ${imageURLs.size}")
+
                 }
-
+                if (workInfo != null && workInfo.state == WorkInfo.State.FAILED)
+                {
+                    val error : String = workInfo.outputData.getString("error").toString()
+                    testTXT.setText("thread error is $error")
+                }
             })
-            */
     }
+
 }

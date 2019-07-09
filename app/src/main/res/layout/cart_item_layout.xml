@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <ImageView
+                android:layout_width="180dp"
+                android:layout_height="180dp" app:srcCompat="@drawable/test_shirt"
+                android:id="@+id/clothingIV" android:layout_marginTop="8dp" app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"/>
+        <TextView
+                android:text="orange shirt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/TitleTXT" app:layout_constraintStart_toEndOf="@+id/clothingIV"
+                android:layout_marginStart="8dp" app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+                app:layout_constraintHorizontal_bias="0.5" app:layout_constraintBottom_toTopOf="@+id/measurementTXT"
+                android:textColor="@color/colorPrimaryText" android:textSize="24sp"/>
+        <TextView
+                android:text="8"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/measurementTXT" app:layout_constraintStart_toEndOf="@+id/clothingIV"
+                android:layout_marginStart="8dp" app:layout_constraintTop_toBottomOf="@+id/TitleTXT"
+                app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp" app:layout_constraintBottom_toTopOf="@+id/deleteBTN"
+                app:layout_constraintHorizontal_bias="0.5" android:textColor="@color/colorPrimaryText"
+                android:textAlignment="textStart" android:textSize="24sp"/>
+        <Button
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:id="@+id/deleteBTN" app:layout_constraintStart_toEndOf="@+id/clothingIV"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/rounded_btn" android:foreground="@drawable/no_image_icon"
+                app:layout_constraintTop_toBottomOf="@+id/measurementTXT"
+                android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="@+id/clothingIV"/>
+        <Button
+                android:layout_width="60dp"
+                android:layout_height="60dp" android:id="@+id/buyAllBTN"
+                app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="24dp"
+                app:layout_constraintBottom_toBottomOf="@+id/deleteBTN" android:background="@drawable/rounded_btn"
+                android:foreground="@drawable/cart_icon"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

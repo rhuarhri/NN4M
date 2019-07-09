@@ -22,7 +22,14 @@ class itemDescription {
 
     private fun calculateReduction(cost : Double, wasCost: Double) : Int
     {
-        return (100 / (wasCost - cost)).roundToInt().toInt()
+        return if ((wasCost - cost) == 0.0)
+        {
+            0
+        }
+        else
+        {
+            (100 / (wasCost - cost)).roundToInt()
+        }
     }
 
     public fun setReduction(cost : Double, wasCost: Double)

@@ -47,6 +47,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        totalCostTXT = findViewById(R.id.totalTXT)
+
+        topIV = findViewById(R.id.topIV)
+
+        bottomIV = findViewById(R.id.bottomIV)
+
         setupSearchThread()
 
         accountBTN = findViewById(R.id.accountBTN)
@@ -67,7 +73,7 @@ class MainActivity : AppCompatActivity() {
         likeBTN = findViewById(R.id.likeBTN)
         likeBTN.setOnClickListener {
 
-            if (clothingDescriptions != null){
+            if (clothingDescriptions!![currentClothingItem] != null){
             showItemDescription(clothingDescriptions!![currentClothingItem])
             }
             else{
@@ -90,11 +96,7 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        totalCostTXT = findViewById(R.id.totalTXT)
 
-        topIV = findViewById(R.id.topIV)
-
-        bottomIV = findViewById(R.id.bottomIV)
 
     }
 

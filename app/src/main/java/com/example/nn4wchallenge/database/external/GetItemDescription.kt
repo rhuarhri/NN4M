@@ -30,7 +30,8 @@ class GetItemDescription (appContext: Context, workerParams: WorkerParameters)
             description = itemDescription.description
             cost = itemDescription.cost
             reduction = itemDescription.reduction
-            images = itemDescription.images.toArray() as Array<String>
+            val dataConverter : dataTranslation = dataTranslation()
+            images = dataConverter.toStringArray(itemDescription.images as ArrayList<String?>)
         }
         catch(e : Exception)
         {
@@ -42,7 +43,7 @@ class GetItemDescription (appContext: Context, workerParams: WorkerParameters)
     }
 
     private fun setupOutput() : Result {
-        var output: Data = Data.Builder()
+        val output: Data = Data.Builder()
             .putString("error", error)
             .putString("name", name)
             .putString("description", description)

@@ -2,10 +2,7 @@ package com.example.nn4wchallenge
 
 import com.example.nn4wchallenge.clothingMatcherCode.clothingMatcher
 import com.example.nn4wchallenge.colourMatcherCode.*
-import com.example.nn4wchallenge.database.external.dataTranslation
-import com.example.nn4wchallenge.database.external.onlineDatabase
-import com.example.nn4wchallenge.database.external.searchItem
-import com.example.nn4wchallenge.database.external.searchManager
+import com.example.nn4wchallenge.database.external.*
 import com.example.nn4wchallenge.database.internal.SetupManager
 import com.example.nn4wchallenge.database.internal.clothing
 import com.example.nn4wchallenge.database.internal.user
@@ -28,13 +25,13 @@ class ExampleUnitTest {
     @Test
     fun testColourMatcher()
     {
-        var colourM : colourMatcher = colourMatcher()
+        val colourM : colourMatcher = colourMatcher()
 
         colourM.matchColour(255, 0, 0) //red
 
-        var result = colourM.doesColourMatch(0, 255, 255) //light blue
+        val result = colourM.doesColourMatch(0, 255, 255) //light blue
 
-        var expected = true //as red and light blue should be contrasting colours
+        val expected = true //as red and light blue should be contrasting colours
 
         assertEquals("colour matcher test ", expected, result)
     }
@@ -45,24 +42,24 @@ class ExampleUnitTest {
         /*
         In this test a base colour is either red, green or blue
          */
-        var test : colourMatcher = colourMatcher()
+        val test : colourMatcher = colourMatcher()
         test.colours = ArrayList()
 
-        var testcolour : colour = colour()
+        val testcolour : colour = colour()
         testcolour.createColour(0,0,255)//colour blue
 
         test.findAdjacent(testcolour)
 
-        var testColour1 : colour = colour()
-        var expectedColour : ArrayList<colour> = ArrayList()
+        val testColour1 : colour = colour()
+        val expectedColour : ArrayList<colour> = ArrayList()
         testColour1.createColour(0, 255, 255)
         expectedColour.add(testColour1)//light blue
-        var testColour2 : colour = colour()
+        val testColour2 : colour = colour()
         testColour2.createColour(255, 0, 255)
         expectedColour.add(testColour2)//pink
 
 
-        var result = test.colours
+        val result = test.colours
 
         //there is probably a better way to test this instead of have a lot of asserts
         //however it is like this as it shows me exactly what failed
@@ -84,23 +81,23 @@ class ExampleUnitTest {
         for example yellow is a mix of green and red
          */
 
-        var test : colourMatcher = colourMatcher()
+        val test : colourMatcher = colourMatcher()
         test.colours = ArrayList()
 
-        var testcolour : colour = colour()
+        val testcolour : colour = colour()
         testcolour.createColour(255,255,0)//colour yellow
 
         test.findAdjacent(testcolour)
 
-        var testColour1 : colour = colour()
-        var expectedColour : ArrayList<colour> = ArrayList()
+        val testColour1 : colour = colour()
+        val expectedColour : ArrayList<colour> = ArrayList()
         testColour1.createColour(255, 0, 0)
         expectedColour.add(testColour1)//green
-        var testColour2 : colour = colour()
+        val testColour2 : colour = colour()
         testColour2.createColour(0, 255, 0)
         expectedColour.add(testColour2)//red
 
-        var result = test.colours
+        val result = test.colours
 
         assertEquals("red check 1", expectedColour.get(0).redAmount, result.get(0).redAmount)
         assertEquals("green check 1", expectedColour.get(0).greenAmount, result.get(0).greenAmount)
@@ -119,20 +116,20 @@ class ExampleUnitTest {
         which will be black and white
          */
 
-        var test : colourMatcher = colourMatcher()
+        val test : colourMatcher = colourMatcher()
         test.colours = ArrayList()
 
-        var testcolour : colour = colour()
+        val testcolour : colour = colour()
         testcolour.createColour(0,0,0)//colour black
 
         test.findAdjacent(testcolour)
 
-        var testColour : colour = colour()
-        var expectedColour : ArrayList<colour> = ArrayList()
+        val testColour : colour = colour()
+        val expectedColour : ArrayList<colour> = ArrayList()
         testColour.createColour(255, 255, 255)
         expectedColour.add(testColour)//white
 
-        var result = test.colours
+        val result = test.colours
 
         assertEquals("red check 1", expectedColour.get(0).redAmount, result.get(0).redAmount)
         assertEquals("green check 1", expectedColour.get(0).greenAmount, result.get(0).greenAmount)
@@ -142,23 +139,23 @@ class ExampleUnitTest {
     @Test
     fun findCorrectContrastingColours()
     {
-        var test : colourMatcher = colourMatcher()
+        val test : colourMatcher = colourMatcher()
         test.colours = ArrayList()
 
-        var testcolour : colour = colour()
+        val testcolour : colour = colour()
         testcolour.createColour(0,255,0)//colour green
 
         test.findContrasting(testcolour)
 
-        var result = test.colours
+        val result = test.colours
 
-        var expectedRedAmount = 255
+        val expectedRedAmount = 255
         assertEquals("red check", expectedRedAmount, result.get(0).redAmount)
 
-        var expectedGreenAmount = 0
+        val expectedGreenAmount = 0
         assertEquals("green check", expectedGreenAmount, result.get(0).greenAmount)
 
-        var expectedBlueAmount = 255
+        val expectedBlueAmount = 255
         assertEquals("blue check", expectedBlueAmount, result.get(0).blueAmount)
     }
 
@@ -172,12 +169,12 @@ class ExampleUnitTest {
         hex value
          */
 
-        var test : colourMatcher = colourMatcher()
+        val test : colourMatcher = colourMatcher()
 
 
-        var result : colour = test.setupToBasicColour(102, 255, 51)
+        val result : colour = test.setupToBasicColour(102, 255, 51)
 
-        var expected : colour = colour()
+        val expected : colour = colour()
 
         expected.createColour(0,255, 0)//standard green
 
@@ -189,34 +186,34 @@ class ExampleUnitTest {
     @Test
     fun createCorrectColourList()
     {
-        var testColourList : ArrayList<colour> = ArrayList()
+        val testColourList : ArrayList<colour> = ArrayList()
 
-        var testColour1 : colour = colour()
+        val testColour1 : colour = colour()
         testColour1.createColour(255, 0,0)//colour red
         testColourList.add(testColour1)
-        var testColour2 : colour = colour()
+        val testColour2 : colour = colour()
         //there should be no duplicate values so this should be deleted
         testColour2.createColour(255, 0,0)//colour red
         testColourList.add(testColour2)
-        var testColour3 : colour = colour()
+        val testColour3 : colour = colour()
         testColour3.createColour(0, 0,255)//colour blue
         testColourList.add(testColour3)
-        var testColour4 : colour = colour()
+        val testColour4 : colour = colour()
         testColour4.createColour(0, 255,0)//colour green
         testColourList.add(testColour4)
 
-        var test : colourMatcher = colourMatcher()
+        val test : colourMatcher = colourMatcher()
         test.colours = ArrayList()
 
         //when the colour given to colourMatcher it is first added to the
         //list of matching colours as this colour will always match itself
-        var testColour5 : colour = colour()
+        val testColour5 : colour = colour()
         testColour5.createColour(0, 0,0)//colour black
         test.colours.add(testColour5)
 
         test.addColour(testColourList)
 
-        var result : ArrayList<colour> = test.colours
+        val result : ArrayList<colour> = test.colours
 
 
         assertEquals("check size",4, result.size)
@@ -230,35 +227,35 @@ class ExampleUnitTest {
     @Test
     fun testSetupProcedure()
     {
-        var setupM : SetupManager = SetupManager()
+        val setupM : SetupManager = SetupManager()
 
         val expectGender : Int = 2
 
-        var resultGender = setupM.getTitleList(setupM.GENDER).size
+        val resultGender = setupM.getTitleList(setupM.GENDER).size
 
         assertEquals("gender size test", expectGender, resultGender)
 
         val expectAge : Int = 4
 
-        var resultAge = setupM.getTitleList(setupM.AGE).size
+        val resultAge = setupM.getTitleList(setupM.AGE).size
 
         assertEquals("age size test", expectAge, resultAge)
 
         val expectChest : Int = 7
 
-        var resultChest = setupM.getTitleList(setupM.CHEST).size
+        val resultChest = setupM.getTitleList(setupM.CHEST).size
 
         assertEquals("chest size test", expectChest, resultChest)
 
         val expectWaist : Int = 7
 
-        var resultWaist = setupM.getTitleList(setupM.WAIST).size
+        val resultWaist = setupM.getTitleList(setupM.WAIST).size
 
         assertEquals("Waist size test", expectWaist, resultWaist)
 
         val expectShoe : Int = 9
 
-        var resultShoe = setupM.getTitleList(setupM.SHOE).size
+        val resultShoe = setupM.getTitleList(setupM.SHOE).size
 
         assertEquals("gender size test", expectShoe, resultShoe)
     }
@@ -267,18 +264,83 @@ class ExampleUnitTest {
     @Test
     fun convertStringToColourTest()
     {
-        var test : dataTranslation = dataTranslation()
+        val test : dataTranslation = dataTranslation()
 
-        var testValue : String = "0x0000FF"
+        val testValue : String = "0x0000FF"
 
         test.StringToRGB(testValue)
 
-        var expectedBlue : Int = 255
+        val expectedBlue : Int = 255
 
-        var colour : Int = test.blueAmount
+        val colour : Int = test.blueAmount
 
         assertEquals("colour test", expectedBlue, colour)
 
+    }
+
+    //the threads have problems with converting array lists to arrays hence why this exists
+    @Test
+    fun convertDoubleArrayTest()
+    {
+        var input : ArrayList<Double?> = ArrayList()
+        input.add(12.0)
+        input.add(null)
+        input.add(6.5)
+
+        val dataConverter : dataTranslation = dataTranslation()
+
+        val result : DoubleArray = dataConverter.toDoubleArray(input)
+
+        val expected1 : Double = 12.0
+        val expected2 : Double = 0.0
+        val expected3 : Double = 6.5
+
+        assertEquals("test 1", expected1, result[0], 0.0)
+        assertEquals("test 2", expected2, result[1], 0.0)
+        assertEquals("test 3", expected3, result[2], 0.0)
+
+    }
+
+    @Test
+    fun convertIntArrayTest()
+    {
+        val input : ArrayList<Int?> = ArrayList()
+        input.add(12)
+        input.add(null)
+        input.add(6)
+
+        val dataConverter : dataTranslation = dataTranslation()
+
+        val result : IntArray = dataConverter.toIntArray(input)
+
+        val expected1 : Int = 12
+        val expected2 : Int = 0
+        val expected3 : Int = 6
+
+        assertEquals("test 1", expected1, result[0])
+        assertEquals("test 2", expected2, result[1])
+        assertEquals("test 3", expected3, result[2])
+    }
+
+    @Test
+    fun convertStringArrayTest()
+    {
+        val input : ArrayList<String?> = ArrayList()
+        input.add("A")
+        input.add(null)
+        input.add("B")
+
+        val dataConverter : dataTranslation = dataTranslation()
+
+        val result : Array<String> = dataConverter.toStringArray(input)
+
+        val expected1 : String = "A"
+        val expected2 : String = ""
+        val expected3 : String = "B"
+
+        assertEquals("test 1", expected1, result[0])
+        assertEquals("test 2", expected2, result[1])
+        assertEquals("test 3", expected3, result[2])
     }
 
     //end of data translation tests
@@ -287,7 +349,7 @@ class ExampleUnitTest {
 
     public fun setupUserInfo() : user
     {
-        var testUser : user = user()
+        val testUser : user = user()
 
         testUser.userAge = "adult"
         testUser.userGender = "female"
@@ -300,7 +362,7 @@ class ExampleUnitTest {
 
     public fun setupClothingInfo() : clothing
     {
-        var testClothing : clothing = clothing()
+        val testClothing : clothing = clothing()
 
         testClothing.clothingType = "dress"
         testClothing.clothingSeason = "summer"
@@ -316,9 +378,9 @@ class ExampleUnitTest {
     fun searchManagerTest()
     {
 
-        var clothingItems : ArrayList<searchItem> = ArrayList()
+        val clothingItems : ArrayList<searchItem> = ArrayList()
 
-        var item1 : searchItem = searchItem()
+        val item1 : searchItem = searchItem()
         item1.age = "adult"
         item1.colour = "0x000000"//colour black
         item1.gender = "female"
@@ -331,7 +393,7 @@ class ExampleUnitTest {
 
         clothingItems.add(item1)
 
-        var item2 : searchItem = searchItem()
+        val item2 : searchItem = searchItem()
         item2.age = "adult"
         item2.colour = "0x00FFFF"//colour light blue
         item2.gender = "female"
@@ -344,7 +406,7 @@ class ExampleUnitTest {
 
         clothingItems.add(item2)
 
-        var item3 : searchItem = searchItem()
+        val item3 : searchItem = searchItem()
         item3.age = "adult"
         item3.colour = "0x00FFFF"//colour light blue
         item3.gender = "male"
@@ -357,13 +419,13 @@ class ExampleUnitTest {
 
         clothingItems.add(item3)
 
-        var testSearch : searchManager = searchManager()
+        val testSearch : searchManager = searchManager()
 
         testSearch.setupUserInfo(setupUserInfo())
 
         testSearch.setupClothingInfo(setupClothingInfo())
 
-        var testResult = testSearch.search(clothingItems)
+        val testResult = testSearch.search(clothingItems)
 
         val expected = "test item 2 image location"
 
@@ -378,9 +440,9 @@ class ExampleUnitTest {
     fun searchManagerTestNoPossibleMatches()
     {
 
-        var clothingItems : ArrayList<searchItem> = ArrayList()
+        val clothingItems : ArrayList<searchItem> = ArrayList()
 
-        var item1 : searchItem = searchItem()
+        val item1 : searchItem = searchItem()
         item1.age = "adult"
         item1.colour = "0x000000"//colour black
         item1.gender = "female"
@@ -393,7 +455,7 @@ class ExampleUnitTest {
 
         clothingItems.add(item1)
 
-        var item2 : searchItem = searchItem()
+        val item2 : searchItem = searchItem()
         item2.age = "adult"
         item2.colour = "0x00FFFF"//colour light blue
         item2.gender = "female"
@@ -406,7 +468,7 @@ class ExampleUnitTest {
 
         clothingItems.add(item2)
 
-        var item3 : searchItem = searchItem()
+        val item3 : searchItem = searchItem()
         item3.age = "adult"
         item3.colour = "0x00FFFF"//colour light blue
         item3.gender = "male"
@@ -419,13 +481,13 @@ class ExampleUnitTest {
 
         clothingItems.add(item3)
 
-        var testSearch : searchManager = searchManager()
+        val testSearch : searchManager = searchManager()
 
         testSearch.setupUserInfo(setupUserInfo())
 
         testSearch.setupClothingInfo(setupClothingInfo())
 
-        var testResult = testSearch.search(clothingItems)
+        val testResult = testSearch.search(clothingItems)
 
 
         val expected = false
@@ -439,7 +501,7 @@ class ExampleUnitTest {
     fun searchManagerTestMatchColour()
     {
 
-        var item1 : searchItem = searchItem()
+        val item1 : searchItem = searchItem()
         item1.age = "adult"
         item1.colour = "0x00FFFF"//colour light blue
         item1.gender = "female"
@@ -450,13 +512,13 @@ class ExampleUnitTest {
         item1.imageURL = "test item 1 image location"
         item1.descriptionURL = "test item 1 description location"
 
-        var testSearch : searchManager = searchManager()
+        val testSearch : searchManager = searchManager()
 
         testSearch.setupUserInfo(setupUserInfo())
 
         testSearch.setupClothingInfo(setupClothingInfo())
 
-        var result = testSearch.matchesColor(item1.colour)
+        val result = testSearch.matchesColor(item1.colour)
 
         val expected = true
 
@@ -467,7 +529,7 @@ class ExampleUnitTest {
     fun searchManagerTestMatchUserDescription()
     {
 
-        var item1 : searchItem = searchItem()
+        val item1 : searchItem = searchItem()
         item1.age = "adult"
         item1.colour = "0x000000"//colour black
         item1.gender = "female"
@@ -479,13 +541,13 @@ class ExampleUnitTest {
         item1.descriptionURL = "test item 1 description location"
 
 
-        var testSearch : searchManager = searchManager()
+        val testSearch : searchManager = searchManager()
 
         testSearch.setupUserInfo(setupUserInfo())
 
         testSearch.setupClothingInfo(setupClothingInfo())
 
-        var result = testSearch.matchesUserDescription(item1)
+        val result = testSearch.matchesUserDescription(item1)
 
         val expected = true
 
@@ -496,7 +558,7 @@ class ExampleUnitTest {
     fun searchManagerTestMatchUserSize()
     {
 
-        var item1 : searchItem = searchItem()
+        val item1 : searchItem = searchItem()
         item1.age = "adult"
         item1.colour = "0x000000"//colour black
         item1.gender = "female"
@@ -508,13 +570,13 @@ class ExampleUnitTest {
         item1.descriptionURL = "test item 1 description location"
 
 
-        var testSearch : searchManager = searchManager()
+        val testSearch : searchManager = searchManager()
 
         testSearch.setupUserInfo(setupUserInfo())
 
         testSearch.setupClothingInfo(setupClothingInfo())
 
-        var result = testSearch.doesFit(item1.type, item1.maxSize.toInt(), item1.minSize.toInt())
+        val result = testSearch.doesFit(item1.type, item1.maxSize.toInt(), item1.minSize.toInt())
 
         val expected = true
 
@@ -524,7 +586,7 @@ class ExampleUnitTest {
     @Test
     fun searchManagerTestUserDescription()
     {
-        var item1 : searchItem = searchItem()
+        val item1 : searchItem = searchItem()
         item1.age = "adult"
         item1.colour = "0x000000"//colour black
         item1.gender = "female"
@@ -536,13 +598,13 @@ class ExampleUnitTest {
         item1.descriptionURL = "test item 1 description location"
 
 
-        var testSearch : searchManager = searchManager()
+        val testSearch : searchManager = searchManager()
 
         testSearch.setupUserInfo(setupUserInfo())
 
         testSearch.setupClothingInfo(setupClothingInfo())
 
-        var result = testSearch.matchesUserDescription(item1)
+        val result = testSearch.matchesUserDescription(item1)
 
         val expected = true
 
@@ -555,13 +617,45 @@ class ExampleUnitTest {
     @Test
     fun testClothingMatcher()
     {
-        var testMatcher : clothingMatcher = clothingMatcher()
+        val testMatcher : clothingMatcher = clothingMatcher()
 
-        var result = testMatcher.matcher("dress", "shoe")
+        val result = testMatcher.matcher("dress", "shoe")
 
-        var expected = true
+        val expected = true
 
         assertEquals("clothing matcher test ", expected, result)
+    }
+
+    //end of clothing matcher tests
+
+    //item description tests
+    @Test
+    fun testNoReduction()
+    {
+        val testItem : itemDescription = itemDescription()
+
+        //no change in price so no reduction
+        testItem.setReduction(22.0, 22.0)
+
+        val expected : Int = 0
+
+        val result : Int = testItem.reduction
+
+        assertEquals("no reduction test", expected, result)
+    }
+
+    @Test
+    fun test10PercentReduction()
+    {
+        val testItem : itemDescription = itemDescription()
+
+        testItem.setReduction(90.0, 100.0)
+
+        val expected : Int = 10
+
+        val result : Int = testItem.reduction
+
+        assertEquals("10 percent reduction test", expected, result)
     }
 
 }

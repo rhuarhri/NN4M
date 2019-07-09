@@ -5,6 +5,7 @@ import androidx.room.Room
 import androidx.work.Data
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import com.example.nn4wchallenge.database.external.dataTranslation
 import com.example.nn4wchallenge.database.external.onlineDatabase
 import com.example.nn4wchallenge.database.external.searchItem
 import com.example.nn4wchallenge.database.external.searchManager
@@ -23,6 +24,8 @@ that is shown to the user
 class matchClothingHandler (appContext: Context, workerParams: WorkerParameters)
     : Worker(appContext, workerParams) {
 
+    private val dataConverter : dataTranslation = dataTranslation()
+
     private var availableClothing : ArrayList<searchItem> = ArrayList()
     private var allUserInfo : Array<user>? = null
     private var allUserClothes : Array<clothing>? = null
@@ -30,9 +33,9 @@ class matchClothingHandler (appContext: Context, workerParams: WorkerParameters)
     private var searcher : searchManager = searchManager()
 
     private var error : String = ""
-    private var imageURLList : ArrayList<String> = ArrayList()
-    private var itemDescriptionURLList : ArrayList<String> = ArrayList()
-    private var userClothingImage : ArrayList<String> = ArrayList()
+    private var imageURLList : ArrayList<String?> = ArrayList()
+    private var itemDescriptionURLList : ArrayList<String?> = ArrayList()
+    private var userClothingImage : ArrayList<String?> = ArrayList()
 
 
     override fun doWork(): Result {
@@ -44,7 +47,7 @@ class matchClothingHandler (appContext: Context, workerParams: WorkerParameters)
         getUserClothesInformation()
 
 
-            var userInfo: user = allUserInfo?.get(0)!!
+            val userInfo: user = allUserInfo?.get(0)!!
 
             searcher.setupUserInfo(userInfo)
 
@@ -53,7 +56,7 @@ class matchClothingHandler (appContext: Context, workerParams: WorkerParameters)
 
                     searcher.setupClothingInfo(item)
 
-                    var searchResults = searcher.search(availableClothing)
+                    val searchResults = searcher.search(availableClothing)
 
 
                     for (searchItem in searchResults) {
@@ -64,8 +67,6 @@ class matchClothingHandler (appContext: Context, workerParams: WorkerParameters)
                     }
                 }
 
-
-
         return setupOutput()
 
     }
@@ -74,7 +75,7 @@ class matchClothingHandler (appContext: Context, workerParams: WorkerParameters)
     {
         if (availableClothing.isEmpty())
         {
-            var jsonOnline : onlineDatabase = onlineDatabase()
+            val jsonOnline : onlineDatabase = onlineDatabase()
             try
             {
                 availableClothing =  jsonOnline.getAvailableClothes()
@@ -107,11 +108,11 @@ class matchClothingHandler (appContext: Context, workerParams: WorkerParameters)
     private fun setupOutput() : Result
     {
 
-        var imageArray : Array<String?> = resultToArray(imageURLList)
-        var descriptionArray : Array<String?> = resultToArray(itemDescriptionURLList)
-        var userClothingArray : Array<String?> = resultToArray(userClothingImage)
+        val imageArray : Array<String> = dataConverter.toStringArray(imageURLList)
+        val descriptionArray : Array<String> = dataConverter.toStringArray(itemDescriptionURLList)
+        val userClothingArray : Array<String> = dataConverter.toStringArray(userClothingImage)
 
-        var output : Data = Data.Builder()
+        val output : Data = Data.Builder()
             .putString("error", error)
             .putStringArray("images", imageArray)
             .putStringArray("descriptions", descriptionArray)
@@ -132,15 +133,5 @@ class matchClothingHandler (appContext: Context, workerParams: WorkerParameters)
         //return Result.success(output)
     }
 
-    //the thread had problems with converting array lists to arrays hence why this exists
-    private fun resultToArray(result : ArrayList<String>) : Array<String?>
-    {
-        var resultArray : Array<String?> = arrayOfNulls(result.size)
-        var iterator : Int = 0
-        for (item in result)
-        {
-            resultArray[iterator] = item
-        }
-        return resultArray
-    }
+
 }
