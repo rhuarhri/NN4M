@@ -66,4 +66,8 @@ dependencies {
 
     //asycn tasks
     implementation "org.jetbrains.anko:anko-commons:0.10.4"
+
+    //glide
+    implementation 'com.github.bumptech.glide:glide:4.8.0'
+    kapt 'com.github.bumptech.glide:compiler:4.8.0'
 }

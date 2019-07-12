@@ -5,6 +5,9 @@ import androidx.room.Room
 import androidx.work.Data
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import com.example.nn4wchallenge.database.internal.cartDatabaseCode.cartDatabase
+import com.example.nn4wchallenge.database.internal.clothingDatabaseCode.clothingDatabase
+import com.example.nn4wchallenge.database.internal.userDatabaseCode.userDatabase
 
 class databaseChecker (appContext: Context, workerParams: WorkerParameters)
     : Worker(appContext, workerParams) {

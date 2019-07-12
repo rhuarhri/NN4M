@@ -12,39 +12,16 @@ import com.example.nn4wchallenge.imageHandling.retrieveImageHandler
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
-/*
-This class is the adapter for the cart screen and the user clothing screen (i.e. the screen that displays what clothes the
-user owns) the reason that it is two in one is because these two screen display very similar data.
 
- */
-
-
-class clothingAdapter (var context : Context, var itemList : ArrayList<clothingItem>, var isCartScreen : Boolean)
+class clothingAdapter (var context : Context, var itemList : ArrayList<clothingItem>)
     : RecyclerView.Adapter<viewHolder>()
 {
-    var imageHandler : retrieveImageHandler = retrieveImageHandler(context)
-
-    private class cartViewHolder(row : View) : viewHolder(row)
-    {
-
-        var buyBTN : Button
-
-        init{
-            this.buyBTN = row.findViewById(R.id.buyAllBTN)
-        }
-
-    }
-
+    val imageHandler : retrieveImageHandler = retrieveImageHandler(context)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): viewHolder {
-        /*return if (isCartScreen)
-        {
-            cartCreate(parent)
-        }
-        else
-        {*/
-            return userClothingCreate(parent)
-        //}
+        val myLayout = LayoutInflater.from(context)
+        val foundView = myLayout.inflate(R.layout.clothing_item_layout, parent, false)
+        return viewHolder(foundView)
     }
 
     override fun getItemCount(): Int {
@@ -52,37 +29,8 @@ class clothingAdapter (var context : Context, var itemList : ArrayList<clothingI
     }
 
     override fun onBindViewHolder(holder: viewHolder, position: Int) {
-        /*if (isCartScreen)
-        {
-            cartBind(holder as cartViewHolder, position)
-        }
-        else
-        {*/
-            userClothingBind(holder, position)
-        //}
-    }
 
-
-
-
-    private fun cartCreate(parent: ViewGroup) : cartViewHolder
-    {
-        var myLayout = LayoutInflater.from(context)
-        var foundView = myLayout.inflate(R.layout.cart_item_layout, parent, false)
-        var itemViewHolder = cartViewHolder(foundView)
-
-        return itemViewHolder
-    }
-
-
-    private fun cartBind(holder: cartViewHolder, position: Int)
-    {
-        val foundImage : Bitmap = imageHandler.getBitmapFromURL(
-            itemList[position].imageLocation,
-            holder.clothingIV.height,
-            holder.clothingIV.width)
-
-        holder.clothingIV.setImageBitmap(foundImage)
+        imageHandler.recyclerViewImageHandler(holder.clothingIV, itemList[position].imageLocation, true)
 
         holder.ItemNameTXT.text = itemList[position].title
 
@@ -90,48 +38,13 @@ class clothingAdapter (var context : Context, var itemList : ArrayList<clothingI
 
         holder.ItemDeleteBTN.setOnClickListener {
 
-
+            Toast.makeText(context, "item called ${itemList[position].title} selected", Toast.LENGTH_LONG)
+                .show()
         }
 
-        holder.buyBTN.setOnClickListener {
-
-
-        }
     }
 
 
-    private fun userClothingCreate(parent: ViewGroup) : viewHolder
-    {
-        var myLayout = LayoutInflater.from(context)
-        var foundView = myLayout.inflate(R.layout.clothing_item_layout, parent, false)
-        var itemViewHolder = viewHolder(foundView)
-        return itemViewHolder
-    }
-
-    private fun userClothingBind(holder: viewHolder, position: Int)
-    {
-        doAsync {
-            val foundImage: Bitmap = imageHandler.getBitmapFtomFile(
-                itemList[position].imageLocation,
-                holder.clothingIV.height,
-                holder.clothingIV.width
-            )
-
-            uiThread {
-                holder.clothingIV.setImageBitmap(foundImage)
-
-            }
-
-            holder.ItemNameTXT.text = itemList[position].title
-
-            holder.ItemMeasurementTXT.text = itemList[position].measurement
-
-            holder.ItemDeleteBTN.setOnClickListener {
-
-                Toast.makeText(context, "item called ${itemList[position].title} selected", Toast.LENGTH_LONG)
-                    .show()
-            }
-        }
     }
 
 /*
@@ -253,5 +166,5 @@ class clothingAdapter (var context : Context, var itemList : ArrayList<clothingI
 
     override fun getCount(): Int {
         return itemList.size
-    }*/
-}
+    }
+}*/

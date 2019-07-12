@@ -16,6 +16,8 @@ import java.util.*
 
 class AddClothingHandler (var context : Context) {
 
+    private val commands : databaseCommands = databaseCommands()
+
     private var savedPhotoPath: String = ""
 
     //private var newClothingItem : clothing = clothing()
@@ -26,7 +28,7 @@ class AddClothingHandler (var context : Context) {
     private var typeAdded : Boolean = false
     public fun setClothingType(type : String)
     {
-        inputData.putString("type", type)
+        inputData.putString(commands.Clothing_type, type)
         typeAdded = true
     }
 
@@ -34,9 +36,9 @@ class AddClothingHandler (var context : Context) {
     public fun setClothingColour(redAmount : Int, greenAmount : Int, blueAmount : Int)
     {
 
-        inputData.putInt("red", redAmount)
-        inputData.putInt("green", greenAmount)
-        inputData.putInt("blue", blueAmount)
+        inputData.putInt(commands.Clothing_red_color, redAmount)
+        inputData.putInt(commands.Clothing_green_color, greenAmount)
+        inputData.putInt(commands.Clothing_blue_color, blueAmount)
 
         colourAdded = true
     }
@@ -44,7 +46,7 @@ class AddClothingHandler (var context : Context) {
     private var seasonAdded : Boolean = false
     public fun setClothingSeason(season : String)
     {
-        inputData.putString("season", season)
+        inputData.putString(commands.Clothing_season, season)
         seasonAdded = true
     }
 
@@ -64,9 +66,11 @@ class AddClothingHandler (var context : Context) {
         {
             //run save clothing item thread
 
+            inputData.putString(commands.Clothing_DB, commands.Clothing_DB)
+            inputData.putString(commands.Clothing_Add, commands.Clothing_Add)
             val DataForThread : Data = inputData.build()
 
-            val saveClothingThread = OneTimeWorkRequestBuilder<AddClothingThreadManager>()
+            val saveClothingThread = OneTimeWorkRequestBuilder<databaseManager>()
                 .setInputData(DataForThread)
                 .build()
             WorkManager.getInstance().enqueue(saveClothingThread)
@@ -100,7 +104,7 @@ class AddClothingHandler (var context : Context) {
         }
         else
         {
-            inputData.putString("picture", savedPhotoPath)
+            inputData.putString(commands.Clothing_picture, savedPhotoPath)
         }
 
 
@@ -150,8 +154,10 @@ class AddClothingHandler (var context : Context) {
     private fun runUpdateDatabaseThread()
     {
 
+        inputData.putString(commands.Clothing_DB, commands.Clothing_DB)
+        inputData.putString(commands.Clothing_Update, commands.Clothing_Update)
         val newClothingItem = inputData.build()
-        val addToClothingDatabase = OneTimeWorkRequestBuilder<AddClothingThreadManager>()
+        val addToClothingDatabase = OneTimeWorkRequestBuilder<databaseManager>()
             .setInputData(newClothingItem)
             .build()
 

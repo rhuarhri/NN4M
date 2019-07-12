@@ -6,7 +6,10 @@ import androidx.work.Data
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.nn4wchallenge.database.external.dataTranslation
+import com.example.nn4wchallenge.database.internal.cartDatabaseCode.cartDatabase
+import com.example.nn4wchallenge.database.internal.cartDatabaseCode.cartItem
 
+/*
 class GetCartThreadManager(appContext: Context, workerParams: WorkerParameters)
     : Worker(appContext, workerParams)
 {
@@ -48,4 +51,4 @@ class GetCartThreadManager(appContext: Context, workerParams: WorkerParameters)
     }
 
 
-}
+}*/

@@ -6,7 +6,10 @@ import androidx.work.Data
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.nn4wchallenge.database.external.dataTranslation
+import com.example.nn4wchallenge.database.internal.clothingDatabaseCode.clothing
+import com.example.nn4wchallenge.database.internal.clothingDatabaseCode.clothingDatabase
 
+/*
 class GetClothingThreadManager(appContext: Context, workerParams: WorkerParameters)
     : Worker(appContext, workerParams)
 {
@@ -51,4 +54,4 @@ class GetClothingThreadManager(appContext: Context, workerParams: WorkerParamete
 
     }
 
-}
+}*/

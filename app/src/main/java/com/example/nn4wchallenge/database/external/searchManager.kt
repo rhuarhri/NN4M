@@ -2,8 +2,8 @@ package com.example.nn4wchallenge.database.external
 
 import com.example.nn4wchallenge.clothingMatcherCode.clothingMatcher
 import com.example.nn4wchallenge.colourMatcherCode.colourMatcher
-import com.example.nn4wchallenge.database.internal.clothing
-import com.example.nn4wchallenge.database.internal.user
+import com.example.nn4wchallenge.database.internal.clothingDatabaseCode.clothing
+import com.example.nn4wchallenge.database.internal.userDatabaseCode.user
 import java.lang.IllegalArgumentException
 
 /*

@@ -9,10 +9,10 @@ import com.example.nn4wchallenge.database.external.dataTranslation
 import com.example.nn4wchallenge.database.external.onlineDatabase
 import com.example.nn4wchallenge.database.external.searchItem
 import com.example.nn4wchallenge.database.external.searchManager
-import com.example.nn4wchallenge.database.internal.clothing
-import com.example.nn4wchallenge.database.internal.clothingDatabase
-import com.example.nn4wchallenge.database.internal.user
-import com.example.nn4wchallenge.database.internal.userDatabase
+import com.example.nn4wchallenge.database.internal.clothingDatabaseCode.clothing
+import com.example.nn4wchallenge.database.internal.clothingDatabaseCode.clothingDatabase
+import com.example.nn4wchallenge.database.internal.userDatabaseCode.user
+import com.example.nn4wchallenge.database.internal.userDatabaseCode.userDatabase
 import java.util.*
 import kotlin.collections.ArrayList
 

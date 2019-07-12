@@ -6,6 +6,7 @@ import androidx.work.Data
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 
+/*
 class AddUserThreadManager (appContext: Context, workerParams: WorkerParameters)
     : Worker(appContext, workerParams)
 {
@@ -29,4 +30,4 @@ class AddUserThreadManager (appContext: Context, workerParams: WorkerParameters)
     }
 
 
-}
+}*/

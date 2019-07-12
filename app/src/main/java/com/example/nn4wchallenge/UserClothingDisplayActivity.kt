@@ -8,10 +8,12 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import com.example.nn4wchallenge.database.internal.GetClothingThreadManager
+import com.example.nn4wchallenge.database.internal.databaseCommands
+import com.example.nn4wchallenge.database.internal.databaseManager
 import com.example.nn4wchallenge.displayClothing.clothingAdapter
 import com.example.nn4wchallenge.displayClothing.clothingItem
 import kotlinx.android.synthetic.*
@@ -50,7 +52,13 @@ class UserClothingDisplayActivity : AppCompatActivity() {
         }
 
 
-        val getDataWorker = OneTimeWorkRequestBuilder<GetClothingThreadManager>().build()
+        val commands : databaseCommands = databaseCommands()
+        val input : Data = Data.Builder()
+            .putString(commands.Clothing_DB, commands.Clothing_DB)
+            .putString(commands.Clothing_Get, commands.Clothing_Get)
+            .build()
+
+        val getDataWorker = OneTimeWorkRequestBuilder<databaseManager>().setInputData(input).build()
 
         WorkManager.getInstance().enqueue(getDataWorker)
 
@@ -64,9 +72,6 @@ class UserClothingDisplayActivity : AppCompatActivity() {
                 val types : Array<String>? = workInfo.outputData.getStringArray("type")
                 val seasons : Array<String>? = workInfo.outputData.getStringArray("season")
                 val images : Array<String>? = workInfo.outputData.getStringArray("image")
-
-
-
 
 
                 if (images == null)
@@ -96,7 +101,7 @@ class UserClothingDisplayActivity : AppCompatActivity() {
                             Toast.LENGTH_LONG
                         ).show()
 
-                        var RVAdapter : RecyclerView.Adapter<*> = clothingAdapter(applicationContext, itemList, false)
+                        var RVAdapter : RecyclerView.Adapter<*> = clothingAdapter(applicationContext, itemList)
 
                         clothingRV = findViewById<RecyclerView>(R.id.clothingRV).apply{
                             setHasFixedSize(false)
@@ -109,30 +114,9 @@ class UserClothingDisplayActivity : AppCompatActivity() {
                     {
                         Toast.makeText(applicationContext, "error is ${e.toString()}", Toast.LENGTH_LONG).show()
                     }
-                    /*
-                    try {
-                        Toast.makeText(
-                            applicationContext,
-                            "type: ${itemList[0].title} seasons: ${itemList[0].measurement} id: ${itemList[0].id}",
-                            Toast.LENGTH_LONG
-                        ).show()
 
-                    }
-                    catch(e : Exception)
-                    {
-                        Toast.makeText(applicationContext, "display error: ${e.toString()}", Toast.LENGTH_LONG).show()
-                    }*/
                 }
 
-                /*
-                var RVAdapter : RecyclerView.Adapter<*> = clothingAdapter(applicationContext, itemList, false)
-
-                clothingRV = findViewById<RecyclerView>(R.id.clothingRV).apply{
-                    setHasFixedSize(false)
-                    layoutManager = LinearLayoutManager(applicationContext)
-
-                    adapter = RVAdapter
-                }*/
 
             }
 

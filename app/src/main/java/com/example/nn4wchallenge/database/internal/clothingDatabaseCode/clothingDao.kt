@@ -1,4 +1,4 @@
-package com.example.nn4wchallenge.database.internal
+package com.example.nn4wchallenge.database.internal.clothingDatabaseCode
 
 import androidx.room.Dao
 import androidx.room.Delete

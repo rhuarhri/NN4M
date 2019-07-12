@@ -9,6 +9,8 @@ import androidx.work.workDataOf
 
 class SetupManager (/*var context: Context?*/){
 
+    private val commands : databaseCommands = databaseCommands()
+
     //Code for setup procedure
     private var genderList : ArrayList<item> = ArrayList()
     private var ageList : ArrayList<item> = ArrayList()
@@ -160,14 +162,14 @@ class SetupManager (/*var context: Context?*/){
     private var genderAdded = false
     public fun setGender(position : Int)
     {
-        inputData.putString("gender", genderList[position].description)
+        inputData.putString(commands.User_gender, genderList[position].description)
         genderAdded = true
     }
 
     private var ageAdded = false
     public fun setAge(position : Int)
     {
-        inputData.putString("age", ageList[position].description)
+        inputData.putString(commands.User_age, ageList[position].description)
         ageAdded = true
 
     }
@@ -175,21 +177,21 @@ class SetupManager (/*var context: Context?*/){
     private var chestSizeAdded = false
     public fun setChest(position: Int)
     {
-        inputData.putInt("chest", chestSizeList[position].description.toInt())
+        inputData.putInt(commands.User_chest, chestSizeList[position].description.toInt())
         chestSizeAdded = true
     }
 
     private var waistSizeAdded = false
     public fun setWaist(position: Int)
     {
-        inputData.putInt("waist", waistSizeList[position].description.toInt())
+        inputData.putInt(commands.User_waist, waistSizeList[position].description.toInt())
         waistSizeAdded = true
     }
 
     private var shoeSizeAdded = false
     public fun setShoe(position: Int)
     {
-        inputData.putInt("shoe", shoeSizeList[position].description.toInt())
+        inputData.putInt(commands.User_shoe_Size, shoeSizeList[position].description.toInt())
         shoeSizeAdded = true
     }
 
@@ -201,9 +203,11 @@ class SetupManager (/*var context: Context?*/){
         {
             //run save user thread
 
+            inputData.putString(commands.User_DB, commands.User_DB)
+            inputData.putString(commands.User_Add, commands.User_Add)
             val newUser : Data = inputData.build()
 
-            val saveUser = OneTimeWorkRequestBuilder<AddUserThreadManager>()
+            val saveUser = OneTimeWorkRequestBuilder<databaseManager>()
                 .setInputData(newUser)
                 .build()
 

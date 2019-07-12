@@ -11,10 +11,8 @@ import androidx.work.Data
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.nn4wchallenge.database.external.onlineDatabase
-import com.example.nn4wchallenge.database.internal.clothing
-import com.example.nn4wchallenge.database.internal.clothingDatabase
-import com.example.nn4wchallenge.database.internal.user
-import com.example.nn4wchallenge.database.internal.userDatabase
+import com.example.nn4wchallenge.database.internal.clothingDatabaseCode.clothingDatabase
+import com.example.nn4wchallenge.database.internal.userDatabaseCode.userDatabase
 import java.io.ByteArrayInputStream
 
 class testWorker (appContext: Context, workerParams: WorkerParameters)

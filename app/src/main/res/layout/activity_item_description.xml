@@ -51,21 +51,22 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/priceTXT" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp" app:layout_constraintBottom_toTopOf="@+id/redudedPriceTXT"
-            app:layout_constraintStart_toStartOf="@+id/redudedPriceTXT" android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/redudedPriceTXT"
+            app:layout_constraintStart_toStartOf="@+id/redudedPriceTXT"
             android:textSize="30sp" android:textColor="@color/colorPrimaryText"/>
     <TextView
             android:text="Top man jacket"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/nameTXT" app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
-            app:layout_constraintEnd_toStartOf="@+id/priceTXT" android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp" app:layout_constraintBottom_toTopOf="@+id/descriptionScrV"
-            android:textSize="30sp" android:textColor="@color/colorPrimaryText"/>
+            app:layout_constraintBottom_toTopOf="@+id/descriptionScrV"
+            android:textSize="30sp" android:textColor="@color/colorPrimaryText"
+            app:layout_constraintEnd_toEndOf="@+id/descriptionScrV"/>
     <SeekBar
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/searchPictureSB" app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
+            android:id="@+id/searchPictureSB" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp"
             app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/nameTXT"/>
+            android:layout_marginBottom="8dp" app:layout_constraintBottom_toTopOf="@+id/nameTXT"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

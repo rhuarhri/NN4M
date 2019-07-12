@@ -1,4 +1,4 @@
-package com.example.nn4wchallenge.database.internal
+package com.example.nn4wchallenge.database.internal.userDatabaseCode
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

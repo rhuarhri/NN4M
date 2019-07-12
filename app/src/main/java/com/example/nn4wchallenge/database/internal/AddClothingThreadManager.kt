@@ -6,10 +6,12 @@ import androidx.work.Data
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 
+/*
 class AddClothingThreadManager (appContext: Context, workerParams: WorkerParameters)
     : Worker(appContext, workerParams)
 {
     override fun doWork(): Result {
+
 
         var newClothing : clothing = clothing()
         newClothing.clothingType = inputData.getString("type").toString()
@@ -29,4 +31,4 @@ class AddClothingThreadManager (appContext: Context, workerParams: WorkerParamet
     }
 
 
-}
+}*/

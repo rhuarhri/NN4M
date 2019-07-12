@@ -1,20 +1,20 @@
 package com.example.nn4wchallenge
 
+import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.SeekBar
-import android.widget.TextView
+import android.widget.*
 import androidx.lifecycle.Observer
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.example.nn4wchallenge.database.external.GetItemDescription
-import com.example.nn4wchallenge.database.internal.AddToCartThreadHandler
-import com.example.nn4wchallenge.database.internal.cartItem
+import com.example.nn4wchallenge.database.internal.databaseCommands
+import com.example.nn4wchallenge.database.internal.databaseManager
 import com.example.nn4wchallenge.imageHandling.retrieveImageHandler
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 
 class ItemDescriptionActivity : AppCompatActivity() {
 
@@ -82,19 +82,39 @@ class ItemDescriptionActivity : AppCompatActivity() {
                     descriptionTXT.setText(workInfo.outputData.getString("description").toString())
 
                     price = workInfo.outputData.getDouble("cost", 0.0)
-                    priceTXT.setText("$price")
+                    Toast.makeText(applicationContext, "price is $price", Toast.LENGTH_LONG).show()
+                    try {
+                        priceTXT.setText("£ " + price.toString())
+                    }
+                    catch(E : Exception)
+                    {
+                        Toast.makeText(applicationContext, "error is ${E.toString()}", Toast.LENGTH_LONG).show()
+                    }
 
                     val reduction : Int = workInfo.outputData.getInt("reduction", 0)
                     if (reduction > 0)
                     {
                         reducedPriceTXT.setText("$reduction off")
                     }
+                    else
+                    {
+                        reducedPriceTXT.setText("")
+                    }
 
                     imageURLs = workInfo.outputData.getStringArray("images") as Array<String>
 
                     if (imageURLs.isNotEmpty())
                     {
-                        //itemImage = imageURLs[0]
+                        itemImage = imageURLs[0]
+
+                        doAsync{
+                           val foundImage: Bitmap =  imageHandler.getBitmapFromURL(imageURLs[0], clothingIV.height, clothingIV.width)
+                            
+                            uiThread {
+                                clothingIV.setImageBitmap(foundImage)
+                            }
+                        }
+                        
                         setupSeekBar()
                     }
 
@@ -113,7 +133,7 @@ class ItemDescriptionActivity : AppCompatActivity() {
 
     private fun setupSeekBar()
     {
-        imageSearchSB.max = imageURLs.size
+        imageSearchSB.max = (imageURLs.size - 1)
 
         imageSearchSB.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener
         {
@@ -126,21 +146,29 @@ class ItemDescriptionActivity : AppCompatActivity() {
             }
 
             override fun onProgressChanged(p0: SeekBar?, position: Int, p2: Boolean) {
-                imageHandler.getBitmapFromURL(imageURLs[position], clothingIV.height, clothingIV.width)
+                doAsync{
+                    val foundImage: Bitmap =imageHandler.getBitmapFromURL(imageURLs[position], clothingIV.height, clothingIV.width)
+                    uiThread {
+                        clothingIV.setImageBitmap(foundImage)
+                    }
+                }
             }
         })
     }
 
     private fun addToCart()
     {
+        val commands : databaseCommands = databaseCommands()
 
-        var input : Data = Data.Builder()
-            .putString("image", itemImage)
-            .putString("name", name)
-            .putDouble("price", price)
+        val input : Data = Data.Builder()
+            .putString(commands.Cart_DB, commands.Cart_DB)
+            .putString(commands.Cart_Add, commands.Cart_Add)
+            .putString(commands.Cart_picture, itemImage)
+            .putString(commands.Cart_name, name)
+            .putDouble(commands.Cart_price, price)
             .build()
 
-        val addToCartWorker = OneTimeWorkRequestBuilder<AddToCartThreadHandler>()
+        val addToCartWorker = OneTimeWorkRequestBuilder<databaseManager>()
             .setInputData(input)
             .build()
 

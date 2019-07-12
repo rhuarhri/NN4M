@@ -7,7 +7,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nn4wchallenge.R
 
-open class viewHolder(row : View) : RecyclerView.ViewHolder(row){
+open class viewHolder(val row : View) : RecyclerView.ViewHolder(row){
+
 
     var clothingIV : ImageView
     var ItemNameTXT : TextView

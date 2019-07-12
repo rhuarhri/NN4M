@@ -5,6 +5,7 @@ import androidx.room.Room
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 
+/*
 class AddToCartThreadHandler(appContext: Context, workerParams: WorkerParameters)
     : Worker(appContext, workerParams) {
 
@@ -23,4 +24,4 @@ class AddToCartThreadHandler(appContext: Context, workerParams: WorkerParameters
 
         return Result.success()
     }
-}
+}*/
