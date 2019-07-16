@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
           package="com.example.nn4wchallenge">
 
     <uses-feature android:name="android.hardware.camera"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
@@ -22,7 +23,7 @@
         </activity>
         <activity android:name=".AddActivity">
         </activity>
-        <activity android:name=".SetupActivity">
+        <activity android:name=".SetupActivity" android:screenOrientation="portrait">
         </activity>
         <activity android:name=".WelcomeActivity">
             <intent-filter>
@@ -38,10 +39,12 @@
                 android:name="androidx.core.content.FileProvider"
                 android:authorities="${applicationId}.fileprovider"
                 android:exported="false"
-                android:grantUriPermissions="true">
+                android:grantUriPermissions="true"
+                tools:replace="android:authorities">
             <meta-data
                     android:name="android.support.FILE_PROVIDER_PATHS"
-                    android:resource="@xml/file_paths"></meta-data>
+                    android:resource="@xml/file_paths"
+                    tools:replace="android:resource"></meta-data>
         </provider>
     </application>
 

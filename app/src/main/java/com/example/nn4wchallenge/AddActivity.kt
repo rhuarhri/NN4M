@@ -3,8 +3,10 @@ package com.example.nn4wchallenge
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.provider.MediaStore
 import android.view.View
 import android.widget.*
@@ -15,8 +17,13 @@ import com.example.nn4wchallenge.AddActivitySpinners.addSpinnerAdapter
 import com.example.nn4wchallenge.database.internal.AddClothingHandler
 import com.example.nn4wchallenge.imageHandling.retrieveImageHandler
 import com.example.nn4wchallenge.imageHandling.saveImageHandler
+import kotlinx.android.synthetic.main.activity_add.*
+import kotlinx.android.synthetic.main.cart_item_layout.*
+import kotlinx.android.synthetic.main.cart_item_layout.clothingIV
+import kotlinx.android.synthetic.main.clothing_item_layout.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import java.io.File
 import kotlin.collections.ArrayList
 
 class AddActivity : AppCompatActivity() {
@@ -24,6 +31,8 @@ class AddActivity : AppCompatActivity() {
     private lateinit var AddManager : AddClothingHandler
 
     private lateinit var savedImage : saveImageHandler
+
+    private lateinit var findImage : retrieveImageHandler
 
     private lateinit var cameraBTN : Button
     private lateinit var saveBTN : Button
@@ -37,7 +46,10 @@ class AddActivity : AppCompatActivity() {
 
         savedImage = saveImageHandler(applicationContext)
 
-        var colourList : ArrayList<addColourItem> = ArrayList()
+        findImage = retrieveImageHandler(applicationContext)
+
+
+        val colourList : ArrayList<addColourItem> = ArrayList()
         colourList.add(addColourItem("black", R.color.colorBlack, 0, 0, 0))
         colourList.add(addColourItem("blue", R.color.colorBlue, 0, 0, 255))
         colourList.add(addColourItem("light blue", R.color.colorLightBlue, 0, 255, 255))
@@ -48,7 +60,7 @@ class AddActivity : AppCompatActivity() {
         colourList.add(addColourItem("white", R.color.colorWhite, 255, 255, 255))
 
 
-        var typeList : ArrayList<addActivityItem> = ArrayList()
+        val typeList : ArrayList<addActivityItem> = ArrayList()
         typeList.add(addActivityItem("dress", R.drawable.dress_icon))
         typeList.add(addActivityItem("jacket", R.drawable.jacket_icon))
         typeList.add(addActivityItem("jumper", R.drawable.jumper_icon))
@@ -60,7 +72,7 @@ class AddActivity : AppCompatActivity() {
 
 
 
-        var seasonList : ArrayList<addActivityItem> = ArrayList()
+        val seasonList : ArrayList<addActivityItem> = ArrayList()
         seasonList.add(addActivityItem("summer", R.drawable.summer_icon))
         seasonList.add(addActivityItem("winter", R.drawable.winter_icon))
         seasonList.add(addActivityItem("party", R.drawable.party_icon))
@@ -80,14 +92,26 @@ class AddActivity : AppCompatActivity() {
         cameraBTN = findViewById(R.id.cameraBTN)
         cameraBTN.setOnClickListener {
 
+            if (savedImage.photoLocation == "")
+            {
+                launchCamera()
+            }
+            else
+            {
+                Toast.makeText(applicationContext, "image already added", Toast.LENGTH_LONG).show()
+            }
+
+
             //The camera could not be tested in the emulator but it could work but unknown without testing
             //Toast.makeText(applicationContext, "camera not available", Toast.LENGTH_LONG).show()
 
-            //remove this function if camera feacture in use
-            AddManager.setPicture()
+            //remove this function if camera feature in use
+            //AddManager.setPicture()
+            //imagePath = "test"
 
             //The camera functionality would have been handled by
-            //launchCamera()
+            //
+
 
             /*
             if (accessCamera.checkCameraPermission()) {
@@ -117,7 +141,6 @@ class AddActivity : AppCompatActivity() {
             }
 
 */
-            Toast.makeText(applicationContext, "picture added", Toast.LENGTH_LONG).show()
 
         }
         saveBTN = findViewById(R.id.saveBTN)
@@ -132,19 +155,31 @@ class AddActivity : AppCompatActivity() {
                 Toast.makeText(applicationContext, "error ${e.toString()}", Toast.LENGTH_LONG).show()
             }
 
-            /*
-            if (error == "") {
-                error = "Saved"
-
-                Toast.makeText(applicationContext, error, Toast.LENGTH_SHORT).show()
-
-
-                //goToHomeActivity()
-            }
-            else{
-                Toast.makeText(applicationContext, error, Toast.LENGTH_SHORT).show()
-            }*/
         }
+
+        if (savedInstanceState != null)
+        {
+            typeSPN.setSelection(with(savedInstanceState) {getInt(typeKey)})
+            colourSPN.setSelection(with(savedInstanceState) {getInt(colourKey)})
+            seasonSPN.setSelection(with(savedInstanceState) {getInt(seasonKey)})
+
+            if (with(savedInstanceState) {getString(imageKey)} != "")
+            {
+                AddManager.setPicture(savedImage.photoLocation)
+                doAsync {
+
+                    val foundImage : Bitmap = findImage.getBitmapFromFile(
+                        savedImage.photoLocation,
+                        clothingPictureIV.height,
+                        clothingPictureIV.width)
+
+                    uiThread {
+                        clothingPictureIV.setImageBitmap(foundImage)
+                    }
+                }
+            }
+        }
+
 
     }
 
@@ -156,12 +191,12 @@ class AddActivity : AppCompatActivity() {
 
     private fun setUpColourSpinner(itemList : ArrayList<addColourItem>)
     {
-        var colourSPN : Spinner = findViewById(R.id.colourSPN)
+        val colourSPN : Spinner = findViewById(R.id.colourSPN)
 
         //item basic list is a list of a parent class converted from list of child class
-        var itemBasicList : ArrayList<addActivityItem> = itemList as ArrayList<addActivityItem>
+        val itemBasicList : ArrayList<addActivityItem> = itemList as ArrayList<addActivityItem>
 
-        var colourAdapter : addSpinnerAdapter = addSpinnerAdapter(applicationContext, itemBasicList)
+        val colourAdapter : addSpinnerAdapter = addSpinnerAdapter(applicationContext, itemBasicList)
 
         colourSPN.adapter = colourAdapter
 
@@ -176,9 +211,10 @@ class AddActivity : AppCompatActivity() {
             }
 
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
-                var colourItem : addColourItem = itemList.get(position)
+                colourCurrentPosition = position
+                val colourItem : addColourItem = itemList.get(position)
                 AddManager.setClothingColour(colourItem.amountOfRed, colourItem.amountOfGreen, colourItem.amountOfBlue)
-                //Toast.makeText(applicationContext, "Clothing colour updated", Toast.LENGTH_SHORT).show()
+
             }
 
         }
@@ -187,9 +223,9 @@ class AddActivity : AppCompatActivity() {
 
     private fun setUpTypeSpinner(itemList : ArrayList<addActivityItem>)
     {
-        var typeSPN : Spinner = findViewById(R.id.typeSPN)
+        val typeSPN : Spinner = findViewById(R.id.typeSPN)
 
-        var typeAdapter : addSpinnerAdapter = addSpinnerAdapter(applicationContext, itemList)
+        val typeAdapter : addSpinnerAdapter = addSpinnerAdapter(applicationContext, itemList)
 
         typeSPN.adapter = typeAdapter
 
@@ -204,9 +240,10 @@ class AddActivity : AppCompatActivity() {
             }
 
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
-                var typeItem : addActivityItem = itemList.get(position)
+                typeCurrentPosition = position
+                val typeItem : addActivityItem = itemList.get(position)
                 AddManager.setClothingType(typeItem.itemTitle)
-                //Toast.makeText(applicationContext, "Clothing type updated", Toast.LENGTH_SHORT).show()
+
             }
 
         }
@@ -216,9 +253,9 @@ class AddActivity : AppCompatActivity() {
 
     private fun setUpSeasonSpinner(itemList : ArrayList<addActivityItem>)
     {
-        var seasonSPN : Spinner = findViewById(R.id.seasonSPN)
+        val seasonSPN : Spinner = findViewById(R.id.seasonSPN)
 
-        var seasonAdapter : addSpinnerAdapter = addSpinnerAdapter(applicationContext, itemList)
+        val seasonAdapter : addSpinnerAdapter = addSpinnerAdapter(applicationContext, itemList)
 
         seasonSPN.adapter = seasonAdapter
 
@@ -233,9 +270,10 @@ class AddActivity : AppCompatActivity() {
             }
 
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
-                var seasonItem : addActivityItem = itemList.get(position)
+                seasonCurrentPosition = position
+                val seasonItem : addActivityItem = itemList.get(position)
                 AddManager.setClothingSeason(seasonItem.itemTitle)
-                //Toast.makeText(applicationContext, "Clothing season updated", Toast.LENGTH_SHORT).show()
+
             }
 
         }
@@ -245,6 +283,7 @@ class AddActivity : AppCompatActivity() {
     /**
      * test code for retriving image from url
      * */
+    /*
     private fun imageTest()
     {
         val input : Data = Data.Builder()
@@ -260,7 +299,7 @@ class AddActivity : AppCompatActivity() {
         var appContext : Context = applicationContext
 
 
-    }
+    }*/
 
 
     /**Code for camera
@@ -271,15 +310,16 @@ class AddActivity : AppCompatActivity() {
     {
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
             //capture image not saved
-            /*takePictureIntent.resolveActivity(packageManager)?.also {
+            takePictureIntent.resolveActivity(packageManager)?.also {
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
-            }*/
+            }
 
+            /*
             //capture image and save to file
             takePictureIntent.resolveActivity(packageManager)?.also {
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, savedImage.getFileLocation())
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
-            }
+            }*/
 
 
         }
@@ -288,53 +328,65 @@ class AddActivity : AppCompatActivity() {
 
     //captured image displayed
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            val imageBitmap = data?.extras!!.get("data") as Bitmap
-            clothingPictureIV.setImageBitmap(imageBitmap)
+
+        /*Toast.makeText(applicationContext, "picture added", Toast.LENGTH_LONG).show()
+        AddManager.setPicture(savedImage.photoLocation)
+        imagePath = savedImage.photoLocation
+
+        doAsync {
+
+            val foundImage : Bitmap = findImage.getBitmapFromFile(imagePath, clothingPictureIV.height, clothingPictureIV.width)
+
+            uiThread {
+                clothingPictureIV.setImageBitmap(foundImage)
+            }
         }
 
+        Toast.makeText(applicationContext, "picture path is $imagePath", Toast.LENGTH_LONG).show()
+
+        */
+
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            val imageBitmap = data!!.extras.get("data") as Bitmap
+            clothingPictureIV.setImageBitmap(imageBitmap)
+
+            savedImage.savePhoto(imageBitmap)
+            AddManager.setPicture(savedImage.savedPhotoPath)
+            imagePath = savedImage.savedPhotoPath
+
+
+
+            //Toast.makeText(applicationContext, "picture path is ${savedImage.savedPhotoPath}", Toast.LENGTH_LONG).show()
+
+            /*
+            val imgFile = File(savedImage.savedPhotoPath)
+            if (imgFile.exists()) {
+                clothingPictureIV.setImageURI(Uri.fromFile(imgFile))
+            }*/
+        }
     }
 
-    /*
 
-    private fun setUpCamera()
-    {
-         cameraM = cameraManager(applicationContext)
+    //save state code
+    private val typeKey : String = "type"
+    private var typeCurrentPosition : Int = 0
+    private val colourKey : String = "colour"
+    private var colourCurrentPosition : Int = 0
+    private val seasonKey : String = "season"
+    private var seasonCurrentPosition : Int = 0
+    private val imageKey : String = "image"
+    private var imagePath : String = ""
 
+    override fun onSaveInstanceState(outState: Bundle?, outPersistentState: PersistableBundle?) {
 
+        if (outState != null)
+        {
+            outState.putInt(typeKey, typeCurrentPosition)
+            outState.putInt(colourKey, colourCurrentPosition)
+            outState.putInt(seasonKey, seasonCurrentPosition)
+            outState.putString(imageKey, imagePath)
+        }
 
-        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-            /*takePictureIntent.resolveActivity(packageManager)?.also {
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
-            }*/
-
-            takePictureIntent.resolveActivity(packageManager)?.also {
-                // Create the File where the photo should go
-                /*
-                val photoFile: File? = try {
-                    createImageFile()
-                } catch (ex: IOException) {
-                    // Error occurred while creating the File
-
-                    null
-                }
-                // Continue only if the File was successfully created
-                photoFile?.also {
-                    val photoURI: Uri = FileProvider.getUriForFile(
-                        this,
-                        "com.example.android.fileprovider",
-                        it
-                    )*/
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraM.getFile())
-                    startActivityForResult(takePictureIntent, cameraM.getRequestImageCapture())
-                }
-            }
-        //}
-    }*/
-
-
-
-
-
-
+        super.onSaveInstanceState(outState, outPersistentState)
+    }
 }

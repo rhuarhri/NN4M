@@ -96,10 +96,7 @@ class ItemDescriptionActivity : AppCompatActivity() {
                     {
                         reducedPriceTXT.setText("$reduction off")
                     }
-                    else
-                    {
-                        reducedPriceTXT.setText("")
-                    }
+
 
                     imageURLs = workInfo.outputData.getStringArray("images") as Array<String>
 

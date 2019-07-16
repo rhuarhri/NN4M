@@ -11,10 +11,16 @@ interface cartDao {
     @Query("SELECT * FROM cartItem")
     fun getAll(): Array<cartItem>
 
+    @Query("SELECT price FROM cartItem")
+    fun getPriceList() : Array<Double>
+
     @Insert
     fun insert(vararg newCartItem: cartItem)
 
     @Delete
     fun delete(oldcartItem: cartItem)
+
+    @Query("DELETE FROM cartItem WHERE id = :deleteId")
+    fun deleteById(deleteId : Int)
 
 }

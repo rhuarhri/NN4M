@@ -15,63 +15,77 @@ class permissionsHandler(var currentActivity : Activity, var appContext : Contex
 
 
     public fun internetPermission() {
-        var accessInternet = Manifest.permission.INTERNET
+        val accessInternet = Manifest.permission.INTERNET
 
         if (isPermissionGranted(accessInternet))
         {
             //permission grant no action
         }
         else{
-            var Title : String = "internet"
-            var message : String = "You need an internet connect"
+            val Title : String = "internet"
+            val message : String = "You need an internet connect"
             askForPermission(accessInternet, Title, message)
         }
     }
 
     public fun checkInternetPermission() : Boolean{
-        var checkInternetPermission = Manifest.permission.INTERNET
+        val checkInternetPermission = Manifest.permission.INTERNET
 
         return isPermissionGranted(checkInternetPermission)
     }
 
     public fun cameraPermission() {
-        var accessInternet = Manifest.permission.CAMERA
+        val accessCamera = Manifest.permission.CAMERA
 
-        if (isPermissionGranted(accessInternet))
+        if (isPermissionGranted(accessCamera))
         {
             //permission grant no action
         }
         else{
-            var Title : String = "Camera"
-            var message : String = "Used to save capture images of your clothes"
-            askForPermission(accessInternet, Title, message)
+            val Title : String = "Camera"
+            val message : String = "Used to save capture images of your clothes"
+            askForPermission(accessCamera, Title, message)
         }
     }
 
     public fun checkCameraPermission() : Boolean{
-        var checkInternetPermission = Manifest.permission.CAMERA
+        val checkCameraPermission = Manifest.permission.CAMERA
 
-        return isPermissionGranted(checkInternetPermission)
+        return isPermissionGranted(checkCameraPermission)
     }
 
     public fun internalStoragePermission() {
-        var accessInternet = Manifest.permission.WRITE_EXTERNAL_STORAGE
+        val accessWrite = Manifest.permission.WRITE_EXTERNAL_STORAGE
+        val accessRead = Manifest.permission.READ_EXTERNAL_STORAGE
 
-        if (isPermissionGranted(accessInternet))
+        if (isPermissionGranted(accessWrite))
         {
             //permission grant no action
         }
         else{
-            var Title : String = "Internal storage"
-            var message : String = "This is necessary for saving your data"
-            askForPermission(accessInternet, Title, message)
+            val Title : String = "Internal storage"
+            val message : String = "This is necessary for saving your data"
+            askForPermission(accessWrite, Title, message)
         }
+
+        if (isPermissionGranted(accessRead))
+        {
+            //permission grant no action
+        }
+        else{
+            val Title : String = "Internal storage"
+            val message : String = "This is necessary for saving your data"
+            askForPermission(accessRead, Title, message)
+        }
+
+
     }
 
     public fun checkInternalStoragePermission() : Boolean{
-        var checkInternetPermission = Manifest.permission.INTERNET
+        val checkWritePermission = Manifest.permission.WRITE_EXTERNAL_STORAGE
+        val checkReadPermission = Manifest.permission.READ_EXTERNAL_STORAGE
 
-        return isPermissionGranted(checkInternetPermission)
+        return isPermissionGranted(checkWritePermission) && isPermissionGranted(checkReadPermission)
     }
 
     private fun askForPermission(permission: String, Title: String, message: String) {

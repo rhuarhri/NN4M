@@ -3,6 +3,7 @@ package com.example.nn4wchallenge
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,6 +26,7 @@ class ViewCartActivity : AppCompatActivity() {
 
     private lateinit var itemsRV : RecyclerView
     private lateinit var buyAllBTN : Button
+    private lateinit var totalTXT : TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,38 +36,18 @@ class ViewCartActivity : AppCompatActivity() {
         buyAllBTN.setOnClickListener {
 
 
-            val input: Data = Data.Builder().putString("database", "cart").build()
-
-            val checkUserDatabaseWorker = OneTimeWorkRequestBuilder<databaseChecker>()
-                .setInputData(input)
-                .build()
-
-            WorkManager.getInstance().enqueue(checkUserDatabaseWorker)
-            WorkManager.getInstance().getWorkInfoByIdLiveData(checkUserDatabaseWorker.id)
-                .observe(this, Observer { workInfo ->
-                    if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED)
-                    {
-                        var output : Boolean = workInfo.outputData.getBoolean("empty", true)
-
-                        if (output)
-                        {
-                            //setup required
-                           Toast.makeText(applicationContext, "cart data base empty", Toast.LENGTH_LONG).show()
-                        }
-                        else
-                        {
-                            Toast.makeText(applicationContext, "cart data base full", Toast.LENGTH_LONG).show()
-                        }
-                    }
-                    //thread that check if data base is empty currently running or waiting to run
-                    else if (workInfo != null && (workInfo.state == WorkInfo.State.RUNNING || workInfo.state == WorkInfo.State.ENQUEUED))
-                    {
-                        //do nothing this prevents the user doing anything without information from the thread
-                    }
-                })
         }
 
+        setupRecyclerView()
 
+        totalTXT = findViewById(R.id.totalTXT)
+        setupTotal()
+
+
+    }
+
+    private fun setupRecyclerView()
+    {
         val input : Data = Data.Builder()
             .putString(commands.Cart_DB, commands.Cart_DB)
             .putString(commands.Cart_Get, commands.Cart_Get)
@@ -87,7 +69,7 @@ class ViewCartActivity : AppCompatActivity() {
 
                 val itemList: ArrayList<clothingItem> = createItemListForAdapter(id, names, price, images)
 
-                var RVAdapter: RecyclerView.Adapter<*> = cartAdapter(applicationContext, itemList)
+                val RVAdapter: RecyclerView.Adapter<*> = cartAdapter(applicationContext, itemList)
 
                 itemsRV = findViewById<RecyclerView>(R.id.itemsRV).apply {
                     setHasFixedSize(false)
@@ -97,9 +79,30 @@ class ViewCartActivity : AppCompatActivity() {
                 }
             }
 
-            })
+        })
     }
 
+    private fun setupTotal()
+    {
+        val input : Data = Data.Builder()
+            .putString(commands.Cart_DB, commands.Cart_DB)
+            .putString(commands.Cart_Get_Prices, commands.Cart_Get_Prices)
+            .build()
+
+        val getTotalWorker = OneTimeWorkRequestBuilder<databaseManager>().setInputData(input).build()
+
+
+        WorkManager.getInstance().enqueue(getTotalWorker)
+
+        WorkManager.getInstance().getWorkInfoByIdLiveData(getTotalWorker.id).observe(this, Observer {
+            workInfo ->
+
+            val total = workInfo.outputData.getDouble(commands.Cart_total_price, 0.0)
+
+            totalTXT.text = "total $total"
+
+        })
+    }
 
     private fun createItemListForAdapter(ids : IntArray?, name : Array<String>?, price : DoubleArray?, image : Array<String>?)
             : ArrayList<clothingItem>

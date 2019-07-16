@@ -61,14 +61,40 @@ class cartDatabaseHandler(val context : Context) {
 
     }
 
-    public fun deleteFromDatabase()
+    public fun deleteFromDatabase(clothingID : Int)
     {
+
+        val accessCartDB = Room.databaseBuilder(context, cartDatabase::class.java,
+            "cart-database").build()
+
+        accessCartDB.cartDao().deleteById(clothingID)
 
     }
 
     public fun updateInDatabase()
     {
 
+    }
+
+    public fun getTotalInDatabase() : Data
+    {
+
+        val convertToArray : dataTranslation = dataTranslation()
+
+        val accessCartDB = Room.databaseBuilder(context, cartDatabase::class.java,
+            "cart-database").build()
+        val foundInDataBase : Array<Double> = accessCartDB.cartDao().getPriceList()
+
+        var totalPrice : Double = 0.0
+
+        for (price in foundInDataBase)
+        {
+            totalPrice += price
+        }
+
+        val output : Data = Data.Builder().putDouble(commands.Cart_total_price, totalPrice).build()
+
+        return output
     }
 
 }

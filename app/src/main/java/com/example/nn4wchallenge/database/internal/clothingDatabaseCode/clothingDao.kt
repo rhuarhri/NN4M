@@ -17,5 +17,7 @@ interface clothingDao {
     @Delete
     fun delete(oldClothing: clothing)
 
+    @Query("DELETE FROM clothing WHERE id = :deleteId")
+    fun deleteById(deleteId : Int)
 
 }

@@ -8,7 +8,12 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.nn4wchallenge.R
+import com.example.nn4wchallenge.database.internal.databaseCommands
+import com.example.nn4wchallenge.database.internal.databaseManager
 import com.example.nn4wchallenge.imageHandling.retrieveImageHandler
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -19,6 +24,7 @@ class cartAdapter(var context : Context, var itemList : ArrayList<clothingItem>)
     : RecyclerView.Adapter<cartAdapter.cartViewHolder>() {
 
     private val imageHandler: retrieveImageHandler = retrieveImageHandler(context)
+    private val commands: databaseCommands = databaseCommands()
 
 
     public class cartViewHolder(row : View) : viewHolder(row)
@@ -63,7 +69,16 @@ class cartAdapter(var context : Context, var itemList : ArrayList<clothingItem>)
 
         holder.ItemDeleteBTN.setOnClickListener {
 
-            Toast.makeText(context, "url is ${itemList[position].imageLocation}", Toast.LENGTH_LONG).show()
+            val input : Data = Data.Builder()
+                .putString(commands.Cart_DB, commands.Cart_DB)
+                .putString(commands.Cart_Delete, commands.Cart_Delete)
+                .putInt(commands.Cart_ID, itemList[position].id)
+                .build()
+
+            val deleteDataWorker = OneTimeWorkRequestBuilder<databaseManager>().setInputData(input).build()
+
+
+            WorkManager.getInstance().enqueue(deleteDataWorker)
 
         }
 

@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">NN4W fashion</string>
+    <string name="buy_all">Buy All</string>
+    <string name="cart_title">Cart</string>
 
 
 </resources>

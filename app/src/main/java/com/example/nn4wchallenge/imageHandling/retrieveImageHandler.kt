@@ -5,6 +5,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.widget.ImageView
 import com.example.nn4wchallenge.R
+import java.io.File
+import java.io.FileInputStream
 import java.io.InputStream
 import java.net.HttpURLConnection
 
@@ -44,11 +46,22 @@ class retrieveImageHandler(private val context : Context) {
 
     public fun getBitmapFromFile(filePath : String?, height : Int, width : Int) : Bitmap
     {
-        return if (filePath == "" || filePath == null)
+        if (filePath == "" || filePath == null)
         {
-            setDefault(height, width)
+            return setDefault(height, width)
         }else{
-            BitmapFactory.decodeFile(filePath, imageOptions(height, width))
+            val imageFile : File = File(filePath)
+
+            val foundImage : Bitmap? = BitmapFactory.decodeStream(FileInputStream(imageFile), null, imageOptions(height, width))
+
+            if (foundImage == null)
+            {
+                return setDefault(height, width)
+            }
+            else
+            {
+                return foundImage
+            }
         }
 
     }

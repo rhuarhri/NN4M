@@ -30,10 +30,12 @@ class databaseCommands {
     public val Cart_Delete = "cartDelete"
     public val Cart_Update = "cartUpdate"
     public val Cart_Get = "cartGet"
+    public val Cart_Get_Prices = "cartGetPrice"
     //names of values store in the database
     public val Cart_ID = "cartId"
     public val Cart_name = "cartName"
     public val Cart_price = "cartPrice"
+    public val Cart_total_price = "cartTotal"
     public val Cart_picture = "cartPicture"
 
     //database id

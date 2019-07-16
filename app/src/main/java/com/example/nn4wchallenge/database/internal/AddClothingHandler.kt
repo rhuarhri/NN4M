@@ -51,16 +51,16 @@ class AddClothingHandler (var context : Context) {
     }
 
     private var pictureAdded = false
-    public fun setPicture()
+    public fun setPicture(imagePath : String)
     {
-        savedPhotoPath = ""
+        savedPhotoPath = imagePath
         pictureAdded = true
     }
 
 
     public fun saveClothingItem() : String
     {
-        var error : String = checkInput()
+        val error : String = checkInput()
 
         if (error == "")
         {
@@ -111,6 +111,7 @@ class AddClothingHandler (var context : Context) {
         return error
     }
 
+    /*
     public fun getFileLocation() : Uri? {
 
         var photoUri : Uri? = null
@@ -149,7 +150,7 @@ class AddClothingHandler (var context : Context) {
             // Save a file: path for use with ACTION_VIEW intents
             savedPhotoPath = absolutePath
         }
-    }
+    }*/
 
     private fun runUpdateDatabaseThread()
     {

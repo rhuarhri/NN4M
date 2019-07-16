@@ -65,9 +65,11 @@ class clothingDatabaseHandler(val context : Context) {
         return output
     }
 
-    public fun deleteFromDatabase()
+    public fun deleteFromDatabase(clothingId : Int)
     {
-
+        val accessDB = Room.databaseBuilder(context, clothingDatabase::class.java,
+            "user-clothes-database").build()
+        accessDB.clothingDao().deleteById(clothingId)
     }
 
     public fun updateInDatabase()

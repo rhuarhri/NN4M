@@ -61,10 +61,16 @@ class databaseManager (appContext: Context, workerParams: WorkerParameters)
                 return Result.failure()
             }
         }
-        if (inputData.getString(commands.Clothing_Get) == commands.Clothing_Get)
+        else if (inputData.getString(commands.Clothing_Get) == commands.Clothing_Get)
         {
             val output = handler.getFromDataBase()
             return Result.success(output)
+        }
+        else if (inputData.getString(commands.Clothing_Delete) == commands.Clothing_Delete)
+        {
+            val id : Int = inputData.getInt(commands.Clothing_ID, 0)
+            handler.deleteFromDatabase(id)
+            return Result.success()
         }
         else
         {
@@ -93,6 +99,17 @@ class databaseManager (appContext: Context, workerParams: WorkerParameters)
         {
             val output = handler.getFromDataBase()
             return Result.success(output)
+        }
+        else if (inputData.getString(commands.Cart_Get_Prices) == commands.Cart_Get_Prices)
+        {
+            val output = handler.getTotalInDatabase()
+            return Result.success(output)
+        }
+        else if (inputData.getString(commands.Cart_Delete) == commands.Cart_Delete)
+        {
+            val id : Int = inputData.getInt(commands.Cart_ID, 0)
+            handler.deleteFromDatabase(id)
+            return Result.success()
         }
         else
         {
