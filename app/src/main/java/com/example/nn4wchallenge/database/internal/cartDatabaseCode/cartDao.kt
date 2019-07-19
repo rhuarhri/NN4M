@@ -23,4 +23,7 @@ interface cartDao {
     @Query("DELETE FROM cartItem WHERE id = :deleteId")
     fun deleteById(deleteId : Int)
 
+    @Query("SELECT * FROM cartItem WHERE id = :selectItemId")
+    fun getItem(selectItemId : Int) : Array<cartItem>
+
 }

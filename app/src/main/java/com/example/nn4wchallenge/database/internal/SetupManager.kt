@@ -2,10 +2,11 @@ package com.example.nn4wchallenge.database.internal
 
 import android.content.Context
 import android.provider.ContactsContract
-import androidx.work.Data
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.workDataOf
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
+import androidx.work.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 class SetupManager (/*var context: Context?*/){
 
@@ -55,7 +56,7 @@ class SetupManager (/*var context: Context?*/){
     private fun setupGender()
     {
         genderList = addToList("Male", "male", genderList)
-        genderList = addToList("female", "female", genderList)
+        genderList = addToList("Female", "female", genderList)
     }
 
     private fun setupAge()
@@ -104,9 +105,9 @@ class SetupManager (/*var context: Context?*/){
 
     private fun addToList(Title : String , Description : String, list : ArrayList<item>) : ArrayList<item>
     {
-        var returnedList : ArrayList<item> = list
+        val returnedList : ArrayList<item> = list
 
-        var newItem : item = item()
+        val newItem = item()
 
         newItem.createItem(Title, Description)
 
@@ -115,9 +116,9 @@ class SetupManager (/*var context: Context?*/){
         return returnedList
     }
 
-    public fun getTitleList(from : String) : ArrayList<String>
+    fun getTitleList(from : String) : ArrayList<String>
     {
-        var returnedList : ArrayList<String> = ArrayList()
+        val returnedList : ArrayList<String> = ArrayList()
 
         var itemList : ArrayList<item> = ArrayList()
 
@@ -160,44 +161,49 @@ class SetupManager (/*var context: Context?*/){
     private var inputData : Data.Builder = Data.Builder()
 
     private var genderAdded = false
-    public fun setGender(position : Int)
+    fun setGender(position : Int)
     {
+        genderPosition = position
         inputData.putString(commands.User_gender, genderList[position].description)
         genderAdded = true
     }
 
     private var ageAdded = false
-    public fun setAge(position : Int)
+    fun setAge(position : Int)
     {
+        agePosition = position
         inputData.putString(commands.User_age, ageList[position].description)
         ageAdded = true
 
     }
 
     private var chestSizeAdded = false
-    public fun setChest(position: Int)
+    fun setChest(position: Int)
     {
+        chestPosition = position
         inputData.putInt(commands.User_chest, chestSizeList[position].description.toInt())
         chestSizeAdded = true
     }
 
     private var waistSizeAdded = false
-    public fun setWaist(position: Int)
+    fun setWaist(position: Int)
     {
+        waistPosition = position
         inputData.putInt(commands.User_waist, waistSizeList[position].description.toInt())
         waistSizeAdded = true
     }
 
     private var shoeSizeAdded = false
-    public fun setShoe(position: Int)
+    fun setShoe(position: Int)
     {
+        shoeSizePosition = position
         inputData.putInt(commands.User_shoe_Size, shoeSizeList[position].description.toInt())
         shoeSizeAdded = true
     }
 
-    public fun saveUserData() : String
+    fun saveUserData() : String
     {
-        var error = checkForErrors()
+        val error = checkForErrors()
 
         if (error == "")
         {
@@ -215,6 +221,69 @@ class SetupManager (/*var context: Context?*/){
         }
 
         return error
+    }
+
+    var genderPosition : Int = 0
+    var agePosition : Int = 0
+    var chestPosition : Int = 0
+    var waistPosition : Int = 0
+    var shoeSizePosition : Int = 0
+
+    fun getExistingUserData() : UUID
+    {
+        inputData.putString(commands.User_DB, commands.User_DB)
+        inputData.putString(commands.User_Update, commands.User_Update)
+        val existingUser = inputData.build()
+
+        val getUserData = OneTimeWorkRequestBuilder<databaseManager>()
+            .setInputData(existingUser)
+            .build()
+
+        WorkManager.getInstance().enqueue(getUserData)
+
+
+        return getUserData.id
+    }
+
+
+    fun displayExistingData( workInfo: WorkInfo)
+    {
+        genderPosition = findPosition(genderList, workInfo.outputData.getString(commands.User_gender))
+        agePosition = findPosition(ageList, workInfo.outputData.getString(commands.User_age))
+        chestPosition = findPosition(chestSizeList, workInfo.outputData.getInt(commands.User_chest, 0).toString())
+        waistPosition = findPosition(waistSizeList, workInfo.outputData.getInt(commands.User_waist, 0).toString())
+        shoeSizePosition = findPosition(shoeSizeList, workInfo.outputData.getInt(commands.User_shoe_Size, 0).toString())
+    }
+
+    private fun findPosition(itemList : ArrayList<item>, itemDescription : String?) : Int
+    {
+        if (itemDescription == null)
+        {
+            return 0
+        }
+        else {
+            for ((position, item) in itemList.withIndex()) {
+                if (item.description == itemDescription) {
+                    return position
+                }
+            }
+
+            return 0
+        }
+    }
+
+    fun updateUserData()
+    {
+
+        inputData.putString(commands.User_DB, commands.User_DB)
+        inputData.putString(commands.User_Update, commands.User_Update)
+        val newUser : Data = inputData.build()
+
+        val updateUser = OneTimeWorkRequestBuilder<databaseManager>()
+            .setInputData(newUser)
+            .build()
+
+        WorkManager.getInstance().enqueue(updateUser)
     }
 
     private fun checkForErrors() : String

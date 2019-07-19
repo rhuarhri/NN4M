@@ -10,9 +10,9 @@ class cartDatabaseHandler(val context : Context) {
 
     private val commands : databaseCommands = databaseCommands()
 
-    public fun addToDatabase(picture : String, name : String, price : Double)
+    fun addToDatabase(picture : String, name : String, price : Double)
     {
-        val newCartItem : cartItem = cartItem()
+        val newCartItem = cartItem()
         newCartItem.itemImage = picture
         newCartItem.itemName = name
         newCartItem.itemprice = price
@@ -23,9 +23,9 @@ class cartDatabaseHandler(val context : Context) {
         accessDB.cartDao().insert(newCartItem)
     }
 
-    public fun getFromDataBase() : Data
+    fun getFromDataBase() : Data
     {
-        val convertToArray : dataTranslation = dataTranslation()
+        val convertToArray = dataTranslation()
 
         val accessCartDB = Room.databaseBuilder(context, cartDatabase::class.java,
             "cart-database").build()
@@ -61,7 +61,7 @@ class cartDatabaseHandler(val context : Context) {
 
     }
 
-    public fun deleteFromDatabase(clothingID : Int)
+    fun deleteFromDatabase(clothingID : Int)
     {
 
         val accessCartDB = Room.databaseBuilder(context, cartDatabase::class.java,
@@ -71,15 +71,13 @@ class cartDatabaseHandler(val context : Context) {
 
     }
 
-    public fun updateInDatabase()
+    fun updateInDatabase()
     {
 
     }
 
-    public fun getTotalInDatabase() : Data
+    fun getTotalInDatabase() : Data
     {
-
-        val convertToArray : dataTranslation = dataTranslation()
 
         val accessCartDB = Room.databaseBuilder(context, cartDatabase::class.java,
             "cart-database").build()
@@ -95,6 +93,25 @@ class cartDatabaseHandler(val context : Context) {
         val output : Data = Data.Builder().putDouble(commands.Cart_total_price, totalPrice).build()
 
         return output
+    }
+
+    fun getSpecificItemInDatabase(id : Int) : Data
+    {
+        val accessCartDB = Room.databaseBuilder(context, cartDatabase::class.java,
+            "cart-database").build()
+        val foundInDataBase : cartItem = accessCartDB.cartDao().getItem(id)[0]
+
+
+        val output : Data = Data.Builder()
+            .putInt(commands.Cart_ID, foundInDataBase.id)
+            .putString(commands.Cart_name, foundInDataBase.itemName)
+            .putDouble(commands.Cart_price, foundInDataBase.itemprice)
+            .putString(commands.Cart_picture, foundInDataBase.itemImage)
+            .build()
+
+        return output
+
+
     }
 
 }

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".PurchaseActivity">
+
+    <TextView
+            android:text="Check out"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/titleTXT" app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            app:layout_constraintTop_toTopOf="parent" android:textSize="30sp"
+            android:textColor="@color/colorPrimaryText" android:layout_marginTop="8dp"/>
+    <TextView
+            android:text="Total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/totalTitleTXT"
+            app:layout_constraintTop_toBottomOf="@+id/titleTXT" android:layout_marginTop="60dp"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp" android:textSize="18sp"
+            android:textColor="@color/colorPrimaryText"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/totalPriceTXT"
+            app:layout_constraintTop_toBottomOf="@+id/totalTitleTXT" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            android:layout_marginTop="16dp" android:textSize="36sp" android:textColor="@color/colorPrimaryText"/>
+    <TextView
+            android:text="Card Number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/cardNumberTitleTXT" android:layout_marginTop="32dp"
+            app:layout_constraintTop_toBottomOf="@+id/totalPriceTXT" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="16dp" android:textSize="18sp" android:textColor="@color/colorPrimaryText"/>
+    <EditText
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/cardNumberET" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/cardNumberTitleTXT" android:layout_marginStart="8dp"
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"/>
+    <TextView
+            android:text="Pin Number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/pinNumberTitleTXT" android:layout_marginTop="24dp"
+            app:layout_constraintTop_toBottomOf="@+id/cardNumberET" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="16dp" android:textSize="18sp" android:textColor="@color/colorPrimaryText"/>
+    <EditText
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/pinNumberET"
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/pinNumberTitleTXT"
+            android:layout_marginEnd="8dp" app:layout_constraintEnd_toEndOf="parent"/>
+    <Button
+            android:text="Enter"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/enterBTN" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/pinNumberET" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            android:textSize="24sp" android:textColor="@color/colorPrimaryText"
+            android:background="@drawable/rounded_btn"/>
+    <TextView
+            android:text="By purchasing you agree to the company's term and condition set out on www.somewebsite.com"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/TermsTXT" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"
+            android:textColor="@color/colorPrimaryText" android:textAlignment="center"/>
+    <TextView
+            android:text="Review purchases"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/reviewTitleTXT" android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/enterBTN" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" android:textSize="18sp" android:textColor="@color/colorPrimaryText"/>
+    <ScrollView
+            android:layout_width="0dp"
+            android:layout_height="0dp" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/reviewTitleTXT" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" android:layout_marginBottom="32dp"
+            app:layout_constraintBottom_toTopOf="@+id/TermsTXT" app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="8dp">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                      android:orientation="vertical">
+            <TextView
+                    android:text="Item"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/reviewTXT" android:textSize="18sp"
+                    android:textColor="@color/colorPrimaryText"/>
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

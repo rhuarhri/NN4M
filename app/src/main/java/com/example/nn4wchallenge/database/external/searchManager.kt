@@ -22,8 +22,6 @@ demonstrate the use of in this app.
 
 class searchManager  {
 
-    //private var imageList : ArrayList<String> = ArrayList()
-    //private var descriptionLocationList : ArrayList<String> = ArrayList()
 
     class matchedPairs()
     {
@@ -56,22 +54,14 @@ class searchManager  {
 
     private var matchClothing : clothingMatcher = clothingMatcher()
 
-    /*
-    public fun setupSearch()
-    {
-        imageList = ArrayList()
-        descriptionLocationList = ArrayList()
 
-        readyToSearch = true
-    }*/
-
-    public fun setupUserInfo(userInfo : user)
+    fun setupUserInfo(userInfo : user)
     {
         UserInfo = userInfo
         userInfoAdded = true
     }
 
-    public fun setupClothingInfo(clothingInfo : clothing)
+    fun setupClothingInfo(clothingInfo : clothing)
     {
         ClothingInfo = clothingInfo
         clothingInfoAdded = true
@@ -82,7 +72,7 @@ class searchManager  {
         return userInfoAdded && clothingInfoAdded
     }
 
-    public fun search(ClothingItems : ArrayList<searchItem>) : ArrayList<matchedPairs>
+    fun search(ClothingItems : ArrayList<searchItem>) : ArrayList<matchedPairs>
     {
         var results : ArrayList<matchedPairs> = ArrayList()
 
@@ -101,7 +91,7 @@ class searchManager  {
                             if (matchClothing.matcher(ClothingInfo.clothingType, item.type)) {
                                 if (doesFit(item.type, item.maxSize.toInt(), item.minSize.toInt())) {
                                     //matches with user
-                                    var newPair : matchedPairs = matchedPairs()
+                                    val newPair = matchedPairs()
                                     newPair.createPair(item.imageURL, item.descriptionURL)
                                     results.add(newPair)
                                 }
@@ -123,11 +113,11 @@ class searchManager  {
 
 
     //public for testing
-    public fun matchesColor(colour : String) : Boolean
+    fun matchesColor(colour : String) : Boolean
     {
         dataConversion.StringToRGB(colour)
 
-        var colourM : colourMatcher = colourMatcher()
+        val colourM = colourMatcher()
 
         colourM.matchColour(ClothingInfo.clothingColorRed, ClothingInfo.clothingColorGreen, ClothingInfo.clothingColorBlue)
 
@@ -136,33 +126,22 @@ class searchManager  {
     }
 
     //public for testing
-    public fun matchesUserDescription(clothingItem : searchItem) : Boolean
+    fun matchesUserDescription(clothingItem : searchItem) : Boolean
     {
-        //this checks if the user is right for the clothing
-        if (clothingItem.age == UserInfo.userAge)
-        {
-            return true
-        }
-
-        if (clothingItem.gender == UserInfo.userGender)
-        {
-            return true
-        }
-
-        return false
+        return clothingItem.age == UserInfo.userAge && clothingItem.gender == UserInfo.userGender
     }
 
     //public for testing
-    public fun doesFit(clothingItem : String, maxSize : Int, minSize : Int) : Boolean
+    fun doesFit(clothingItem : String, maxSize : Int, minSize : Int) : Boolean
     {
 
-        var chestSize : Int = UserInfo.userChestMeasurement
+        val chestSize : Int = UserInfo.userChestMeasurement
         var matchChestSize : Boolean = false
 
-        var waistSize : Int = UserInfo.userWaistMeasurement
+        val waistSize : Int = UserInfo.userWaistMeasurement
         var matchWaistSize : Boolean = false
 
-        var shoeSize : Int = UserInfo.userShoeSize
+        val shoeSize : Int = UserInfo.userShoeSize
         var matchShoeSize : Boolean = false
 
         when(clothingItem)

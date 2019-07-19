@@ -6,6 +6,9 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import android.view.View
 import android.widget.*
+import androidx.lifecycle.Observer
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import com.example.nn4wchallenge.database.internal.SetupManager
 
 
@@ -29,6 +32,8 @@ class SetupActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_setup)
 
+        val function : String = intent.getStringExtra("function")
+
         setupM = SetupManager()
 
         genderSPN = findViewById(R.id.GenderSPN)
@@ -37,7 +42,6 @@ class SetupActivity : AppCompatActivity() {
 
             override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
 
-                genderCurrentPosition = i
                 setupM.setGender(i)
 
             }
@@ -53,7 +57,6 @@ class SetupActivity : AppCompatActivity() {
 
             override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
 
-                ageCurrentPosition = i
                 setupM.setAge(i)
 
             }
@@ -69,7 +72,6 @@ class SetupActivity : AppCompatActivity() {
 
             override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
 
-                chestCurrentPosition = i
                 setupM.setChest(i)
 
             }
@@ -85,7 +87,7 @@ class SetupActivity : AppCompatActivity() {
 
             override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
 
-                waistCurrentPosition = i
+
                 setupM.setWaist(i)
 
             }
@@ -101,7 +103,6 @@ class SetupActivity : AppCompatActivity() {
 
             override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
 
-                shoeCurrentPosition = i
                 setupM.setShoe(i)
 
             }
@@ -111,18 +112,53 @@ class SetupActivity : AppCompatActivity() {
             }
         }
 
+        if (function == "update")
+        {
+            val threadId = setupM.getExistingUserData()
+
+            WorkManager.getInstance().getWorkInfoByIdLiveData(threadId).observe(this, Observer {
+
+                workInfo ->
+
+                if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED)
+                {
+
+                    setupM.displayExistingData(workInfo)
+
+                    genderSPN.setSelection(setupM.genderPosition)
+                    ageSPN.setSelection(setupM.agePosition)
+                    chestSPN.setSelection(setupM.chestPosition)
+                    waistSPN.setSelection(setupM.waistPosition)
+                    shoeSizeSPN.setSelection(setupM.shoeSizePosition)
+
+                }
+
+
+            })
+
+
+        }
+
         saveBTN = findViewById(R.id.saveBTN)
         saveBTN.setOnClickListener {
 
-            var error = setupM.saveUserData()
-
-            if (error == "")
+            if (function == "update")
             {
-                error = "Saved"
-                goToAddClothingScreen()
+                setupM.updateUserData()
+                goToHomeScreen()
+            }
+            else {
+
+                var error = setupM.saveUserData()
+
+                if (error == "") {
+                    error = "Saved"
+                    goToAddClothingScreen()
+                }
+
+                Toast.makeText(applicationContext, error, Toast.LENGTH_SHORT).show()
             }
 
-            Toast.makeText(applicationContext, error, Toast.LENGTH_SHORT).show()
         }
 
         if (savedInstanceState != null)
@@ -136,6 +172,12 @@ class SetupActivity : AppCompatActivity() {
 
     }
 
+
+    private fun goToHomeScreen()
+    {
+        val goTo = Intent(applicationContext, MainActivity::class.java)
+        startActivity(goTo)
+    }
 
     private fun goToAddClothingScreen()
     {
@@ -157,24 +199,19 @@ class SetupActivity : AppCompatActivity() {
 
     //code related to save state
     private val genderKey : String = "gender"
-    private var genderCurrentPosition : Int = 0
     private val ageKey : String = "age"
-    private var ageCurrentPosition : Int = 0
     private val chestKey : String = "chest"
-    private var chestCurrentPosition : Int = 0
     private val waistKey : String = "waist"
-    private var waistCurrentPosition : Int = 0
     private val shoeKey : String = "shoe"
-    private var shoeCurrentPosition : Int = 0
 
     override fun onSaveInstanceState(outState: Bundle?, outPersistentState: PersistableBundle?) {
 
         if (outState != null) {
-            outState.putInt(genderKey, genderCurrentPosition)
-            outState.putInt(ageKey, ageCurrentPosition)
-            outState.putInt(chestKey, chestCurrentPosition)
-            outState.putInt(waistKey, waistCurrentPosition)
-            outState.putInt(shoeKey, shoeCurrentPosition)
+            outState.putInt(genderKey, setupM.genderPosition)
+            outState.putInt(ageKey, setupM.agePosition)
+            outState.putInt(chestKey, setupM.chestPosition)
+            outState.putInt(waistKey, setupM.waistPosition)
+            outState.putInt(shoeKey, setupM.shoeSizePosition)
         }
 
         super.onSaveInstanceState(outState, outPersistentState)

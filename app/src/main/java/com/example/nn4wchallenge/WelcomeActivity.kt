@@ -5,11 +5,12 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
-import android.widget.TextView
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.work.*
 import com.example.nn4wchallenge.database.internal.databaseChecker
+import com.example.nn4wchallenge.imageHandling.promotionImageHandler
 
 class WelcomeActivity : AppCompatActivity() {
 
@@ -32,8 +33,11 @@ class WelcomeActivity : AppCompatActivity() {
     this section could have a log in section to make buying cloths quicker
      */
 
+    private lateinit var promotionHandler : promotionImageHandler
+
     private lateinit var checkUserDatabaseWorker: OneTimeWorkRequest
 
+    private lateinit var promotionIV : ImageView
     private lateinit var searchBTN: Button
     private lateinit var shoppingBTN: Button
 
@@ -42,6 +46,10 @@ class WelcomeActivity : AppCompatActivity() {
         setContentView(R.layout.activity_welcome)
 
         checkSetup()
+
+        promotionHandler = promotionImageHandler(applicationContext)
+        promotionIV = findViewById(R.id.promotionIV)
+        promotionHandler.setPromotionImage(this, promotionIV)
 
         searchBTN = findViewById(R.id.quickSearchBTN)
         searchBTN.setOnClickListener {
@@ -106,6 +114,7 @@ class WelcomeActivity : AppCompatActivity() {
 
     private fun goToSetupScreen() {
         val goTo = Intent(applicationContext, SetupActivity::class.java)
+            .putExtra("function", "new")
         startActivity(goTo)
     }
 
@@ -116,7 +125,7 @@ class WelcomeActivity : AppCompatActivity() {
 
     private fun checkSetup() {
 
-        val accessPermissions: permissionsHandler = permissionsHandler(this, applicationContext)
+        val accessPermissions = permissionsHandler(this, applicationContext)
 
             accessPermissions.internetPermission()
 

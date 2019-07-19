@@ -1,5 +1,6 @@
 package com.example.nn4wchallenge
 
+import android.content.Intent
 import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -53,7 +54,7 @@ class ItemDescriptionActivity : AppCompatActivity() {
 
         if (descriptionlocation == "" || descriptionlocation == "null")
         {
-            descriptionTXT.setText("no description")
+            descriptionTXT.text = "no description"
         }
         else{
             setupDescription(descriptionlocation)
@@ -77,14 +78,14 @@ class ItemDescriptionActivity : AppCompatActivity() {
                 if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED) {
 
                     name = workInfo.outputData.getString("name").toString()
-                    nameTXT.setText(name)
+                    nameTXT.text = name
 
-                    descriptionTXT.setText(workInfo.outputData.getString("description").toString())
+                    descriptionTXT.text = workInfo.outputData.getString("description").toString()
 
                     price = workInfo.outputData.getDouble("cost", 0.0)
-                    Toast.makeText(applicationContext, "price is $price", Toast.LENGTH_LONG).show()
+
                     try {
-                        priceTXT.setText("£ " + price.toString())
+                        priceTXT.text = "£ " + price.toString()
                     }
                     catch(E : Exception)
                     {
@@ -94,7 +95,7 @@ class ItemDescriptionActivity : AppCompatActivity() {
                     val reduction : Int = workInfo.outputData.getInt("reduction", 0)
                     if (reduction > 0)
                     {
-                        reducedPriceTXT.setText("$reduction off")
+                        reducedPriceTXT.text = "$reduction off"
                     }
 
 
@@ -155,7 +156,7 @@ class ItemDescriptionActivity : AppCompatActivity() {
 
     private fun addToCart()
     {
-        val commands : databaseCommands = databaseCommands()
+        val commands = databaseCommands()
 
         val input : Data = Data.Builder()
             .putString(commands.Cart_DB, commands.Cart_DB)
@@ -171,5 +172,14 @@ class ItemDescriptionActivity : AppCompatActivity() {
 
         WorkManager.getInstance().enqueue(addToCartWorker)
 
+        Toast.makeText(applicationContext, "item added to cart", Toast.LENGTH_SHORT).show()
+
+        goToHomeScreen()
+    }
+
+    private fun goToHomeScreen()
+    {
+        val goTo = Intent(applicationContext, MainActivity::class.java)
+        startActivity(goTo)
     }
 }

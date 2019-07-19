@@ -16,7 +16,6 @@ import com.example.nn4wchallenge.database.internal.databaseCommands
 import com.example.nn4wchallenge.database.internal.databaseManager
 import com.example.nn4wchallenge.displayClothing.clothingAdapter
 import com.example.nn4wchallenge.displayClothing.clothingItem
-import kotlinx.android.synthetic.*
 
 class UserClothingDisplayActivity : AppCompatActivity() {
 
@@ -39,7 +38,8 @@ class UserClothingDisplayActivity : AppCompatActivity() {
         accountBTN = findViewById(R.id.accountBTN)
         accountBTN.setOnClickListener {
 
-            val goToAccountScreen : Intent = Intent(applicationContext, SetupActivity::class.java)
+            val goToAccountScreen = Intent(applicationContext, SetupActivity::class.java)
+                .putExtra("function", "update")
             startActivity(goToAccountScreen)
 
         }
@@ -47,12 +47,12 @@ class UserClothingDisplayActivity : AppCompatActivity() {
         addBTN = findViewById(R.id.addBTN)
         addBTN.setOnClickListener {
 
-            val goToAddScreen : Intent = Intent(applicationContext, AddActivity::class.java)
+            val goToAddScreen = Intent(applicationContext, AddActivity::class.java)
             startActivity(goToAddScreen)
         }
 
 
-        val commands : databaseCommands = databaseCommands()
+        val commands = databaseCommands()
         val input : Data = Data.Builder()
             .putString(commands.Clothing_DB, commands.Clothing_DB)
             .putString(commands.Clothing_Get, commands.Clothing_Get)
@@ -68,10 +68,10 @@ class UserClothingDisplayActivity : AppCompatActivity() {
             if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED)
             {
 
-                val ids : IntArray? = workInfo.outputData.getIntArray("id")
-                val types : Array<String>? = workInfo.outputData.getStringArray("type")
-                val seasons : Array<String>? = workInfo.outputData.getStringArray("season")
-                val images : Array<String>? = workInfo.outputData.getStringArray("image")
+                val ids : IntArray? = workInfo.outputData.getIntArray(commands.Clothing_ID)
+                val types : Array<String>? = workInfo.outputData.getStringArray(commands.Clothing_type)
+                val seasons : Array<String>? = workInfo.outputData.getStringArray(commands.Clothing_season)
+                val images : Array<String>? = workInfo.outputData.getStringArray(commands.Clothing_picture)
 
 
                 if (images == null)
@@ -94,14 +94,9 @@ class UserClothingDisplayActivity : AppCompatActivity() {
                 {
 
                     try {
-                        var itemList: ArrayList<clothingItem> = createItemListForAdapter(ids, types, seasons, images)
-                        Toast.makeText(
-                            applicationContext,
-                            "size is ${itemList.size} id size is ${ids.size}",
-                            Toast.LENGTH_LONG
-                        ).show()
+                        val itemList: ArrayList<clothingItem> = createItemListForAdapter(ids, types, seasons, images)
 
-                        var RVAdapter : RecyclerView.Adapter<*> = clothingAdapter(applicationContext, itemList)
+                        val RVAdapter : RecyclerView.Adapter<*> = clothingAdapter(applicationContext, itemList)
 
                         clothingRV = findViewById<RecyclerView>(R.id.clothingRV).apply{
                             setHasFixedSize(false)

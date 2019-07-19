@@ -1,10 +1,10 @@
 package com.example.nn4wchallenge
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -12,17 +12,17 @@ import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import com.example.nn4wchallenge.database.internal.databaseChecker
 import com.example.nn4wchallenge.database.internal.databaseCommands
 import com.example.nn4wchallenge.database.internal.databaseManager
 import com.example.nn4wchallenge.displayClothing.cartAdapter
-import com.example.nn4wchallenge.displayClothing.clothingAdapter
 import com.example.nn4wchallenge.displayClothing.clothingItem
 
 
 class ViewCartActivity : AppCompatActivity() {
 
     private val commands : databaseCommands = databaseCommands()
+
+    private var total : Double = 0.00
 
     private lateinit var itemsRV : RecyclerView
     private lateinit var buyAllBTN : Button
@@ -35,6 +35,7 @@ class ViewCartActivity : AppCompatActivity() {
         buyAllBTN = findViewById(R.id.buyAllBTN)
         buyAllBTN.setOnClickListener {
 
+            goToCheckOut(total)
 
         }
 
@@ -97,7 +98,7 @@ class ViewCartActivity : AppCompatActivity() {
         WorkManager.getInstance().getWorkInfoByIdLiveData(getTotalWorker.id).observe(this, Observer {
             workInfo ->
 
-            val total = workInfo.outputData.getDouble(commands.Cart_total_price, 0.0)
+            total = workInfo.outputData.getDouble(commands.Cart_total_price, 0.0)
 
             totalTXT.text = "total $total"
 
@@ -119,5 +120,12 @@ class ViewCartActivity : AppCompatActivity() {
         }
 
         return itemList
+    }
+
+    private fun goToCheckOut(price : Double)
+    {
+        val goTo = Intent(this, PurchaseActivity::class.java).putExtra("function", "buyAll")
+
+        startActivity(goTo)
     }
 }

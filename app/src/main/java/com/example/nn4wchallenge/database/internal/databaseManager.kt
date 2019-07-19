@@ -41,7 +41,7 @@ class databaseManager (appContext: Context, workerParams: WorkerParameters)
 
     private fun clothingDatabase(context: Context, inputData : Data) : Result
     {
-        val handler : clothingDatabaseHandler = clothingDatabaseHandler(context)
+        val handler = clothingDatabaseHandler(context)
 
         if (inputData.getString(commands.Clothing_Add) == commands.Clothing_Add)
         {
@@ -82,7 +82,7 @@ class databaseManager (appContext: Context, workerParams: WorkerParameters)
 
     private fun cartDatabase(context: Context, inputData : Data) : Result
     {
-        val handler : cartDatabaseHandler = cartDatabaseHandler(context)
+        val handler = cartDatabaseHandler(context)
 
         if (inputData.getString(commands.Cart_Add) == commands.Cart_Add) {
             val name: String? = inputData.getString(commands.Cart_name)
@@ -105,6 +105,12 @@ class databaseManager (appContext: Context, workerParams: WorkerParameters)
             val output = handler.getTotalInDatabase()
             return Result.success(output)
         }
+        else if (inputData.getString(commands.Cart_Get_Single_Item) == commands.Cart_Get_Single_Item)
+        {
+            val itemId : Int = inputData.getInt(commands.Cart_ID, 0)
+            val output = handler.getSpecificItemInDatabase(itemId)
+            return Result.success(output)
+        }
         else if (inputData.getString(commands.Cart_Delete) == commands.Cart_Delete)
         {
             val id : Int = inputData.getInt(commands.Cart_ID, 0)
@@ -120,7 +126,7 @@ class databaseManager (appContext: Context, workerParams: WorkerParameters)
 
     private fun userDatabase(context: Context, inputData : Data) : Result
     {
-        val handler : userDatabaseHandler = userDatabaseHandler(context)
+        val handler = userDatabaseHandler(context)
 
         if (inputData.getString(commands.User_Add) == commands.User_Add) {
             val gender : String? = inputData.getString(commands.User_gender)
@@ -141,7 +147,25 @@ class databaseManager (appContext: Context, workerParams: WorkerParameters)
         }
         else if (inputData.getString(commands.User_Get) == commands.User_Get)
         {
-            return Result.success()
+            val output = handler.getFromDataBase()
+            return Result.success(output)
+        }
+        else if (inputData.getString(commands.User_Update) == commands.User_Update)
+        {
+            val gender : String? = inputData.getString(commands.User_gender)
+            val age : String? = inputData.getString(commands.User_age)
+            val waist : Int = inputData.getInt(commands.User_waist, 0)
+            val chest : Int = inputData.getInt(commands.User_chest, 0)
+            val shoe : Int = inputData.getInt(commands.User_shoe_Size, 0)
+            if (gender != null && age != null)
+            {
+                handler.updateInDatabase(gender, age, waist, chest, shoe)
+                return Result.success()
+            }
+            else
+            {
+                return Result.failure()
+            }
         }
         else{
             return Result.failure()

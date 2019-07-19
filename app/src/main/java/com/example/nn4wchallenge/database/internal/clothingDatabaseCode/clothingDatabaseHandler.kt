@@ -11,9 +11,9 @@ class clothingDatabaseHandler(val context : Context) {
     private val commands : databaseCommands = databaseCommands()
     private val convertToArray : dataTranslation = dataTranslation()
 
-    public fun addToDatabase(type : String, season : String, picture : String, redAmount : Int, greenAmount : Int, blueAmount: Int)
+    fun addToDatabase(type : String, season : String, picture : String, redAmount : Int, greenAmount : Int, blueAmount: Int)
     {
-        val newClothing : clothing = clothing()
+        val newClothing = clothing()
         newClothing.clothingType = type
         newClothing.clothingSeason = season
         newClothing.clothingImageLocation = picture
@@ -27,7 +27,7 @@ class clothingDatabaseHandler(val context : Context) {
         accessDB.clothingDao().insert(newClothing)
     }
 
-    public fun getFromDataBase() : Data
+    fun getFromDataBase() : Data
     {
         val accessDB = Room.databaseBuilder(context, clothingDatabase::class.java,
             "user-clothes-database").build()
@@ -56,23 +56,23 @@ class clothingDatabaseHandler(val context : Context) {
 
 
         val output : Data = Data.Builder()
-            .putIntArray("id", ids)
-            .putStringArray("type", types)
-            .putStringArray("season", season)
-            .putStringArray("image", image)
+            .putIntArray(commands.Clothing_ID, ids)
+            .putStringArray(commands.Clothing_type, types)
+            .putStringArray(commands.Clothing_season, season)
+            .putStringArray(commands.Clothing_picture, image)
             .build()
 
         return output
     }
 
-    public fun deleteFromDatabase(clothingId : Int)
+    fun deleteFromDatabase(clothingId : Int)
     {
         val accessDB = Room.databaseBuilder(context, clothingDatabase::class.java,
             "user-clothes-database").build()
         accessDB.clothingDao().deleteById(clothingId)
     }
 
-    public fun updateInDatabase()
+    fun updateInDatabase()
     {
 
     }
