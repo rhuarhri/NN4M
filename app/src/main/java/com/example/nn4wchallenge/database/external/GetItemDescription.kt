@@ -8,20 +8,19 @@ import androidx.work.WorkerParameters
 class GetItemDescription (appContext: Context, workerParams: WorkerParameters)
     : Worker(appContext, workerParams) {
 
-    private var error : String = ""
+    private var error = ""
 
-    private var name : String = ""
-    private var description : String = ""
-    private var cost : Double = 0.0
-    private var reduction : Int = 0
+    private var name = ""
+    private var description = ""
+    private var cost = 0.0
+    private var reduction = 0
     private lateinit var images : Array<String>
 
     override fun doWork(): Result {
 
         val descriptionLocation : String = inputData.getString("url").toString()
 
-
-        val getFromOnline : onlineDatabase = onlineDatabase()
+        val getFromOnline = OnlineDatabase()
 
         try
         {
@@ -30,7 +29,7 @@ class GetItemDescription (appContext: Context, workerParams: WorkerParameters)
             description = itemDescription.description
             cost = itemDescription.cost
             reduction = itemDescription.reduction
-            val dataConverter : dataTranslation = dataTranslation()
+            val dataConverter = DataTranslation()
             images = dataConverter.toStringArray(itemDescription.images as ArrayList<String?>)
         }
         catch(e : Exception)

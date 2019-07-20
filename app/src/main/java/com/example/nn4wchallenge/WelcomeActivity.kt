@@ -9,8 +9,8 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.work.*
-import com.example.nn4wchallenge.database.internal.databaseChecker
-import com.example.nn4wchallenge.imageHandling.promotionImageHandler
+import com.example.nn4wchallenge.database.internal.DatabaseChecker
+import com.example.nn4wchallenge.imageHandling.PromotionImageHandler
 
 class WelcomeActivity : AppCompatActivity() {
 
@@ -33,7 +33,7 @@ class WelcomeActivity : AppCompatActivity() {
     this section could have a log in section to make buying cloths quicker
      */
 
-    private lateinit var promotionHandler : promotionImageHandler
+    private lateinit var promotionHandler : PromotionImageHandler
 
     private lateinit var checkUserDatabaseWorker: OneTimeWorkRequest
 
@@ -47,7 +47,7 @@ class WelcomeActivity : AppCompatActivity() {
 
         checkSetup()
 
-        promotionHandler = promotionImageHandler(applicationContext)
+        promotionHandler = PromotionImageHandler(applicationContext)
         promotionIV = findViewById(R.id.promotionIV)
         promotionHandler.setPromotionImage(this, promotionIV)
 
@@ -127,7 +127,7 @@ class WelcomeActivity : AppCompatActivity() {
 
     private fun checkSetup() {
 
-        val accessPermissions = permissionsHandler(this, applicationContext)
+        val accessPermissions = PermissionsHandler(this, applicationContext)
 
             accessPermissions.internetPermission()
 
@@ -143,7 +143,7 @@ class WelcomeActivity : AppCompatActivity() {
 
             val input: Data = Data.Builder().putString("database", "user").build()
 
-            checkUserDatabaseWorker = OneTimeWorkRequestBuilder<databaseChecker>()
+            checkUserDatabaseWorker = OneTimeWorkRequestBuilder<DatabaseChecker>()
                 .setInputData(input)
                 .build()
 

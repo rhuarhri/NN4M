@@ -15,8 +15,8 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.example.nn4wchallenge.AddActivitySpinners.*
-import com.example.nn4wchallenge.database.quickSearchHandler
-import com.example.nn4wchallenge.slideShowCode.slideShowAdapter
+import com.example.nn4wchallenge.database.QuickSearchHandler
+import com.example.nn4wchallenge.slideShowCode.SlideShowAdapter
 
 class QuickSearchActivity : AppCompatActivity() {
 
@@ -47,33 +47,33 @@ class QuickSearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_quick_search)
 
-        val colourList : ArrayList<addColourItem> = ArrayList()
-        colourList.add(addColourItem("black", R.color.colorBlack, 0, 0, 0))
-        colourList.add(addColourItem("blue", R.color.colorBlue, 0, 0, 255))
-        colourList.add(addColourItem("light blue", R.color.colorLightBlue, 0, 255, 255))
-        colourList.add(addColourItem("green", R.color.colorGreen, 0, 255, 0))
-        colourList.add(addColourItem("yellow", R.color.colorYellow, 255, 255, 0))
-        colourList.add(addColourItem("red", R.color.colorRed, 255, 0, 0))
-        colourList.add(addColourItem("pink", R.color.colorPink, 255, 0, 255))
-        colourList.add(addColourItem("white", R.color.colorWhite, 255, 255, 255))
+        val colourList : ArrayList<AddColourItem> = ArrayList()
+        colourList.add(AddColourItem("black", R.color.colorBlack, 0, 0, 0))
+        colourList.add(AddColourItem("blue", R.color.colorBlue, 0, 0, 255))
+        colourList.add(AddColourItem("light blue", R.color.colorLightBlue, 0, 255, 255))
+        colourList.add(AddColourItem("green", R.color.colorGreen, 0, 255, 0))
+        colourList.add(AddColourItem("yellow", R.color.colorYellow, 255, 255, 0))
+        colourList.add(AddColourItem("red", R.color.colorRed, 255, 0, 0))
+        colourList.add(AddColourItem("pink", R.color.colorPink, 255, 0, 255))
+        colourList.add(AddColourItem("white", R.color.colorWhite, 255, 255, 255))
 
 
-        val typeList : ArrayList<addActivityItem> = ArrayList()
-        typeList.add(addActivityItem("dress", R.drawable.dress_icon))
-        typeList.add(addActivityItem("jacket", R.drawable.jacket_icon))
-        typeList.add(addActivityItem("jumper", R.drawable.jumper_icon))
-        typeList.add(addActivityItem("shirt", R.drawable.shirt_icon))
-        typeList.add(addActivityItem("shorts", R.drawable.shorts_icon))
-        typeList.add(addActivityItem("skirt", R.drawable.skirt_icon))
-        typeList.add(addActivityItem("top", R.drawable.top_icon))
-        typeList.add(addActivityItem("trousers", R.drawable.trousers_icon))
+        val typeList : ArrayList<AddActivityItem> = ArrayList()
+        typeList.add(AddActivityItem("dress", R.drawable.dress_icon))
+        typeList.add(AddActivityItem("jacket", R.drawable.jacket_icon))
+        typeList.add(AddActivityItem("jumper", R.drawable.jumper_icon))
+        typeList.add(AddActivityItem("shirt", R.drawable.shirt_icon))
+        typeList.add(AddActivityItem("shorts", R.drawable.shorts_icon))
+        typeList.add(AddActivityItem("skirt", R.drawable.skirt_icon))
+        typeList.add(AddActivityItem("top", R.drawable.top_icon))
+        typeList.add(AddActivityItem("trousers", R.drawable.trousers_icon))
 
 
-        val seasonList : ArrayList<addActivityItem> = ArrayList()
-        seasonList.add(addActivityItem("summer", R.drawable.summer_icon))
-        seasonList.add(addActivityItem("winter", R.drawable.winter_icon))
-        seasonList.add(addActivityItem("party", R.drawable.party_icon))
-        seasonList.add(addActivityItem("formal", R.drawable.formal_icon))
+        val seasonList : ArrayList<AddActivityItem> = ArrayList()
+        seasonList.add(AddActivityItem("summer", R.drawable.summer_icon))
+        seasonList.add(AddActivityItem("winter", R.drawable.winter_icon))
+        seasonList.add(AddActivityItem("party", R.drawable.party_icon))
+        seasonList.add(AddActivityItem("formal", R.drawable.formal_icon))
 
         setUpColourSpinner(colourList)
         setUpTypeSpinner(typeList)
@@ -89,14 +89,14 @@ class QuickSearchActivity : AppCompatActivity() {
 
     }
 
-    private fun setUpColourSpinner(itemList : ArrayList<addColourItem>)
+    private fun setUpColourSpinner(itemList : ArrayList<AddColourItem>)
     {
         val colourSPN : Spinner = findViewById(R.id.colourSPN)
 
         //item basic list is a list of a parent class converted from list of child class
-        val itemBasicList : ArrayList<addActivityItem> = itemList as ArrayList<addActivityItem>
+        val itemBasicList : ArrayList<AddActivityItem> = itemList as ArrayList<AddActivityItem>
 
-        val colourAdapter = addSpinnerAdapter(applicationContext, itemBasicList)
+        val colourAdapter = AddSpinnerAdapter(applicationContext, itemBasicList)
 
         colourSPN.adapter = colourAdapter
 
@@ -112,7 +112,7 @@ class QuickSearchActivity : AppCompatActivity() {
 
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
 
-                val colourItem : addColourItem = itemList.get(position)
+                val colourItem : AddColourItem = itemList[position]
                 redAmount = colourItem.amountOfRed
                 greenAmount = colourItem.amountOfGreen
                 blueAmount = colourItem.amountOfBlue
@@ -123,11 +123,11 @@ class QuickSearchActivity : AppCompatActivity() {
 
     }
 
-    private fun setUpTypeSpinner(itemList : ArrayList<addActivityItem>)
+    private fun setUpTypeSpinner(itemList : ArrayList<AddActivityItem>)
     {
         val typeSPN : Spinner = findViewById(R.id.typeSPN)
 
-        val typeAdapter = addSpinnerAdapter(applicationContext, itemList)
+        val typeAdapter = AddSpinnerAdapter(applicationContext, itemList)
 
         typeSPN.adapter = typeAdapter
 
@@ -143,7 +143,7 @@ class QuickSearchActivity : AppCompatActivity() {
 
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
 
-                val typeItem : addActivityItem = itemList.get(position)
+                val typeItem : AddActivityItem = itemList[position]
                 type = typeItem.itemTitle
 
             }
@@ -153,11 +153,11 @@ class QuickSearchActivity : AppCompatActivity() {
 
     }
 
-    private fun setUpSeasonSpinner(itemList : ArrayList<addActivityItem>)
+    private fun setUpSeasonSpinner(itemList : ArrayList<AddActivityItem>)
     {
         val seasonSPN : Spinner = findViewById(R.id.seasonSPN)
 
-        val seasonAdapter = addSpinnerAdapter(applicationContext, itemList)
+        val seasonAdapter = AddSpinnerAdapter(applicationContext, itemList)
 
         seasonSPN.adapter = seasonAdapter
 
@@ -173,7 +173,7 @@ class QuickSearchActivity : AppCompatActivity() {
 
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
 
-                val seasonItem : addActivityItem = itemList.get(position)
+                val seasonItem : AddActivityItem = itemList[position]
                 season = seasonItem.itemTitle
 
             }
@@ -192,7 +192,7 @@ class QuickSearchActivity : AppCompatActivity() {
             .putInt("blue", blueAmount)
             .build()
 
-        val quickSearchWorker = OneTimeWorkRequestBuilder<quickSearchHandler>().setInputData(input).build()
+        val quickSearchWorker = OneTimeWorkRequestBuilder<QuickSearchHandler>().setInputData(input).build()
 
         WorkManager.getInstance().enqueue(quickSearchWorker)
 
@@ -228,14 +228,14 @@ class QuickSearchActivity : AppCompatActivity() {
     private fun setupRecyclerView(images : Array<String>)
     {
 
-        val RVAdapter: RecyclerView.Adapter<*> = slideShowAdapter(applicationContext, images)
+        val rvAdapter: RecyclerView.Adapter<*> = SlideShowAdapter(applicationContext, images)
 
         pictureRV.apply {
 
             setHasFixedSize(false)
             layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
 
-            adapter = RVAdapter
+            adapter = rvAdapter
         }
 
 

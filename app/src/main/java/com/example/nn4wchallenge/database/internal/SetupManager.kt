@@ -1,16 +1,12 @@
 package com.example.nn4wchallenge.database.internal
 
-import android.content.Context
-import android.provider.ContactsContract
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import androidx.work.*
 import java.util.*
 import kotlin.collections.ArrayList
 
 class SetupManager (/*var context: Context?*/){
 
-    private val commands : databaseCommands = databaseCommands()
+    private val commands : DatabaseCommands = DatabaseCommands()
 
     //Code for setup procedure
     private var genderList : ArrayList<item> = ArrayList()
@@ -213,7 +209,7 @@ class SetupManager (/*var context: Context?*/){
             inputData.putString(commands.User_Add, commands.User_Add)
             val newUser : Data = inputData.build()
 
-            val saveUser = OneTimeWorkRequestBuilder<databaseManager>()
+            val saveUser = OneTimeWorkRequestBuilder<DatabaseManager>()
                 .setInputData(newUser)
                 .build()
 
@@ -235,7 +231,7 @@ class SetupManager (/*var context: Context?*/){
         inputData.putString(commands.User_Update, commands.User_Update)
         val existingUser = inputData.build()
 
-        val getUserData = OneTimeWorkRequestBuilder<databaseManager>()
+        val getUserData = OneTimeWorkRequestBuilder<DatabaseManager>()
             .setInputData(existingUser)
             .build()
 
@@ -279,7 +275,7 @@ class SetupManager (/*var context: Context?*/){
         inputData.putString(commands.User_Update, commands.User_Update)
         val newUser : Data = inputData.build()
 
-        val updateUser = OneTimeWorkRequestBuilder<databaseManager>()
+        val updateUser = OneTimeWorkRequestBuilder<DatabaseManager>()
             .setInputData(newUser)
             .build()
 

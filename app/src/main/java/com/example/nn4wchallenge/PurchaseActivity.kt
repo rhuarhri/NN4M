@@ -1,6 +1,5 @@
 package com.example.nn4wchallenge
 
-import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -12,12 +11,12 @@ import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import com.example.nn4wchallenge.database.internal.databaseCommands
-import com.example.nn4wchallenge.database.internal.databaseManager
+import com.example.nn4wchallenge.database.internal.DatabaseCommands
+import com.example.nn4wchallenge.database.internal.DatabaseManager
 
 class PurchaseActivity : AppCompatActivity() {
 
-    private val commands : databaseCommands = databaseCommands()
+    private val commands : DatabaseCommands = DatabaseCommands()
 
     private lateinit var costTXT : TextView
     private lateinit var reviewTXT : TextView
@@ -66,7 +65,7 @@ class PurchaseActivity : AppCompatActivity() {
             .putString(commands.Cart_Get, commands.Cart_Get)
             .build()
 
-        val getCartItemWorker = OneTimeWorkRequestBuilder<databaseManager>().setInputData(inputData).build()
+        val getCartItemWorker = OneTimeWorkRequestBuilder<DatabaseManager>().setInputData(inputData).build()
 
         WorkManager.getInstance().enqueue(getCartItemWorker)
 
@@ -101,7 +100,7 @@ class PurchaseActivity : AppCompatActivity() {
             .putString(commands.Cart_Get_Prices, commands.Cart_Get_Prices)
             .build()
 
-        val getTotalCostWorker = OneTimeWorkRequestBuilder<databaseManager>().setInputData(inputData).build()
+        val getTotalCostWorker = OneTimeWorkRequestBuilder<DatabaseManager>().setInputData(inputData).build()
 
         WorkManager.getInstance().enqueue(getTotalCostWorker)
 
@@ -127,7 +126,7 @@ class PurchaseActivity : AppCompatActivity() {
             .putInt(commands.Cart_ID, id)
             .build()
 
-        val getCartItemWorker = OneTimeWorkRequestBuilder<databaseManager>().setInputData(inputData).build()
+        val getCartItemWorker = OneTimeWorkRequestBuilder<DatabaseManager>().setInputData(inputData).build()
 
         WorkManager.getInstance().enqueue(getCartItemWorker)
 

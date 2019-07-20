@@ -1,11 +1,11 @@
 package com.example.nn4wchallenge
 
-import com.example.nn4wchallenge.clothingMatcherCode.clothingMatcher
+import com.example.nn4wchallenge.clothingMatcherCode.ClothingMatcher
 import com.example.nn4wchallenge.colourMatcherCode.*
 import com.example.nn4wchallenge.database.external.*
 import com.example.nn4wchallenge.database.internal.SetupManager
-import com.example.nn4wchallenge.database.internal.clothingDatabaseCode.clothing
-import com.example.nn4wchallenge.database.internal.userDatabaseCode.user
+import com.example.nn4wchallenge.database.internal.clothingDatabaseCode.Clothing
+import com.example.nn4wchallenge.database.internal.userDatabaseCode.User
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -22,7 +22,7 @@ class ExampleUnitTest {
     @Test
     fun testColourMatcher()
     {
-        val colourM = colourMatcher()
+        val colourM = ColourMatcher()
 
         colourM.matchColour(255, 0, 0) //red
 
@@ -39,19 +39,19 @@ class ExampleUnitTest {
         /*
         In this test a base colour is either red, green or blue
          */
-        val test = colourMatcher()
+        val test = ColourMatcher()
         test.colours = ArrayList()
 
-        val testcolour = colour()
+        val testcolour = Colour()
         testcolour.createColour(0,0,255)//colour blue
 
         test.findAdjacent(testcolour)
 
-        val testColour1 = colour()
-        val expectedColour : ArrayList<colour> = ArrayList()
+        val testColour1 = Colour()
+        val expectedColour : ArrayList<Colour> = ArrayList()
         testColour1.createColour(0, 255, 255)
         expectedColour.add(testColour1)//light blue
-        val testColour2 = colour()
+        val testColour2 = Colour()
         testColour2.createColour(255, 0, 255)
         expectedColour.add(testColour2)//pink
 
@@ -78,19 +78,19 @@ class ExampleUnitTest {
         for example yellow is a mix of green and red
          */
 
-        val test = colourMatcher()
+        val test = ColourMatcher()
         test.colours = ArrayList()
 
-        val testcolour = colour()
+        val testcolour = Colour()
         testcolour.createColour(255,255,0)//colour yellow
 
         test.findAdjacent(testcolour)
 
-        val testColour1 = colour()
-        val expectedColour : ArrayList<colour> = ArrayList()
+        val testColour1 = Colour()
+        val expectedColour : ArrayList<Colour> = ArrayList()
         testColour1.createColour(255, 0, 0)
         expectedColour.add(testColour1)//green
-        val testColour2 = colour()
+        val testColour2 = Colour()
         testColour2.createColour(0, 255, 0)
         expectedColour.add(testColour2)//red
 
@@ -113,16 +113,16 @@ class ExampleUnitTest {
         which will be black and white
          */
 
-        val test = colourMatcher()
+        val test = ColourMatcher()
         test.colours = ArrayList()
 
-        val testcolour = colour()
+        val testcolour = Colour()
         testcolour.createColour(0,0,0)//colour black
 
         test.findAdjacent(testcolour)
 
-        val testColour = colour()
-        val expectedColour : ArrayList<colour> = ArrayList()
+        val testColour = Colour()
+        val expectedColour : ArrayList<Colour> = ArrayList()
         testColour.createColour(255, 255, 255)
         expectedColour.add(testColour)//white
 
@@ -136,10 +136,10 @@ class ExampleUnitTest {
     @Test
     fun findCorrectContrastingColours()
     {
-        val test = colourMatcher()
+        val test = ColourMatcher()
         test.colours = ArrayList()
 
-        val testcolour = colour()
+        val testcolour = Colour()
         testcolour.createColour(0,255,0)//colour green
 
         test.findContrasting(testcolour)
@@ -166,11 +166,11 @@ class ExampleUnitTest {
         hex value
          */
 
-        val test = colourMatcher()
+        val test = ColourMatcher()
 
-        val result : colour = test.setupToBasicColour(102, 255, 51)
+        val result : Colour = test.setupToBasicColour(102, 255, 51)
 
-        val expected = colour()
+        val expected = Colour()
 
         expected.createColour(0,255, 0)//standard green
 
@@ -182,34 +182,34 @@ class ExampleUnitTest {
     @Test
     fun createCorrectColourList()
     {
-        val testColourList : ArrayList<colour> = ArrayList()
+        val testColourList : ArrayList<Colour> = ArrayList()
 
-        val testColour1 = colour()
+        val testColour1 = Colour()
         testColour1.createColour(255, 0,0)//colour red
         testColourList.add(testColour1)
-        val testColour2 = colour()
+        val testColour2 = Colour()
         //there should be no duplicate values so this should be deleted
         testColour2.createColour(255, 0,0)//colour red
         testColourList.add(testColour2)
-        val testColour3 = colour()
+        val testColour3 = Colour()
         testColour3.createColour(0, 0,255)//colour blue
         testColourList.add(testColour3)
-        val testColour4 = colour()
+        val testColour4 = Colour()
         testColour4.createColour(0, 255,0)//colour green
         testColourList.add(testColour4)
 
-        val test = colourMatcher()
+        val test = ColourMatcher()
         test.colours = ArrayList()
 
         //when the colour given to colourMatcher it is first added to the
         //list of matching colours as this colour will always match itself
-        val testColour5 = colour()
+        val testColour5 = Colour()
         testColour5.createColour(0, 0,0)//colour black
         test.colours.add(testColour5)
 
         test.addColour(testColourList)
 
-        val result : ArrayList<colour> = test.colours
+        val result : ArrayList<Colour> = test.colours
 
 
         assertEquals("check size",4, result.size)
@@ -259,11 +259,11 @@ class ExampleUnitTest {
     @Test
     fun convertStringToColourTest()
     {
-        val test = dataTranslation()
+        val test = DataTranslation()
 
         val testValue = "0x0000FF"
 
-        test.StringToRGB(testValue)
+        test.stringToRGB(testValue)
 
         val expectedBlue = 255
 
@@ -276,15 +276,15 @@ class ExampleUnitTest {
     @Test
     fun convertRGBToHexStringTest()
     {
-        val test = dataTranslation()
+        val test = DataTranslation()
 
         val testRedAmount = 255
         val testGreenAmount = 5
         val testBlueAmount = 0
 
-        val hexString = test.RGBToHexString(testRedAmount, testGreenAmount, testBlueAmount)
+        val hexString = test.rgbToHexString(testRedAmount, testGreenAmount, testBlueAmount)
 
-        test.StringToRGB(hexString)
+        test.stringToRGB(hexString)
 
         val expectedRed = 255
         val expectedGreen = 5
@@ -308,7 +308,7 @@ class ExampleUnitTest {
         input.add(null)
         input.add(6.5)
 
-        val dataConverter = dataTranslation()
+        val dataConverter = DataTranslation()
 
         val result : DoubleArray = dataConverter.toDoubleArray(input)
 
@@ -330,7 +330,7 @@ class ExampleUnitTest {
         input.add(null)
         input.add(6)
 
-        val dataConverter = dataTranslation()
+        val dataConverter = DataTranslation()
 
         val result : IntArray = dataConverter.toIntArray(input)
 
@@ -351,7 +351,7 @@ class ExampleUnitTest {
         input.add(null)
         input.add("B")
 
-        val dataConverter = dataTranslation()
+        val dataConverter = DataTranslation()
 
         val result : Array<String> = dataConverter.toStringArray(input)
 
@@ -368,9 +368,9 @@ class ExampleUnitTest {
 
     //search manager tests
 
-    private fun setupUserInfo() : user
+    private fun setupUserInfo() : User
     {
-        val testUser = user()
+        val testUser = User()
 
         testUser.userAge = "adult"
         testUser.userGender = "female"
@@ -381,9 +381,9 @@ class ExampleUnitTest {
         return testUser
     }
 
-    private fun setupClothingInfo() : clothing
+    private fun setupClothingInfo() : Clothing
     {
-        val testClothing = clothing()
+        val testClothing = Clothing()
 
         testClothing.clothingType = "dress"
         testClothing.clothingSeason = "summer"
@@ -399,9 +399,9 @@ class ExampleUnitTest {
     fun searchManagerTest()
     {
 
-        val clothingItems : ArrayList<searchItem> = ArrayList()
+        val clothingItems : ArrayList<SearchItem> = ArrayList()
 
-        val item1 = searchItem()
+        val item1 = SearchItem()
         item1.age = "adult"
         item1.colour = "0x000000"//colour black
         item1.gender = "female"
@@ -414,7 +414,7 @@ class ExampleUnitTest {
 
         clothingItems.add(item1)
 
-        val item2 = searchItem()
+        val item2 = SearchItem()
         item2.age = "adult"
         item2.colour = "0x00FFFF"//colour light blue
         item2.gender = "female"
@@ -427,7 +427,7 @@ class ExampleUnitTest {
 
         clothingItems.add(item2)
 
-        val item3 = searchItem()
+        val item3 = SearchItem()
         item3.age = "adult"
         item3.colour = "0x00FFFF"//colour light blue
         item3.gender = "male"
@@ -440,7 +440,7 @@ class ExampleUnitTest {
 
         clothingItems.add(item3)
 
-        val testSearch = searchManager()
+        val testSearch = SearchManager()
 
         testSearch.setupUserInfo(setupUserInfo())
 
@@ -461,9 +461,9 @@ class ExampleUnitTest {
     fun searchManagerTestNoPossibleMatches()
     {
 
-        val clothingItems : ArrayList<searchItem> = ArrayList()
+        val clothingItems : ArrayList<SearchItem> = ArrayList()
 
-        val item1 = searchItem()
+        val item1 = SearchItem()
         item1.age = "adult"
         item1.colour = "0x000000"//colour black
         item1.gender = "female"
@@ -476,7 +476,7 @@ class ExampleUnitTest {
 
         clothingItems.add(item1)
 
-        val item2 = searchItem()
+        val item2 = SearchItem()
         item2.age = "adult"
         item2.colour = "0x00FFFF"//colour light blue
         item2.gender = "female"
@@ -489,7 +489,7 @@ class ExampleUnitTest {
 
         clothingItems.add(item2)
 
-        val item3 = searchItem()
+        val item3 = SearchItem()
         item3.age = "adult"
         item3.colour = "0x00FFFF"//colour light blue
         item3.gender = "male"
@@ -502,7 +502,7 @@ class ExampleUnitTest {
 
         clothingItems.add(item3)
 
-        val testSearch = searchManager()
+        val testSearch = SearchManager()
 
         testSearch.setupUserInfo(setupUserInfo())
 
@@ -520,7 +520,7 @@ class ExampleUnitTest {
     fun searchManagerTestMatchColour()
     {
 
-        val item1 = searchItem()
+        val item1 = SearchItem()
         item1.age = "adult"
         item1.colour = "0x00FFFF"//colour light blue
         item1.gender = "female"
@@ -531,7 +531,7 @@ class ExampleUnitTest {
         item1.imageURL = "test item 1 image location"
         item1.descriptionURL = "test item 1 description location"
 
-        val testSearch = searchManager()
+        val testSearch = SearchManager()
 
         testSearch.setupUserInfo(setupUserInfo())
 
@@ -548,7 +548,7 @@ class ExampleUnitTest {
     fun searchManagerTestMatchUserDescription()
     {
 
-        val item1 = searchItem()
+        val item1 = SearchItem()
         item1.age = "adult"
         item1.colour = "0x000000"//colour black
         item1.gender = "female"
@@ -560,7 +560,7 @@ class ExampleUnitTest {
         item1.descriptionURL = "test item 1 description location"
 
 
-        val testSearch = searchManager()
+        val testSearch = SearchManager()
 
         testSearch.setupUserInfo(setupUserInfo())
 
@@ -577,7 +577,7 @@ class ExampleUnitTest {
     fun searchManagerTestMatchUserSize()
     {
 
-        val item1 = searchItem()
+        val item1 = SearchItem()
         item1.age = "adult"
         item1.colour = "0x000000"//colour black
         item1.gender = "female"
@@ -588,7 +588,7 @@ class ExampleUnitTest {
         item1.imageURL = "test item 1 image location"
         item1.descriptionURL = "test item 1 description location"
 
-        val testSearch = searchManager()
+        val testSearch = SearchManager()
 
         testSearch.setupUserInfo(setupUserInfo())
 
@@ -604,7 +604,7 @@ class ExampleUnitTest {
     @Test
     fun searchManagerTestUserDescription()
     {
-        val item1 = searchItem()
+        val item1 = SearchItem()
         item1.age = "adult"
         item1.colour = "0x000000"//colour black
         item1.gender = "female"
@@ -615,8 +615,7 @@ class ExampleUnitTest {
         item1.imageURL = "test item 1 image location"
         item1.descriptionURL = "test item 1 description location"
 
-
-        val testSearch = searchManager()
+        val testSearch = SearchManager()
 
         testSearch.setupUserInfo(setupUserInfo())
 
@@ -635,7 +634,7 @@ class ExampleUnitTest {
     @Test
     fun testClothingMatcher()
     {
-        val testMatcher = clothingMatcher()
+        val testMatcher = ClothingMatcher()
 
         val result = testMatcher.matcher("dress", "shoes")
 
@@ -650,7 +649,7 @@ class ExampleUnitTest {
     @Test
     fun testNoReduction()
     {
-        val testItem = itemDescription()
+        val testItem = ItemDescription()
 
         //no change in price so no reduction
         testItem.setReduction(22.0, 22.0)
@@ -665,7 +664,7 @@ class ExampleUnitTest {
     @Test
     fun test10PercentReduction()
     {
-        val testItem = itemDescription()
+        val testItem = ItemDescription()
 
         testItem.setReduction(90.0, 100.0)
 

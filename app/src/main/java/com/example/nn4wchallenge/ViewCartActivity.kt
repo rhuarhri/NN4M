@@ -12,15 +12,15 @@ import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import com.example.nn4wchallenge.database.internal.databaseCommands
-import com.example.nn4wchallenge.database.internal.databaseManager
-import com.example.nn4wchallenge.displayClothing.cartAdapter
-import com.example.nn4wchallenge.displayClothing.clothingItem
+import com.example.nn4wchallenge.database.internal.DatabaseCommands
+import com.example.nn4wchallenge.database.internal.DatabaseManager
+import com.example.nn4wchallenge.displayClothing.CartAdapter
+import com.example.nn4wchallenge.displayClothing.ClothingItem
 
 
 class ViewCartActivity : AppCompatActivity() {
 
-    private val commands : databaseCommands = databaseCommands()
+    private val commands : DatabaseCommands = DatabaseCommands()
 
     private var total : Double = 0.00
 
@@ -54,7 +54,7 @@ class ViewCartActivity : AppCompatActivity() {
             .putString(commands.Cart_Get, commands.Cart_Get)
             .build()
 
-        val getDataWorker = OneTimeWorkRequestBuilder<databaseManager>().setInputData(input).build()
+        val getDataWorker = OneTimeWorkRequestBuilder<DatabaseManager>().setInputData(input).build()
 
         WorkManager.getInstance().enqueue(getDataWorker)
 
@@ -67,15 +67,15 @@ class ViewCartActivity : AppCompatActivity() {
                 val price: DoubleArray? = workInfo.outputData.getDoubleArray(commands.Cart_price)
                 val images: Array<String>? = workInfo.outputData.getStringArray(commands.Cart_picture)
 
-                val itemList: ArrayList<clothingItem> = createItemListForAdapter(id, names, price, images)
+                val itemList: ArrayList<ClothingItem> = createItemListForAdapter(id, names, price, images)
 
-                val RVAdapter: RecyclerView.Adapter<*> = cartAdapter(applicationContext, itemList)
+                val rvAdapter: RecyclerView.Adapter<*> = CartAdapter(applicationContext, itemList)
 
                 itemsRV = findViewById<RecyclerView>(R.id.itemsRV).apply {
                     setHasFixedSize(false)
                     layoutManager = LinearLayoutManager(applicationContext)
 
-                    adapter = RVAdapter
+                    adapter = rvAdapter
                 }
             }
 
@@ -89,7 +89,7 @@ class ViewCartActivity : AppCompatActivity() {
             .putString(commands.Cart_Get_Prices, commands.Cart_Get_Prices)
             .build()
 
-        val getTotalWorker = OneTimeWorkRequestBuilder<databaseManager>().setInputData(input).build()
+        val getTotalWorker = OneTimeWorkRequestBuilder<DatabaseManager>().setInputData(input).build()
 
 
         WorkManager.getInstance().enqueue(getTotalWorker)
@@ -105,14 +105,14 @@ class ViewCartActivity : AppCompatActivity() {
     }
 
     private fun createItemListForAdapter(ids : IntArray?, name : Array<String>?, price : DoubleArray?, image : Array<String>?)
-            : ArrayList<clothingItem>
+            : ArrayList<ClothingItem>
     {
-        val itemList : ArrayList<clothingItem> = ArrayList()
+        val itemList : ArrayList<ClothingItem> = ArrayList()
 
         if (ids != null && name != null && price != null && image != null) {
             for ((i, id) in ids.withIndex()) {
 
-                itemList.add(clothingItem(ids[i], name[i], price[i].toString(), image[i]))
+                itemList.add(ClothingItem(ids[i], name[i], price[i].toString(), image[i]))
 
             }
 

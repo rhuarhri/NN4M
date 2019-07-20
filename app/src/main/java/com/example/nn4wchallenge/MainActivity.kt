@@ -14,10 +14,10 @@ import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import com.example.nn4wchallenge.database.internal.databaseCommands
-import com.example.nn4wchallenge.database.internal.databaseManager
-import com.example.nn4wchallenge.database.matchClothingHandler
-import com.example.nn4wchallenge.imageHandling.retrieveImageHandler
+import com.example.nn4wchallenge.database.internal.DatabaseCommands
+import com.example.nn4wchallenge.database.internal.DatabaseManager
+import com.example.nn4wchallenge.database.MatchClothingHandler
+import com.example.nn4wchallenge.imageHandling.RetrieveImageHandler
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity() {
     {
         doAsync {
 
-            val getImage = retrieveImageHandler(applicationContext)
+            val getImage = RetrieveImageHandler(applicationContext)
 
             val foundImage : Bitmap = getImage.getBitmapFromURL(location, topIV.height, topIV.width)
 
@@ -124,7 +124,7 @@ class MainActivity : AppCompatActivity() {
     {
         doAsync {
 
-            val getImage = retrieveImageHandler(applicationContext)
+            val getImage = RetrieveImageHandler(applicationContext)
 
             val foundImage : Bitmap = getImage.getBitmapFromFile(location, bottomIV.height, bottomIV.width)
 
@@ -138,7 +138,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupSearchThread()
     {
-            val searchWorkRequest = OneTimeWorkRequestBuilder<matchClothingHandler>()
+            val searchWorkRequest = OneTimeWorkRequestBuilder<MatchClothingHandler>()
                 .build()
 
             WorkManager.getInstance().enqueue(searchWorkRequest)
@@ -173,14 +173,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupTotalPrice()
     {
-        val commands = databaseCommands()
+        val commands = DatabaseCommands()
 
         val input : Data = Data.Builder()
             .putString(commands.Cart_DB, commands.Cart_DB)
             .putString(commands.Cart_Get_Prices, commands.Cart_Get_Prices)
             .build()
 
-        val getTotalWorker = OneTimeWorkRequestBuilder<databaseManager>().setInputData(input).build()
+        val getTotalWorker = OneTimeWorkRequestBuilder<DatabaseManager>().setInputData(input).build()
 
 
         WorkManager.getInstance().enqueue(getTotalWorker)

@@ -43,7 +43,7 @@
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/redudedPriceTXT"
+            android:id="@+id/reducedPriceTXT"
             app:layout_constraintBottom_toTopOf="@+id/cartBTN" app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="8dp" android:textColor="@color/colorPrimaryText" android:textSize="30sp"
     />
@@ -52,7 +52,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/priceTXT" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/redudedPriceTXT"
+            app:layout_constraintBottom_toTopOf="@+id/reducedPriceTXT"
             android:textSize="30sp" android:textColor="@color/colorPrimaryText"/>
     <TextView
             android:layout_width="0dp"

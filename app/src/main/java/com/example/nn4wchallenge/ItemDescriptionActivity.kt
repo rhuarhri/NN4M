@@ -1,7 +1,6 @@
 package com.example.nn4wchallenge
 
 import android.content.Intent
-import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.*
@@ -13,17 +12,15 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.example.nn4wchallenge.database.external.GetItemDescription
-import com.example.nn4wchallenge.database.internal.databaseCommands
-import com.example.nn4wchallenge.database.internal.databaseManager
-import com.example.nn4wchallenge.imageHandling.retrieveImageHandler
-import com.example.nn4wchallenge.slideShowCode.slideShowAdapter
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
+import com.example.nn4wchallenge.database.internal.DatabaseCommands
+import com.example.nn4wchallenge.database.internal.DatabaseManager
+import com.example.nn4wchallenge.imageHandling.RetrieveImageHandler
+import com.example.nn4wchallenge.slideShowCode.SlideShowAdapter
 
 class ItemDescriptionActivity : AppCompatActivity() {
 
     //private lateinit var clothingIV : ImageView
-    private lateinit var imageHandler : retrieveImageHandler
+    private lateinit var imageHandler : RetrieveImageHandler
 
     private lateinit var descriptionTXT : TextView
     private lateinit var nameTXT : TextView
@@ -48,12 +45,12 @@ class ItemDescriptionActivity : AppCompatActivity() {
 
         val descriptionlocation : String = intent.getStringExtra("description")
 
-        imageHandler = retrieveImageHandler(applicationContext)
+        imageHandler = RetrieveImageHandler(applicationContext)
         //clothingIV = findViewById(R.id.clothingPicture)
         descriptionTXT = findViewById(R.id.descriptionTXT)
         nameTXT = findViewById(R.id.nameTXT)
         priceTXT = findViewById(R.id.priceTXT)
-        reducedPriceTXT = findViewById(R.id.redudedPriceTXT)
+        reducedPriceTXT = findViewById(R.id.reducedPriceTXT)
         //imageSearchSB = findViewById(R.id.searchPictureSB)
         pictureRV = findViewById(R.id.pictureRV)
 
@@ -74,13 +71,13 @@ class ItemDescriptionActivity : AppCompatActivity() {
 
         val inputData : Data = Data.Builder().putString("url", descriptionURL).build()
 
-        val GetDescriptionWorker = OneTimeWorkRequestBuilder<GetItemDescription>()
+        val getDescriptionWorker = OneTimeWorkRequestBuilder<GetItemDescription>()
             .setInputData(inputData)
             .build()
 
-        WorkManager.getInstance().enqueue(GetDescriptionWorker)
+        WorkManager.getInstance().enqueue(getDescriptionWorker)
 
-        WorkManager.getInstance().getWorkInfoByIdLiveData(GetDescriptionWorker.id)
+        WorkManager.getInstance().getWorkInfoByIdLiveData(getDescriptionWorker.id)
             .observe(this, Observer { workInfo ->
                 if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED) {
 
@@ -134,7 +131,7 @@ class ItemDescriptionActivity : AppCompatActivity() {
                 }
                 if (workInfo != null && workInfo.state == WorkInfo.State.FAILED)
                 {
-                    descriptionTXT.setText(workInfo.outputData.getString("error").toString())
+                    descriptionTXT.text = workInfo.outputData.getString("error").toString()
                 }
             })
     }
@@ -168,21 +165,21 @@ class ItemDescriptionActivity : AppCompatActivity() {
     private fun setupRecyclerView(images : Array<String>)
     {
 
-        val RVAdapter: RecyclerView.Adapter<*> = slideShowAdapter(applicationContext, images)
+        val rvAdapter: RecyclerView.Adapter<*> = SlideShowAdapter(applicationContext, images)
 
         pictureRV.apply {
 
             setHasFixedSize(false)
             layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
 
-            adapter = RVAdapter
+            adapter = rvAdapter
         }
 
     }
 
     private fun addToCart()
     {
-        val commands = databaseCommands()
+        val commands = DatabaseCommands()
 
         val input : Data = Data.Builder()
             .putString(commands.Cart_DB, commands.Cart_DB)
@@ -192,7 +189,7 @@ class ItemDescriptionActivity : AppCompatActivity() {
             .putDouble(commands.Cart_price, price)
             .build()
 
-        val addToCartWorker = OneTimeWorkRequestBuilder<databaseManager>()
+        val addToCartWorker = OneTimeWorkRequestBuilder<DatabaseManager>()
             .setInputData(input)
             .build()
 

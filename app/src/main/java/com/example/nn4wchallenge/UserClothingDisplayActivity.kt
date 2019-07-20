@@ -12,10 +12,10 @@ import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import com.example.nn4wchallenge.database.internal.databaseCommands
-import com.example.nn4wchallenge.database.internal.databaseManager
-import com.example.nn4wchallenge.displayClothing.clothingAdapter
-import com.example.nn4wchallenge.displayClothing.clothingItem
+import com.example.nn4wchallenge.database.internal.DatabaseCommands
+import com.example.nn4wchallenge.database.internal.DatabaseManager
+import com.example.nn4wchallenge.displayClothing.ClothingAdapter
+import com.example.nn4wchallenge.displayClothing.ClothingItem
 
 class UserClothingDisplayActivity : AppCompatActivity() {
 
@@ -52,13 +52,13 @@ class UserClothingDisplayActivity : AppCompatActivity() {
         }
 
 
-        val commands = databaseCommands()
+        val commands = DatabaseCommands()
         val input : Data = Data.Builder()
             .putString(commands.Clothing_DB, commands.Clothing_DB)
             .putString(commands.Clothing_Get, commands.Clothing_Get)
             .build()
 
-        val getDataWorker = OneTimeWorkRequestBuilder<databaseManager>().setInputData(input).build()
+        val getDataWorker = OneTimeWorkRequestBuilder<DatabaseManager>().setInputData(input).build()
 
         WorkManager.getInstance().enqueue(getDataWorker)
 
@@ -94,15 +94,15 @@ class UserClothingDisplayActivity : AppCompatActivity() {
                 {
 
                     try {
-                        val itemList: ArrayList<clothingItem> = createItemListForAdapter(ids, types, seasons, images)
+                        val itemList: ArrayList<ClothingItem> = createItemListForAdapter(ids, types, seasons, images)
 
-                        val RVAdapter : RecyclerView.Adapter<*> = clothingAdapter(applicationContext, itemList)
+                        val rvAdapter : RecyclerView.Adapter<*> = ClothingAdapter(applicationContext, itemList)
 
                         clothingRV = findViewById<RecyclerView>(R.id.clothingRV).apply{
                             setHasFixedSize(false)
                             layoutManager = LinearLayoutManager(applicationContext)
 
-                            adapter = RVAdapter
+                            adapter = rvAdapter
                         }
                     }
                     catch (e : Exception)
@@ -121,14 +121,14 @@ class UserClothingDisplayActivity : AppCompatActivity() {
     }
 
     private fun createItemListForAdapter(ids : IntArray?, type : Array<String>?, season : Array<String>?, image : Array<String>?)
-    : ArrayList<clothingItem>
+    : ArrayList<ClothingItem>
     {
-        val itemList : ArrayList<clothingItem> = ArrayList()
+        val itemList : ArrayList<ClothingItem> = ArrayList()
 
         if (ids != null && type != null && season != null && image != null) {
             for ((i, id) in ids.withIndex()) {
 
-                    itemList.add(clothingItem(id, type[i], season[i], image[i]))
+                    itemList.add(ClothingItem(id, type[i], season[i], image[i]))
 
             }
         }
