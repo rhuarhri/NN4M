@@ -1,16 +1,13 @@
 package com.example.nn4wchallenge
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.provider.MediaStore
 import android.view.View
 import android.widget.*
-import androidx.work.Data
 import com.example.nn4wchallenge.AddActivitySpinners.addActivityItem
 import com.example.nn4wchallenge.AddActivitySpinners.addColourItem
 import com.example.nn4wchallenge.AddActivitySpinners.addSpinnerAdapter
@@ -18,12 +15,8 @@ import com.example.nn4wchallenge.database.internal.AddClothingHandler
 import com.example.nn4wchallenge.imageHandling.retrieveImageHandler
 import com.example.nn4wchallenge.imageHandling.saveImageHandler
 import kotlinx.android.synthetic.main.activity_add.*
-import kotlinx.android.synthetic.main.cart_item_layout.*
-import kotlinx.android.synthetic.main.cart_item_layout.clothingIV
-import kotlinx.android.synthetic.main.clothing_item_layout.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
-import java.io.File
 import kotlin.collections.ArrayList
 
 class AddActivity : AppCompatActivity() {
@@ -86,7 +79,7 @@ class AddActivity : AppCompatActivity() {
         clothingPictureIV = findViewById(R.id.pictureIV)
 
 
-        val accessCamera: permissionsHandler = permissionsHandler(this, applicationContext)
+        val accessCamera = permissionsHandler(this, applicationContext)
 
         accessCamera.cameraPermission()
         cameraBTN = findViewById(R.id.cameraBTN)
@@ -102,48 +95,8 @@ class AddActivity : AppCompatActivity() {
             }
 
 
-            //The camera could not be tested in the emulator but it could work but unknown without testing
-            //Toast.makeText(applicationContext, "camera not available", Toast.LENGTH_LONG).show()
-
-            //remove this function if camera feature in use
-            //AddManager.setPicture()
-            //imagePath = "test"
-
-            //The camera functionality would have been handled by
-            //
-
-
-            /*
-            if (accessCamera.checkCameraPermission()) {
-                Toast.makeText(applicationContext, "camera access granted", Toast.LENGTH_SHORT).show()
-                launchCamera()
-            }
-            else
-            {
-                Toast.makeText(applicationContext, "camera access not granted", Toast.LENGTH_SHORT).show()
-                accessCamera.cameraPermission()
-            }*/
-
-            //imageTest()
-
-            /*
-            var savedImage = saveImageHandler(applicationContext)
-            var fileLocation : String = ""
-
-
-            try {
-                var file = savedImage.createImageFile()
-                fileLocation = "file location is ${savedImage.savedPhotoPath}"
-            }
-            catch(e : Exception)
-            {
-                fileLocation = "error ${e.toString()}"
-            }
-
-*/
-
         }
-        saveBTN = findViewById(R.id.saveBTN)
+        saveBTN = findViewById(R.id.searchBTN)
         saveBTN.setOnClickListener {
 
             try {
@@ -185,7 +138,7 @@ class AddActivity : AppCompatActivity() {
 
     private fun goToHomeActivity()
     {
-        val goTo : Intent = Intent(applicationContext, MainActivity::class.java)
+        val goTo = Intent(applicationContext, MainActivity::class.java)
         startActivity(goTo)
     }
 
@@ -196,7 +149,7 @@ class AddActivity : AppCompatActivity() {
         //item basic list is a list of a parent class converted from list of child class
         val itemBasicList : ArrayList<addActivityItem> = itemList as ArrayList<addActivityItem>
 
-        val colourAdapter : addSpinnerAdapter = addSpinnerAdapter(applicationContext, itemBasicList)
+        val colourAdapter = addSpinnerAdapter(applicationContext, itemBasicList)
 
         colourSPN.adapter = colourAdapter
 
@@ -225,7 +178,7 @@ class AddActivity : AppCompatActivity() {
     {
         val typeSPN : Spinner = findViewById(R.id.typeSPN)
 
-        val typeAdapter : addSpinnerAdapter = addSpinnerAdapter(applicationContext, itemList)
+        val typeAdapter = addSpinnerAdapter(applicationContext, itemList)
 
         typeSPN.adapter = typeAdapter
 
@@ -255,7 +208,7 @@ class AddActivity : AppCompatActivity() {
     {
         val seasonSPN : Spinner = findViewById(R.id.seasonSPN)
 
-        val seasonAdapter : addSpinnerAdapter = addSpinnerAdapter(applicationContext, itemList)
+        val seasonAdapter = addSpinnerAdapter(applicationContext, itemList)
 
         seasonSPN.adapter = seasonAdapter
 
@@ -280,27 +233,6 @@ class AddActivity : AppCompatActivity() {
 
     }
 
-    /**
-     * test code for retriving image from url
-     * */
-    /*
-    private fun imageTest()
-    {
-        val input : Data = Data.Builder()
-            .putInt("height", clothingPictureIV.height)
-            .putInt("width", clothingPictureIV.width)
-            .putString("url", "https://images.riverisland.com//is//image//RiverIsland//739288_rollover")
-            .putString("file", "")
-            .build()
-
-        var requiredHeight : Int = clothingPictureIV.height
-        var requiredWidth : Int = clothingPictureIV.width
-        var imageURL : String = "https://images.riverisland.com//is//image//RiverIsland//739288_rollover"
-        var appContext : Context = applicationContext
-
-
-    }*/
-
 
     /**Code for camera
      * The purpose of the camera feature is to show how the user's clothes match
@@ -314,14 +246,6 @@ class AddActivity : AppCompatActivity() {
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
             }
 
-            /*
-            //capture image and save to file
-            takePictureIntent.resolveActivity(packageManager)?.also {
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, savedImage.getFileLocation())
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
-            }*/
-
-
         }
 
     }
@@ -329,22 +253,6 @@ class AddActivity : AppCompatActivity() {
     //captured image displayed
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
-        /*Toast.makeText(applicationContext, "picture added", Toast.LENGTH_LONG).show()
-        AddManager.setPicture(savedImage.photoLocation)
-        imagePath = savedImage.photoLocation
-
-        doAsync {
-
-            val foundImage : Bitmap = findImage.getBitmapFromFile(imagePath, clothingPictureIV.height, clothingPictureIV.width)
-
-            uiThread {
-                clothingPictureIV.setImageBitmap(foundImage)
-            }
-        }
-
-        Toast.makeText(applicationContext, "picture path is $imagePath", Toast.LENGTH_LONG).show()
-
-        */
 
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             val imageBitmap = data!!.extras.get("data") as Bitmap
@@ -355,14 +263,6 @@ class AddActivity : AppCompatActivity() {
             imagePath = savedImage.savedPhotoPath
 
 
-
-            //Toast.makeText(applicationContext, "picture path is ${savedImage.savedPhotoPath}", Toast.LENGTH_LONG).show()
-
-            /*
-            val imgFile = File(savedImage.savedPhotoPath)
-            if (imgFile.exists()) {
-                clothingPictureIV.setImageURI(Uri.fromFile(imgFile))
-            }*/
         }
     }
 

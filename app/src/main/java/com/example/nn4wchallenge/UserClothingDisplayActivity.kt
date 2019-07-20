@@ -126,7 +126,7 @@ class UserClothingDisplayActivity : AppCompatActivity() {
         val itemList : ArrayList<clothingItem> = ArrayList()
 
         if (ids != null && type != null && season != null && image != null) {
-            for ((i, id) in ids!!.withIndex()) {
+            for ((i, id) in ids.withIndex()) {
 
                     itemList.add(clothingItem(id, type[i], season[i], image[i]))
 

@@ -21,7 +21,7 @@ class addSpinnerAdapter(var context : Context, var itemList : ArrayList<addActiv
 
         init {
             this.ItemIcon = row?.findViewById(R.id.ItemIV) as ImageView
-            this.ItemTitleTXT = row?.findViewById(R.id.TitleTXT) as TextView
+            this.ItemTitleTXT = row.findViewById(R.id.TitleTXT) as TextView
         }
 
     }

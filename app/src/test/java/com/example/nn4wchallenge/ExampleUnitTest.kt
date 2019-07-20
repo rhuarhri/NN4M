@@ -273,6 +273,32 @@ class ExampleUnitTest {
 
     }
 
+    @Test
+    fun convertRGBToHexStringTest()
+    {
+        val test = dataTranslation()
+
+        val testRedAmount = 255
+        val testGreenAmount = 5
+        val testBlueAmount = 0
+
+        val hexString = test.RGBToHexString(testRedAmount, testGreenAmount, testBlueAmount)
+
+        test.StringToRGB(hexString)
+
+        val expectedRed = 255
+        val expectedGreen = 5
+        val expectedBlue = 0
+
+        val red : Int = test.redAmount
+        val green : Int = test.greenAmount
+        val blue : Int = test.blueAmount
+
+        assertEquals("hex string test red", expectedRed, red)
+        assertEquals("hex string test green", expectedGreen, green)
+        assertEquals("hex string test blue", expectedBlue, blue)
+    }
+
     //the threads have problems with converting array lists to arrays hence why this exists
     @Test
     fun convertDoubleArrayTest()
@@ -649,5 +675,6 @@ class ExampleUnitTest {
 
         assertEquals("10 percent reduction test", expected, result)
     }
+
 
 }

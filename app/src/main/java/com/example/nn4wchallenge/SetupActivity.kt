@@ -139,7 +139,7 @@ class SetupActivity : AppCompatActivity() {
 
         }
 
-        saveBTN = findViewById(R.id.saveBTN)
+        saveBTN = findViewById(R.id.searchBTN)
         saveBTN.setOnClickListener {
 
             if (function == "update")

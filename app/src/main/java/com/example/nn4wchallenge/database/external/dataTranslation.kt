@@ -5,15 +5,14 @@ import android.graphics.Color
 
 class dataTranslation {
 
-    public var redAmount = 0
-    public var greenAmount = 0
-    public var blueAmount = 0
+    var redAmount = 0
+    var greenAmount = 0
+    var blueAmount = 0
 
-
-    public fun StringToRGB(stringValue: String)
+    fun StringToRGB(stringValue: String)
     {
 
-        var chunks : ArrayList<String> = ArrayList()
+        val chunks : ArrayList<String> = ArrayList()
 
         var firstLetter : Char? = null
         var secondLetter : Char? = null
@@ -40,11 +39,45 @@ class dataTranslation {
         blueAmount = Integer.parseInt(chunks[3], 16)
     }
 
+    fun RGBToHexString(redAmount : Int, greenAmount : Int, blueAmount : Int) : String
+    {
+        var hexColourValue = "0x"
+
+        if (redAmount <= 16) //i.e. between 0 and F
+        {
+            hexColourValue += ("0" + Integer.toHexString(redAmount))
+        }
+        else
+        {
+            hexColourValue += Integer.toHexString(redAmount)
+        }
+
+        if (greenAmount <= 16)
+        {
+            hexColourValue += ("0" + Integer.toHexString(greenAmount))
+        }
+        else
+        {
+            hexColourValue += Integer.toHexString(greenAmount)
+        }
+
+        if (blueAmount <= 16)
+        {
+            hexColourValue += ("0" + Integer.toHexString(blueAmount))
+        }
+        else
+        {
+            hexColourValue += Integer.toHexString(blueAmount)
+        }
+
+        return hexColourValue
+    }
+
 
     //the threads have problems with converting array lists to arrays hence why this exists
-    public fun toDoubleArray(input : ArrayList<Double?>) : DoubleArray
+    fun toDoubleArray(input : ArrayList<Double?>) : DoubleArray
     {
-        val createArray : DoubleArray = DoubleArray(input.size)
+        val createArray = DoubleArray(input.size)
 
         for ((it, item) in input.withIndex())
         {
@@ -63,9 +96,9 @@ class dataTranslation {
     }
 
 
-    public fun toIntArray(input : ArrayList<Int?>) : IntArray
+    fun toIntArray(input : ArrayList<Int?>) : IntArray
     {
-        val createArray : IntArray = IntArray(input.size)
+        val createArray = IntArray(input.size)
 
         for ((it, item) in input.withIndex())
         {
@@ -83,7 +116,7 @@ class dataTranslation {
         return createArray
     }
 
-    public fun toStringArray(input : ArrayList<String?>) : Array<String>
+    fun toStringArray(input : ArrayList<String?>) : Array<String>
     {
         val createArray : Array<String?> = arrayOfNulls(input.size)
 
@@ -103,23 +136,4 @@ class dataTranslation {
         return createArray as Array<String>
     }
 
-    private fun convertToArray(input : ArrayList<*>, default : Any) : Array<*>
-    {
-        var resultArray : Array<Any?> = arrayOfNulls(input.size)
-        var iterator : Int = 0
-        for (item in input)
-        {
-            if (item != null)
-            {
-                resultArray[iterator] = default
-            }
-            else
-            {
-                resultArray[iterator] = item
-            }
-
-        }
-
-        return resultArray
-    }
 }

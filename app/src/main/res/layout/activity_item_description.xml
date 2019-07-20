@@ -7,13 +7,13 @@
         android:layout_height="match_parent"
         tools:context=".ItemDescriptionActivity">
 
-    <ImageView
+    <!--<ImageView
             android:layout_width="0dp"
             android:layout_height="0dp" app:srcCompat="@drawable/no_image_icon"
             android:id="@+id/clothingPicture" android:layout_marginTop="8dp"
             app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp" app:layout_constraintBottom_toTopOf="@+id/searchPictureSB"/>
+            android:layout_marginBottom="8dp" app:layout_constraintBottom_toTopOf="@+id/searchPictureSB"/>-->
     <ScrollView
             android:layout_width="280dp"
             android:layout_height="0dp" android:layout_marginBottom="8dp"
@@ -61,11 +61,18 @@
             app:layout_constraintBottom_toTopOf="@+id/descriptionScrV"
             android:textSize="30sp" android:textColor="@color/colorPrimaryText"
             app:layout_constraintEnd_toEndOf="@+id/descriptionScrV"/>
-    <SeekBar
+    <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="0dp"
+            android:layout_height="0dp" android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="8dp" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/priceTXT" android:id="@+id/pictureRV"/>
+    <!--<SeekBar
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/searchPictureSB" app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="8dp"
             app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp" app:layout_constraintBottom_toTopOf="@+id/nameTXT"/>
+            android:layout_marginBottom="8dp" app:layout_constraintBottom_toTopOf="@+id/nameTXT"/>-->
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -62,7 +62,7 @@ class matchClothingHandler (appContext: Context, workerParams: WorkerParameters)
                     for (searchItem in searchResults) {
                         imageURLList.add(searchItem.image)
                         itemDescriptionURLList.add(searchItem.descriptionLocation)
-                        userClothingImage.add(item.clothingImageLocation.toString())
+                        userClothingImage.add(item.clothingImageLocation)
 
                     }
                 }
@@ -75,7 +75,7 @@ class matchClothingHandler (appContext: Context, workerParams: WorkerParameters)
     {
         if (availableClothing.isEmpty())
         {
-            val jsonOnline : onlineDatabase = onlineDatabase()
+            val jsonOnline = onlineDatabase()
             try
             {
                 availableClothing =  jsonOnline.getAvailableClothes()
@@ -119,8 +119,6 @@ class matchClothingHandler (appContext: Context, workerParams: WorkerParameters)
             .putStringArray("userClothing", userClothingArray)
             .build()
 
-
-
         if (error == "" || error == null)
         {
             return Result.success(output)
@@ -130,7 +128,6 @@ class matchClothingHandler (appContext: Context, workerParams: WorkerParameters)
             return Result.failure(output)
         }
 
-        //return Result.success(output)
     }
 
 

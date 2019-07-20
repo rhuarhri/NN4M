@@ -120,7 +120,9 @@ class WelcomeActivity : AppCompatActivity() {
 
     private fun goToQuickSearch() {
         //might be implemented in the future
-        Toast.makeText(applicationContext, "Functionality not available", Toast.LENGTH_SHORT).show()
+        //Toast.makeText(applicationContext, "Functionality not available", Toast.LENGTH_SHORT).show()
+        val goTo = Intent(applicationContext, QuickSearchActivity::class.java)
+        startActivity(goTo)
     }
 
     private fun checkSetup() {

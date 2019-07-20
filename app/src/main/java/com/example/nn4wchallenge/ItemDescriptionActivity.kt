@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.*
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
@@ -14,12 +16,13 @@ import com.example.nn4wchallenge.database.external.GetItemDescription
 import com.example.nn4wchallenge.database.internal.databaseCommands
 import com.example.nn4wchallenge.database.internal.databaseManager
 import com.example.nn4wchallenge.imageHandling.retrieveImageHandler
+import com.example.nn4wchallenge.slideShowCode.slideShowAdapter
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
 class ItemDescriptionActivity : AppCompatActivity() {
 
-    private lateinit var clothingIV : ImageView
+    //private lateinit var clothingIV : ImageView
     private lateinit var imageHandler : retrieveImageHandler
 
     private lateinit var descriptionTXT : TextView
@@ -27,7 +30,9 @@ class ItemDescriptionActivity : AppCompatActivity() {
     private lateinit var priceTXT : TextView
     private lateinit var reducedPriceTXT : TextView
 
-    private lateinit var imageSearchSB : SeekBar
+    //private lateinit var imageSearchSB : SeekBar
+
+    private lateinit var pictureRV : RecyclerView
 
     private lateinit var cartBTN : Button
 
@@ -44,12 +49,14 @@ class ItemDescriptionActivity : AppCompatActivity() {
         val descriptionlocation : String = intent.getStringExtra("description")
 
         imageHandler = retrieveImageHandler(applicationContext)
-        clothingIV = findViewById(R.id.clothingPicture)
+        //clothingIV = findViewById(R.id.clothingPicture)
         descriptionTXT = findViewById(R.id.descriptionTXT)
         nameTXT = findViewById(R.id.nameTXT)
         priceTXT = findViewById(R.id.priceTXT)
         reducedPriceTXT = findViewById(R.id.redudedPriceTXT)
-        imageSearchSB = findViewById(R.id.searchPictureSB)
+        //imageSearchSB = findViewById(R.id.searchPictureSB)
+        pictureRV = findViewById(R.id.pictureRV)
+
         cartBTN = findViewById(R.id.cartBTN)
 
         if (descriptionlocation == "" || descriptionlocation == "null")
@@ -103,6 +110,7 @@ class ItemDescriptionActivity : AppCompatActivity() {
 
                     if (imageURLs.isNotEmpty())
                     {
+                        /*
                         itemImage = imageURLs[0]
 
                         doAsync{
@@ -113,7 +121,9 @@ class ItemDescriptionActivity : AppCompatActivity() {
                             }
                         }
                         
-                        setupSeekBar()
+                        setupSeekBar()*/
+
+                        setupRecyclerView(imageURLs)
                     }
 
                     cartBTN.setOnClickListener {
@@ -129,6 +139,7 @@ class ItemDescriptionActivity : AppCompatActivity() {
             })
     }
 
+    /*
     private fun setupSeekBar()
     {
         imageSearchSB.max = (imageURLs.size - 1)
@@ -152,6 +163,21 @@ class ItemDescriptionActivity : AppCompatActivity() {
                 }
             }
         })
+    }*/
+
+    private fun setupRecyclerView(images : Array<String>)
+    {
+
+        val RVAdapter: RecyclerView.Adapter<*> = slideShowAdapter(applicationContext, images)
+
+        pictureRV.apply {
+
+            setHasFixedSize(false)
+            layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
+
+            adapter = RVAdapter
+        }
+
     }
 
     private fun addToCart()

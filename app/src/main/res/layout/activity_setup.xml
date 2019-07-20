@@ -92,7 +92,7 @@
     <Button
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:id="@+id/saveBTN" android:layout_marginEnd="8dp" app:layout_constraintEnd_toEndOf="parent"
+            android:id="@+id/searchBTN" android:layout_marginEnd="8dp" app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"
             android:background="@drawable/rounded_btn" android:foreground="@drawable/save_icon"/>

@@ -56,7 +56,6 @@ class ViewCartActivity : AppCompatActivity() {
 
         val getDataWorker = OneTimeWorkRequestBuilder<databaseManager>().setInputData(input).build()
 
-
         WorkManager.getInstance().enqueue(getDataWorker)
 
         WorkManager.getInstance().getWorkInfoByIdLiveData(getDataWorker.id).observe(this, Observer {
@@ -111,7 +110,7 @@ class ViewCartActivity : AppCompatActivity() {
         val itemList : ArrayList<clothingItem> = ArrayList()
 
         if (ids != null && name != null && price != null && image != null) {
-            for ((i, id) in ids!!.withIndex()) {
+            for ((i, id) in ids.withIndex()) {
 
                 itemList.add(clothingItem(ids[i], name[i], price[i].toString(), image[i]))
 
