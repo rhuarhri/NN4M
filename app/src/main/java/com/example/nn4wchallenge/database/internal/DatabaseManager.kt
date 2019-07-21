@@ -9,10 +9,15 @@ import com.example.nn4wchallenge.database.internal.clothingDatabaseCode.Clothing
 import com.example.nn4wchallenge.database.internal.userDatabaseCode.UserDatabaseHandler
 
 
-/*This class exists to be an interface for the data base.
-This makes it easier to maintain as changes made to the
-database won't effect the rest fo the app if this class
-does not change.
+/*This class exists to be an interface for the apps internal data base.
+This makes it easier to maintain as the app can send a request to this
+class which it will then check and complete the request. This makes it
+easier because more functionality can be added to the apps data base
+which won't effect the rest of the app as the app can still make the
+same requests even if the data base has changed.
+
+More like an event handler than an interface
+
  */
 class DatabaseManager (appContext: Context, workerParams: WorkerParameters)
     : Worker(appContext, workerParams) {

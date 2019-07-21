@@ -4,16 +4,16 @@ import androidx.work.*
 import java.util.*
 import kotlin.collections.ArrayList
 
-class SetupManager (/*var context: Context?*/){
+class SetupManager {
 
     private val commands : DatabaseCommands = DatabaseCommands()
 
     //Code for setup procedure
-    private var genderList : ArrayList<item> = ArrayList()
-    private var ageList : ArrayList<item> = ArrayList()
-    private var chestSizeList : ArrayList<item> = ArrayList()
-    private var waistSizeList : ArrayList<item> = ArrayList()
-    private var shoeSizeList : ArrayList<item> = ArrayList()
+    private var genderList : ArrayList<Item> = ArrayList()
+    private var ageList : ArrayList<Item> = ArrayList()
+    private var chestSizeList : ArrayList<Item> = ArrayList()
+    private var waistSizeList : ArrayList<Item> = ArrayList()
+    private var shoeSizeList : ArrayList<Item> = ArrayList()
 
     //values used to identify function
     val GENDER : String = "gender"
@@ -27,7 +27,7 @@ class SetupManager (/*var context: Context?*/){
     This class exists in order to make the deciphering of a spinner item easy and
     ensure that the user has the necessary information to make a decision
      */
-    private class item()
+    private class Item
     {
         //displayed on a spinner
         var title : String = ""
@@ -99,11 +99,11 @@ class SetupManager (/*var context: Context?*/){
 
     }
 
-    private fun addToList(Title : String , Description : String, list : ArrayList<item>) : ArrayList<item>
+    private fun addToList(Title : String , Description : String, list : ArrayList<Item>) : ArrayList<Item>
     {
-        val returnedList : ArrayList<item> = list
+        val returnedList : ArrayList<Item> = list
 
-        val newItem = item()
+        val newItem = Item()
 
         newItem.createItem(Title, Description)
 
@@ -116,7 +116,7 @@ class SetupManager (/*var context: Context?*/){
     {
         val returnedList : ArrayList<String> = ArrayList()
 
-        var itemList : ArrayList<item> = ArrayList()
+        var itemList : ArrayList<Item> = ArrayList()
 
         if (from == GENDER)
         {
@@ -251,7 +251,7 @@ class SetupManager (/*var context: Context?*/){
         shoeSizePosition = findPosition(shoeSizeList, workInfo.outputData.getInt(commands.User_shoe_Size, 0).toString())
     }
 
-    private fun findPosition(itemList : ArrayList<item>, itemDescription : String?) : Int
+    private fun findPosition(itemList : ArrayList<Item>, itemDescription : String?) : Int
     {
         if (itemDescription == null)
         {

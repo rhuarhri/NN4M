@@ -13,6 +13,10 @@ import com.example.nn4wchallenge.database.internal.clothingDatabaseCode.Clothing
 import com.example.nn4wchallenge.database.internal.userDatabaseCode.User
 import com.example.nn4wchallenge.database.internal.userDatabaseCode.UserDatabase
 
+/*
+Go to Quick search activity for more information on what this does
+ */
+
 class QuickSearchHandler (appContext: Context, workerParams: WorkerParameters)
     : Worker(appContext, workerParams)
 {

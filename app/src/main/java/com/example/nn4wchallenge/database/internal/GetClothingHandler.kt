@@ -1,5 +1,6 @@
 package com.example.nn4wchallenge.database.internal
 
+/*
 import android.graphics.BitmapFactory
 import android.widget.ImageView
 
@@ -30,4 +31,4 @@ class GetClothingHandler {
             imageView.setImageBitmap(bitmap)
         }
     }
-}
+}*/

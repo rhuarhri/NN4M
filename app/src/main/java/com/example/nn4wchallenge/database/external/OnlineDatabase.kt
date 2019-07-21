@@ -6,13 +6,12 @@ import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
 
-
 /*
 The gets the data from the json files and converts it into something the
 app can use
  */
 
-class OnlineDatabase () {
+class OnlineDatabase {
 
     private val CLOTHING_REGISTER_URL: String =
         "https://firebasestorage.googleapis.com/v0/b/nn4mfashion.appspot.com/o/clothing%20catalog.json?alt=media&token=7b84a00d-78f3-4a98-848e-504cd9dca636"

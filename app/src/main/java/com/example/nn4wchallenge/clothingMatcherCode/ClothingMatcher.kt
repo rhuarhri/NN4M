@@ -1,5 +1,11 @@
 package com.example.nn4wchallenge.clothingMatcherCode
 
+/*
+The idea behind this class is that a matching pair of clothing should be
+worn next to each other in order to present part of or an entire
+outfit in one pair
+ */
+
 class ClothingMatcher {
 
     fun matcher(matchClothing : String, withClothing : String) : Boolean
@@ -16,6 +22,7 @@ class ClothingMatcher {
             "skirt" -> matches = getSkirtMatches()
             "top" -> matches = getTopMatches()
             "trousers" -> matches = getTrousersMatches()
+            "shoes" -> matches = getShoesMatches()
         }
 
         return matches.contains(withClothing)
@@ -115,5 +122,17 @@ class ClothingMatcher {
         trouserMatches.add("top")
 
         return trouserMatches
+    }
+
+    private fun getShoesMatches() : ArrayList<String>
+    {
+        val shoesMatches : ArrayList<String> = ArrayList()
+
+        shoesMatches.add("dress")
+        shoesMatches.add("shorts")
+        shoesMatches.add("skirt")
+        shoesMatches.add("trousers")
+
+        return shoesMatches
     }
 }

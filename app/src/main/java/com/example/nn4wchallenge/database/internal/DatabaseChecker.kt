@@ -9,6 +9,12 @@ import com.example.nn4wchallenge.database.internal.cartDatabaseCode.CartDatabase
 import com.example.nn4wchallenge.database.internal.clothingDatabaseCode.ClothingDatabase
 import com.example.nn4wchallenge.database.internal.userDatabaseCode.UserDatabase
 
+/*
+This class checks if the app's internal data base is empty.
+if it is then the user will have to go through the setup
+procedure
+ */
+
 class DatabaseChecker (appContext: Context, workerParams: WorkerParameters)
     : Worker(appContext, workerParams) {
     override fun doWork(): Result {
@@ -20,7 +26,6 @@ class DatabaseChecker (appContext: Context, workerParams: WorkerParameters)
         {
             "user" -> isDatabaseEmpty = isUserDatabaseEmpty()
             "clothing" -> isDatabaseEmpty = isClothingDatabaseEmpty()
-            "cart" -> isDatabaseEmpty = isCartDatabaseEmpty()
             null -> isDatabaseEmpty = true
         }
 
@@ -51,13 +56,4 @@ class DatabaseChecker (appContext: Context, workerParams: WorkerParameters)
         return rowsInDatabase <= 0
     }
 
-    private fun isCartDatabaseEmpty() : Boolean
-    {
-        val accessCartDB = Room.databaseBuilder(applicationContext, CartDatabase::class.java,
-            "cart-database").build()
-
-        val rowsInDatabase : Int = accessCartDB.cartDao().getAll().size
-
-        return rowsInDatabase <= 0
-    }
 }

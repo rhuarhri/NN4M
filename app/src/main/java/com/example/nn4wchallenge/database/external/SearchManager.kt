@@ -23,7 +23,7 @@ demonstrate the use of in this app.
 class SearchManager  {
 
 
-    class matchedPairs()
+    class MatchedPairs
     {
         var image : String = ""
         var descriptionLocation : String = ""
@@ -72,9 +72,9 @@ class SearchManager  {
         return userInfoAdded && clothingInfoAdded
     }
 
-    fun search(ClothingItems : ArrayList<SearchItem>) : ArrayList<matchedPairs>
+    fun search(ClothingItems : ArrayList<SearchItem>) : ArrayList<MatchedPairs>
     {
-        val results : ArrayList<matchedPairs> = ArrayList()
+        val results : ArrayList<MatchedPairs> = ArrayList()
 
         if (!readyToSearch())
         {
@@ -91,7 +91,7 @@ class SearchManager  {
                             if (matchClothing.matcher(ClothingInfo.clothingType, item.type)) {
                                 if (doesFit(item.type, item.maxSize.toInt(), item.minSize.toInt())) {
                                     //matches with user
-                                    val newPair = matchedPairs()
+                                    val newPair = MatchedPairs()
                                     newPair.createPair(item.imageURL, item.descriptionURL)
                                     results.add(newPair)
                                 }
