@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
@@ -20,6 +21,7 @@ import com.example.nn4wchallenge.database.MatchClothingHandler
 import com.example.nn4wchallenge.imageHandling.RetrieveImageHandler
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import java.io.File
 
 class MainActivity : AppCompatActivity() {
 
@@ -133,11 +135,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
     }
 
     private fun setupSearchThread()
     {
+
             val searchWorkRequest = OneTimeWorkRequestBuilder<MatchClothingHandler>()
                 .build()
 
@@ -154,18 +156,17 @@ class MainActivity : AppCompatActivity() {
                         if (clothingImages != null && userClothingImage != null) {
                             setTopImage(clothingImages?.get(currentClothingItem))
                             setBottomImage(userClothingImage?.get(currentClothingItem))
-                        }
-                        else{
+                        } else {
                             Toast.makeText(applicationContext, "no matches found", Toast.LENGTH_LONG).show()
                         }
 
                     }
 
-                    if (workInfo != null && workInfo.state == WorkInfo.State.FAILED)
-                    {
-                        val error : String? = workInfo.outputData.getString("error")
+                    if (workInfo != null && workInfo.state == WorkInfo.State.FAILED) {
+                        val error: String? = workInfo.outputData.getString("error")
 
-                        Toast.makeText(applicationContext, "search error : ${error.toString()}", Toast.LENGTH_LONG).show()
+                        Toast.makeText(applicationContext, "search error : ${error.toString()}", Toast.LENGTH_LONG)
+                            .show()
                     }
                 })
 

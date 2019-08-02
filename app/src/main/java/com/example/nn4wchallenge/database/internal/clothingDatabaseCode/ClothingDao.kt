@@ -11,6 +11,9 @@ interface ClothingDao {
     @Query("SELECT * FROM Clothing")
     fun getAll(): Array<Clothing>
 
+    @Query("SELECT image FROM Clothing WHERE id = :itemId")
+    fun getImageLocation(itemId : Int) : Array<String>
+
     @Insert
     fun insert(vararg newClothing: Clothing)
 

@@ -65,4 +65,9 @@ class SaveImageHandler (private val context : Context) {
 
     }
 
+    fun getPhotoFile():File
+    {
+        return createImageFile()
+    }
+
 }

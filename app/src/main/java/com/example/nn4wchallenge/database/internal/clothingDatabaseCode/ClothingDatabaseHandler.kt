@@ -5,6 +5,8 @@ import androidx.room.Room
 import androidx.work.Data
 import com.example.nn4wchallenge.database.external.DataTranslation
 import com.example.nn4wchallenge.database.internal.DatabaseCommands
+import com.example.nn4wchallenge.imageHandling.RemoveImageHandler
+import java.io.File
 
 class ClothingDatabaseHandler(val context : Context) {
 
@@ -69,6 +71,13 @@ class ClothingDatabaseHandler(val context : Context) {
     {
         val accessDB = Room.databaseBuilder(context, ClothingDatabase::class.java,
             "user-clothes-database").build()
+
+        val imageLocation : String = accessDB.clothingDao().getImageLocation(clothingId)[0]
+
+        val imageRemover = RemoveImageHandler()
+
+        imageRemover.removeImage(imageLocation)
+
         accessDB.clothingDao().deleteById(clothingId)
     }
 

@@ -1,13 +1,13 @@
 package com.example.nn4wchallenge
 
 import android.content.Intent
-import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.PersistableBundle
-import android.provider.MediaStore
+import android.view.TextureView
 import android.view.View
 import android.widget.*
+import androidx.camera.core.*
 import com.example.nn4wchallenge.AddActivitySpinners.AddActivityItem
 import com.example.nn4wchallenge.AddActivitySpinners.AddColourItem
 import com.example.nn4wchallenge.AddActivitySpinners.AddSpinnerAdapter
@@ -15,9 +15,11 @@ import com.example.nn4wchallenge.database.internal.AddClothingHandler
 import com.example.nn4wchallenge.imageHandling.RetrieveImageHandler
 import com.example.nn4wchallenge.imageHandling.SaveImageHandler
 import kotlinx.android.synthetic.main.activity_add.*
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
+import java.io.File
 import kotlin.collections.ArrayList
+import com.example.nn4wchallenge.cameraCode.CameraHandler
+import com.example.nn4wchallenge.imageHandling.PreviewImageHandler
+
 
 class AddActivity : AppCompatActivity() {
 
@@ -29,9 +31,14 @@ class AddActivity : AppCompatActivity() {
 
     private lateinit var findImage : RetrieveImageHandler
 
+    private lateinit var previewImage : PreviewImageHandler
+
+    private lateinit var cameraManger : CameraHandler
+
     private lateinit var cameraBTN : Button
+    private lateinit var previewDisplayBTN : Button
     private lateinit var saveBTN : Button
-    private lateinit var clothingPictureIV : ImageView
+    private lateinit var pictureTV : TextureView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,35 +50,62 @@ class AddActivity : AppCompatActivity() {
 
         findImage = RetrieveImageHandler(applicationContext)
 
+        previewImage = PreviewImageHandler(this)
+
+        pictureTV = findViewById(R.id.pictureTV)
+
+        val accessPermissions = PermissionsHandler(this, applicationContext)
+
+        val accessCamera = PermissionsHandler(this, applicationContext)
+
+        accessCamera.cameraPermission()
+        cameraBTN = findViewById(R.id.cameraBTN)
+
+        if (accessPermissions.checkCameraPermission()) {
+
+            cameraManger = CameraHandler(this, pictureTV)
+
+            cameraBTN.setOnClickListener {
+
+                val photoFile = savedImage.getPhotoFile()
+
+                cameraManger.imageCapture.takePicture(photoFile, object : ImageCapture.OnImageSavedListener
+                {
+                    override fun onImageSaved(file: File) {
+                        previewImage.showDialog(savedImage.savedPhotoPath, "Do you like this ")
+                    }
+
+                    override fun onError(useCaseError: ImageCapture.UseCaseError, message: String, cause: Throwable?) {
+                        Toast.makeText(applicationContext, "image capture failed", Toast.LENGTH_SHORT).show()
+                    }
+
+                })
+            }
+
+        } else {
+            Toast.makeText(applicationContext, "camera permission not granted", Toast.LENGTH_LONG).show()
+
+        }
+
+
+        previewDisplayBTN = findViewById(R.id.previewBTN)
+        previewDisplayBTN.setOnClickListener {
+            
+            previewImage.showDialog(savedImage.savedPhotoPath, "test")
+        }
+
 
         setUpColourSpinner(clothesData.getColourList())
         setUpTypeSpinner(clothesData.getTypeList())
         setUpSeasonSpinner(clothesData.getSeasonsList())
 
 
-        clothingPictureIV = findViewById(R.id.pictureIV)
-
-
-        val accessCamera = PermissionsHandler(this, applicationContext)
-
-        accessCamera.cameraPermission()
-        cameraBTN = findViewById(R.id.cameraBTN)
-        cameraBTN.setOnClickListener {
-
-            if (savedImage.savedPhotoPath == "")
-            {
-                launchCamera()
-            }
-            else
-            {
-                Toast.makeText(applicationContext, "image already added", Toast.LENGTH_LONG).show()
-            }
-
-
-        }
         saveBTN = findViewById(R.id.searchBTN)
         saveBTN.setOnClickListener {
 
+            if (File(savedImage.savedPhotoPath).exists())
+            {
+                AddManager.setPicture(savedImage.savedPhotoPath)
             try {
                 var error = AddManager.saveClothingItem()
                 goToHomeActivity()
@@ -80,6 +114,12 @@ class AddActivity : AppCompatActivity() {
             {
                 Toast.makeText(applicationContext, "error ${e.toString()}", Toast.LENGTH_LONG).show()
             }
+            }
+            else
+            {
+                Toast.makeText(applicationContext, "no image captured ", Toast.LENGTH_LONG).show()
+            }
+
 
         }
 
@@ -89,20 +129,13 @@ class AddActivity : AppCompatActivity() {
             colourSPN.setSelection(with(savedInstanceState) {getInt(colourKey)})
             seasonSPN.setSelection(with(savedInstanceState) {getInt(seasonKey)})
 
-            if (with(savedInstanceState) {getString(imageKey)} != "")
+            if (savedInstanceState.getString(imageKey) == null)
             {
-                AddManager.setPicture(savedImage.savedPhotoPath)
-                doAsync {
-
-                    val foundImage : Bitmap = findImage.getBitmapFromFile(
-                        savedImage.savedPhotoPath,
-                        clothingPictureIV.height,
-                        clothingPictureIV.width)
-
-                    uiThread {
-                        clothingPictureIV.setImageBitmap(foundImage)
-                    }
-                }
+                savedImage.savedPhotoPath = ""
+            }
+            else
+            {
+                savedImage.savedPhotoPath = savedInstanceState.getString(imageKey) as String
             }
         }
 
@@ -206,10 +239,214 @@ class AddActivity : AppCompatActivity() {
 
     }
 
+    /*
+    @Throws(Exception::class)
+    private fun setupCamera()
+    {
+        CameraX.unbindAll()
 
-    /**Code for camera
+        val lensFacing = CameraX.LensFacing.BACK
+
+        val aspectRatio = Rational (clothingPictureIV.getWidth(), clothingPictureIV.getHeight())
+
+        val size = Size(clothingPictureIV.getWidth(), clothingPictureIV.getHeight())
+
+        val previewConfig = PreviewConfig.Builder().apply{
+            setLensFacing(lensFacing)
+            setTargetAspectRatio(aspectRatio)
+            setTargetResolution(size)
+        }.build()
+
+        val preview = Preview(previewConfig)
+
+
+        preview.setOnPreviewOutputUpdateListener{
+                previewOutput : Preview.PreviewOutput? ->
+
+
+            val parent = clothingPictureIV.parent as ViewGroup
+            parent.removeView(clothingPictureIV)
+            parent.addView(clothingPictureIV, 0)
+
+            clothingPictureIV.surfaceTexture = previewOutput!!.surfaceTexture
+
+            updateTransform()
+
+        }
+
+
+        val imageCaptureConfig = ImageCaptureConfig.Builder().build()
+        imageCapture = ImageCapture(imageCaptureConfig)
+
+
+        cameraBTN.setOnClickListener {
+
+                try {
+                    launchCamera()
+                    //val foundImage = BitmapFactory.decodeResource(applicationContext.resources, R.drawable.no_image_icon)
+                    //showImage(foundImage)
+
+                }
+                catch (e : Exception)
+                {
+                    Toast.makeText(applicationContext, "capture image error ${e.toString()}", Toast.LENGTH_LONG).show()
+                }
+
+        }
+
+
+        CameraX.bindToLifecycle(this, preview, imageCapture)
+    }
+
+    private fun updateTransform()
+    {
+        val mx = Matrix()
+        val w = clothingPictureIV.measuredWidth
+        val h = clothingPictureIV.measuredHeight
+
+        val cX = w / 2f
+        val cY = h / 2f
+
+        var rotationDgr : Int = 0
+        val rotation : Int = clothingPictureIV.rotation.toInt()
+
+        when (rotation)
+        {
+
+            Surface.ROTATION_0 -> rotationDgr = 0
+            Surface.ROTATION_90 -> rotationDgr = 90
+            Surface.ROTATION_180 -> rotationDgr = 180
+            Surface.ROTATION_270 -> rotationDgr = 270
+        }
+
+        mx.postRotate(rotationDgr.toFloat(), cX, cY)
+        clothingPictureIV.setTransform(mx)
+
+    }
+
+    @Throws(Exception::class)
+    private fun launchCamera()
+    {
+        val photoFile = savedImage.getPhotoFile()
+
+        imageCapture.takePicture(photoFile, object : ImageCapture.OnImageSavedListener
+        {
+            override fun onImageSaved(file: File) {
+                Toast.makeText(applicationContext, "image captured", Toast.LENGTH_SHORT).show()
+                //getBitmapImage()
+                previewImage.showDialog(savedImage.savedPhotoPath, "Do you like this ")
+                }
+
+            override fun onError(useCaseError: ImageCapture.UseCaseError, message: String, cause: Throwable?) {
+                Toast.makeText(applicationContext, "image capture failed", Toast.LENGTH_SHORT).show()
+            }
+
+        }
+        )
+
+    }*/
+
+    /*
+    private fun getBitmapImage()
+    {
+        if (savedImage.savedPhotoPath != "") {
+            //doAsync {
+
+
+            try {
+                val foundImage: Bitmap = findImage.getBitmapFromFile(
+                    savedImage.savedPhotoPath,
+                    400,
+                    400
+                )
+
+
+                try {
+                    showImage(foundImage)
+                } catch (e: Exception) {
+                    Toast.makeText(
+                        applicationContext,
+                        "display image error ${e.toString()}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+            catch (e: Exception)
+            {
+                Toast.makeText(
+                    applicationContext,
+                    "decode image error ${e.toString()}",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+
+                //uiThread {
+                    //previewImage.showDialog(foundImage, savedImage.savedPhotoPath, "Do you like this image?")
+
+                    Toast.makeText(applicationContext, "Async task done", Toast.LENGTH_SHORT).show()
+
+            *
+                    try {
+                        showImage(foundImage)
+                    } catch (e: Exception) {
+                        Toast.makeText(
+                            applicationContext,
+                            "display image error ${e.toString()}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }*
+
+                //}
+
+            //}
+        }
+        else
+        {
+            Toast.makeText(applicationContext, "no image file", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    @Throws(Exception::class)
+    private fun showImage(image : Bitmap)
+    {
+        val myAlert = Dialog(this)
+        myAlert.setContentView(R.layout.image_alert_layout)
+        val titleTXT : TextView = myAlert.findViewById(R.id.TitleTXT)
+        titleTXT.text = "Do you like this image?"
+
+        val pictureIV : ImageView = myAlert.findViewById(R.id.capturedPictureIV)
+        pictureIV.setImageBitmap(image)
+
+        val likeBTN : Button = myAlert.findViewById(R.id.likeBTN)
+        likeBTN.setOnClickListener {
+
+
+
+            //myAlert.cancel()
+        }
+
+        val dislikeBTN : Button = myAlert.findViewById(R.id.dislikeBTN)
+        dislikeBTN.setOnClickListener {
+
+            val removeHandler = RemoveImageHandler()
+            if (removeHandler.removeImage(savedImage.savedPhotoPath))
+            {
+                savedImage.savedPhotoPath = ""
+            }
+
+            //myAlert.cancel()
+
+        }
+
+        myAlert.show()
+
+    }
+
+
+    *Code for camera
      * The purpose of the camera feature is to show how the user's clothes match
-    the clothes that they might be interested in.*/
+    the clothes that they might be interested in.
+
     private val REQUEST_IMAGE_CAPTURE = 1
     private fun launchCamera()
     {
@@ -237,7 +474,7 @@ class AddActivity : AppCompatActivity() {
 
 
         }
-    }
+    }*/
 
 
     //save state code
@@ -257,7 +494,7 @@ class AddActivity : AppCompatActivity() {
             outState.putInt(typeKey, typeCurrentPosition)
             outState.putInt(colourKey, colourCurrentPosition)
             outState.putInt(seasonKey, seasonCurrentPosition)
-            outState.putString(imageKey, imagePath)
+            outState.putString(imageKey, savedImage.savedPhotoPath)
         }
 
         super.onSaveInstanceState(outState, outPersistentState)

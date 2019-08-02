@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -35,7 +36,7 @@ class ViewCartActivity : AppCompatActivity() {
         buyAllBTN = findViewById(R.id.buyAllBTN)
         buyAllBTN.setOnClickListener {
 
-            goToCheckOut(total)
+            goToCheckOut()
 
         }
 
@@ -58,7 +59,7 @@ class ViewCartActivity : AppCompatActivity() {
 
         WorkManager.getInstance().enqueue(getDataWorker)
 
-        WorkManager.getInstance().getWorkInfoByIdLiveData(getDataWorker.id).observe(this, Observer {
+        WorkManager.getInstance().getWorkInfoByIdLiveData(getDataWorker.id).observe(this as LifecycleOwner, Observer {
                 workInfo ->
 
             if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED) {
@@ -121,7 +122,7 @@ class ViewCartActivity : AppCompatActivity() {
         return itemList
     }
 
-    private fun goToCheckOut(price : Double)
+    private fun goToCheckOut()
     {
         val goTo = Intent(this, PurchaseActivity::class.java).putExtra("function", "buyAll")
 

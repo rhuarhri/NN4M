@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.work.*
 import com.example.nn4wchallenge.database.internal.DatabaseChecker
@@ -119,8 +120,6 @@ class WelcomeActivity : AppCompatActivity() {
     }
 
     private fun goToQuickSearch() {
-        //might be implemented in the future
-        //Toast.makeText(applicationContext, "Functionality not available", Toast.LENGTH_SHORT).show()
         val goTo = Intent(applicationContext, QuickSearchActivity::class.java)
         startActivity(goTo)
     }
@@ -136,6 +135,16 @@ class WelcomeActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(applicationContext, "internet permission not granted", Toast.LENGTH_LONG).show()
             }
+
+        accessPermissions.cameraPermission()
+
+        if (accessPermissions.checkCameraPermission()) {
+
+
+        } else {
+            Toast.makeText(applicationContext, "camera permission not granted", Toast.LENGTH_LONG).show()
+
+        }
 
         accessPermissions.internalStoragePermission()
 

@@ -11,18 +11,17 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:id="@+id/searchBTN" android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
             android:background="@drawable/rounded_btn" android:foreground="@drawable/save_icon"/>
 
     <Spinner
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/colourSPN"
-            app:layout_constraintBottom_toTopOf="@+id/searchBTN"
-            app:layout_constraintTop_toBottomOf="@+id/cameraBTN" app:layout_constraintVertical_bias="0.100000024"
             app:layout_constraintStart_toEndOf="@+id/typeSPN" app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintEnd_toStartOf="@+id/seasonSPN"/>
+            app:layout_constraintEnd_toStartOf="@+id/seasonSPN" app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="8dp" app:layout_constraintTop_toTopOf="@+id/searchBTN"/>
     <Spinner
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -33,32 +32,33 @@
     <Spinner
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/seasonSPN" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            android:id="@+id/seasonSPN"
             app:layout_constraintTop_toTopOf="@+id/colourSPN"
             app:layout_constraintBottom_toBottomOf="@+id/colourSPN" app:layout_constraintStart_toEndOf="@+id/colourSPN"
-            app:layout_constraintHorizontal_bias="0.5"/>
+            app:layout_constraintEnd_toStartOf="@+id/searchBTN" android:layout_marginEnd="8dp"/>
     <TextureView
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:id="@+id/pictureTV" android:layout_marginTop="8dp"
             app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/cameraBTN"/>
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp" app:layout_constraintBottom_toTopOf="@+id/searchBTN"
+            app:layout_constraintEnd_toStartOf="@+id/cameraBTN" android:layout_marginEnd="8dp"/>
     <Button
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:id="@+id/cameraBTN"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
             android:background="@drawable/rounded_btn"
-            android:foreground="@drawable/camera_icon" android:layout_marginBottom="80dp"
-            app:layout_constraintBottom_toTopOf="@+id/searchBTN"
-            app:layout_constraintEnd_toStartOf="@+id/previewBTN" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="8dp"/>
+            android:foreground="@drawable/camera_icon"
+            app:layout_constraintBottom_toTopOf="@+id/previewBTN" app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="8dp"/>
     <Button
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:id="@+id/previewBTN"
-            app:layout_constraintTop_toTopOf="@+id/cameraBTN" app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginEnd="8dp" app:layout_constraintStart_toEndOf="@+id/cameraBTN"
-            app:layout_constraintHorizontal_bias="0.5" android:background="@drawable/rounded_btn"
-            android:foreground="@drawable/view_icon"/>
+            android:id="@+id/previewBTN" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp" app:layout_constraintBottom_toTopOf="@+id/searchBTN"
+            android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/cameraBTN"
+            android:background="@drawable/rounded_btn" app:layout_constraintVertical_bias="0.321"
+    />
 </androidx.constraintlayout.widget.ConstraintLayout>

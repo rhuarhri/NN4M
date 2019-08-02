@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.*
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,7 +20,7 @@ import com.example.nn4wchallenge.slideShowCode.SlideShowAdapter
 
 class ItemDescriptionActivity : AppCompatActivity() {
 
-    //private lateinit var clothingIV : ImageView
+
     private lateinit var imageHandler : RetrieveImageHandler
 
     private lateinit var descriptionTXT : TextView
@@ -27,7 +28,6 @@ class ItemDescriptionActivity : AppCompatActivity() {
     private lateinit var priceTXT : TextView
     private lateinit var reducedPriceTXT : TextView
 
-    //private lateinit var imageSearchSB : SeekBar
 
     private lateinit var pictureRV : RecyclerView
 
@@ -135,32 +135,6 @@ class ItemDescriptionActivity : AppCompatActivity() {
                 }
             })
     }
-
-    /*
-    private fun setupSeekBar()
-    {
-        imageSearchSB.max = (imageURLs.size - 1)
-
-        imageSearchSB.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener
-        {
-            override fun onStartTrackingTouch(p0: SeekBar?) {
-
-            }
-
-            override fun onStopTrackingTouch(p0: SeekBar?) {
-
-            }
-
-            override fun onProgressChanged(p0: SeekBar?, position: Int, p2: Boolean) {
-                doAsync{
-                    val foundImage: Bitmap =imageHandler.getBitmapFromURL(imageURLs[position], clothingIV.height, clothingIV.width)
-                    uiThread {
-                        clothingIV.setImageBitmap(foundImage)
-                    }
-                }
-            }
-        })
-    }*/
 
     private fun setupRecyclerView(images : Array<String>)
     {
