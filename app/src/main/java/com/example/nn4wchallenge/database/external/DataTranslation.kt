@@ -39,36 +39,24 @@ class DataTranslation {
 
     fun rgbToHexString(redAmount : Int, greenAmount : Int, blueAmount : Int) : String
     {
-        var hexColourValue = "0x"
-
-        if (redAmount <= 16) //i.e. between 0 and F
+        var hexRed = Integer.toHexString(redAmount)
+        if (hexRed.length == 1)
         {
-            hexColourValue += ("0" + Integer.toHexString(redAmount))
-        }
-        else
-        {
-            hexColourValue += Integer.toHexString(redAmount)
+            hexRed = "0$hexRed"
         }
 
-        if (greenAmount <= 16)
+        var hexGreen = Integer.toHexString(greenAmount)
+        if (hexGreen.length == 1)
         {
-            hexColourValue += ("0" + Integer.toHexString(greenAmount))
-        }
-        else
-        {
-            hexColourValue += Integer.toHexString(greenAmount)
+            hexGreen = "0$hexGreen"
         }
 
-        if (blueAmount <= 16)
+        var hexBlue = Integer.toHexString(blueAmount)
+        if (hexBlue.length == 1)
         {
-            hexColourValue += ("0" + Integer.toHexString(blueAmount))
+            hexBlue = "0$hexBlue"
         }
-        else
-        {
-            hexColourValue += Integer.toHexString(blueAmount)
-        }
-
-        return hexColourValue
+        return "ff$hexRed$hexGreen$hexBlue"
     }
 
 

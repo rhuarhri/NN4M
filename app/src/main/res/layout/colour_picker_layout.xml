@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_centerVertical="true"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="#FFFFFF"
+>
+    <TextView
+            android:text="Colour picker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/colourPreviewTXT" android:textSize="30sp"
+            android:textColor="@color/colorPrimaryText" android:textAlignment="center"/>
+    <SeekBar
+            android:id="@+id/redSB"
+            android:padding="30px"
+            android:progressDrawable="@drawable/seekbar_r_progress"
+            android:thumb="@drawable/seekbar_r_thumb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:max="255"/>
+
+    <SeekBar
+            android:id="@+id/greenSB"
+            android:padding="30px"
+            android:progressDrawable="@drawable/seekbar_g_progress"
+            android:thumb="@drawable/seekbar_g_thumb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:max="255"/>
+
+    <SeekBar
+            android:id="@+id/blueSB"
+            android:padding="30px"
+            android:progressDrawable="@drawable/seekbar_b_progress"
+            android:thumb="@drawable/seekbar_b_thumb"
+            android:layout_weight="0.9"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:max="255"/>
+
+    <LinearLayout
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="30px"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <Button
+                android:id="@+id/cancelBTN"
+                android:text="Cancel"
+                android:background="@drawable/rounded_btn"
+                android:layout_weight="0.5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:textColor="@color/colorPrimaryText"/>
+        <Button
+                android:id="@+id/okBTN"
+                android:background="@drawable/rounded_btn"
+                android:text="Apply"
+                android:layout_weight="0.5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:textColor="@color/colorPrimaryText"/>
+    </LinearLayout>
+
+
+</LinearLayout>
