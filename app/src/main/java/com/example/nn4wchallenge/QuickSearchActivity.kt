@@ -1,5 +1,6 @@
 package com.example.nn4wchallenge
 
+/*
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -33,7 +34,7 @@ class QuickSearchActivity : AppCompatActivity() {
     They open the app, go to this screen and input data about the skirt.
     The app produces some matches which the user can look through.
     The user decides to buy the skirt based on what the app has told them.
-     */
+     *
 
     private val clothesData = clothesSpinnerData()
 
@@ -217,3 +218,4 @@ class QuickSearchActivity : AppCompatActivity() {
 
     }
 }
+*/

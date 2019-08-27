@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content" android:background="#fff">
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <Button
+                android:layout_width="60dp"
+                android:layout_height="60dp" android:id="@+id/saveImageBTN"
+                app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="8dp" android:layout_marginStart="8dp"
+                android:background="@drawable/rounded_btn" android:foreground="@drawable/save_icon"/>
+        <TextView
+                android:text="Save image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/saveTitleTXT"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/saveImageBTN"
+                android:layout_marginStart="8dp" android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toStartOf="@+id/saveHelpBTN" android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="@+id/saveImageBTN"
+                android:textSize="30sp" android:textColor="@color/colorPrimaryText"/>
+        <Button
+                android:layout_width="60dp"
+                android:layout_height="60dp" android:id="@+id/cancelSaveBTN"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="8dp" app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="8dp" android:background="@drawable/rounded_btn"
+                android:foreground="@drawable/exit_icon"/>
+        <Button
+                android:layout_width="60dp"
+                android:layout_height="60dp" android:id="@+id/saveHelpBTN"
+                app:layout_constraintTop_toTopOf="parent" app:layout_constraintEnd_toStartOf="@+id/cancelSaveBTN"
+                android:layout_marginEnd="8dp" android:layout_marginTop="8dp"
+                android:background="@drawable/rounded_btn" android:foreground="@drawable/help_icon"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent" app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@+id/saveHelpBTN"
+                android:id="@+id/helpSaveInfoLayout" android:visibility="gone">
+
+            <TextView
+                    android:text="Save image for future use."
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/saveHelpMessageTXT"
+                    app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="8dp"
+                    app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginEnd="8dp" android:layout_marginStart="8dp"
+                    android:textColor="@color/colorPrimaryText" android:textSize="18sp"/>
+            <Button
+                    android:layout_width="60dp"
+                    android:layout_height="60dp" android:id="@+id/cancelSaveInfoBTN"
+                    app:layout_constraintTop_toBottomOf="@+id/saveHelpMessageTXT"
+                    app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+                    app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp" android:background="@drawable/rounded_btn"
+                    android:foreground="@drawable/exit_icon"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

@@ -261,15 +261,15 @@ class ExampleUnitTest {
     {
         val test = DataTranslation()
 
-        val testValue = "0x0000FF"
+        val testValue = "ffff0000"
 
         test.stringToRGB(testValue)
 
-        val expectedBlue = 255
+        val expectedRed = 255
 
-        val colour : Int = test.blueAmount
+        val colour : Int = test.redAmount
 
-        assertEquals("colour test", expectedBlue, colour)
+        assertEquals("colour test", expectedRed, colour)
 
     }
 
@@ -517,6 +517,114 @@ class ExampleUnitTest {
     }
 
     @Test
+    fun searchManagerSearchBasedOnColour()
+    {
+        val clothingItems : ArrayList<SearchItem> = ArrayList()
+
+        val item1 = SearchItem()
+        item1.age = "adult"
+        item1.colour = "0x000000"//colour black
+        item1.gender = "female"
+        item1.type = "shoes"
+        item1.minSize = "3"
+        item1.maxSize = "10"
+        item1.season = "summer"
+        item1.imageURL = "test item 1 image location"
+        item1.descriptionURL = "test item 1 description location"
+
+        clothingItems.add(item1)
+
+        val item2 = SearchItem()
+        item2.age = "adult"
+        item2.colour = "0x00FFFF"//colour light blue
+        item2.gender = "female"
+        item2.type = "shoes"
+        item2.minSize = "3"
+        item2.maxSize = "10"
+        item2.season = "summer"//"winter"
+        item2.imageURL = "test item 2 image location"
+        item2.descriptionURL = "test item 2 description location"
+
+        clothingItems.add(item2)
+
+        val item3 = SearchItem()
+        item3.age = "adult"
+        item3.colour = "0x00FFFF"//colour light blue
+        item3.gender = "female"
+        item3.type = "shoes"
+        item3.minSize = "3"
+        item3.maxSize = "10"
+        item3.season = "summer"
+        item3.imageURL = "test item 3 image location"
+        item3.descriptionURL = "test item 3 description location"
+
+        clothingItems.add(item3)
+
+        val testSearch = SearchManager()
+
+        testSearch.setupUserInfo(setupUserInfo())
+
+        //testSearch.setupClothingInfo(setupClothingInfo())
+
+        val testResult = testSearch.searchByColour(clothingItems, "ffff0000")
+
+        val expected = false
+
+        assertEquals("search by colour test result not empty ", expected, testResult.isEmpty())
+
+        val expected2 = "test item 2 image location"
+
+        assertEquals("search by colour image found ", expected2, testResult[0].image)
+
+    }
+
+    @Test
+    fun searchManagerFilterTest()
+    {
+        val testSearch = SearchManager()
+
+        val testItems : ArrayList<SearchManager.MatchedPairs> = ArrayList()
+
+        val item1 : SearchManager.MatchedPairs = SearchManager.MatchedPairs()
+        item1.createPair("test image 1", "test description 1")
+        item1.addAditionalInfo("shoes", "summer")
+        testItems.add(item1)
+
+        val item2 : SearchManager.MatchedPairs = SearchManager.MatchedPairs()
+        item2.createPair("test image 2", "test description 2")
+        item2.addAditionalInfo("shoes", "winter")
+        testItems.add(item2)
+
+        val item3 : SearchManager.MatchedPairs = SearchManager.MatchedPairs()
+        item3.createPair("test image 3", "test description 3")
+        item3.addAditionalInfo("dress", "summer")
+        testItems.add(item3)
+
+        val item4 : SearchManager.MatchedPairs = SearchManager.MatchedPairs()
+        item3.createPair("test image 4", "test description 4")
+        testItems.add(item4)
+
+        //the items above would be the result from the search by colour function
+        //this may need to be filtered in order to get more accurate matches
+        //Test
+        //find match for summer dress with should by summer shoes
+
+        val type : String = "dress"
+        val season : String = "summer"
+
+        val testResult = testSearch.filterSearchResult(testItems, type, season)
+
+        val expected = false
+
+        assertEquals("search filter test result not empty ", expected, testResult.isEmpty())
+
+        val expected2 = "test image 1"
+
+        assertEquals("search filter image found ", expected2, testResult[0].image)
+
+    }
+
+    @Test
     fun searchManagerTestMatchColour()
     {
 
@@ -535,9 +643,17 @@ class ExampleUnitTest {
 
         testSearch.setupUserInfo(setupUserInfo())
 
-        testSearch.setupClothingInfo(setupClothingInfo())
+        var testClothing = setupClothingInfo()
 
-        val result = testSearch.matchesColor(item1.colour)
+        testSearch.setupClothingInfo(testClothing)
+
+        val red : Int = 255
+        val green : Int = 0
+        val blue : Int = 0
+
+        val result = testSearch.matchesColor(
+            item1.colour, testClothing.clothingColorRed, testClothing.clothingColorGreen, testClothing.clothingColorBlue
+        )
 
         val expected = true
 

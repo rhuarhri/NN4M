@@ -92,10 +92,12 @@ class WelcomeActivity : AppCompatActivity() {
                         {
                             //setup required
                             goToSetupScreen()
+                            //goToMatchScreen()
                         }
                         else
                         {
-                            goToShoppingScreen()
+                            //goToShoppingScreen()
+                            goToMatchScreen()
                         }
                     }
                     //thread that check if data base is empty currently running or waiting to run
@@ -109,8 +111,8 @@ class WelcomeActivity : AppCompatActivity() {
     }
 
     private fun goToShoppingScreen() {
-        val goTo = Intent(applicationContext, MainActivity::class.java)
-        startActivity(goTo)
+        //val goTo = Intent(applicationContext, MainActivity::class.java)
+        //startActivity(goTo)
     }
 
     private fun goToSetupScreen() {
@@ -119,9 +121,15 @@ class WelcomeActivity : AppCompatActivity() {
         startActivity(goTo)
     }
 
-    private fun goToQuickSearch() {
-        val goTo = Intent(applicationContext, QuickSearchActivity::class.java)
+    private fun goToMatchScreen()
+    {
+        val goTo = Intent(applicationContext, MatchActivity::class.java)
         startActivity(goTo)
+    }
+
+    private fun goToQuickSearch() {
+        //val goTo = Intent(applicationContext, QuickSearchActivity::class.java)
+        //startActivity(goTo)
     }
 
     private fun checkSetup() {

@@ -17,12 +17,12 @@ import com.example.nn4wchallenge.database.internal.DatabaseCommands
 import com.example.nn4wchallenge.database.internal.DatabaseManager
 import com.example.nn4wchallenge.displayClothing.ClothingAdapter
 import com.example.nn4wchallenge.displayClothing.ClothingItem
+import com.example.nn4wchallenge.displayClothing.ClothingListListener
 
-class UserClothingDisplayActivity : AppCompatActivity() {
+class UserClothingDisplayActivity : AppCompatActivity(), ClothingListListener {
 
     private lateinit var settingsBTN : Button
     private lateinit var accountBTN : Button
-    private lateinit var addBTN : Button
 
     private lateinit var clothingRV : RecyclerView
 
@@ -45,14 +45,6 @@ class UserClothingDisplayActivity : AppCompatActivity() {
 
         }
 
-        addBTN = findViewById(R.id.addBTN)
-        addBTN.setOnClickListener {
-
-            val goToAddScreen = Intent(applicationContext, AddActivity::class.java)
-            startActivity(goToAddScreen)
-        }
-
-
         val commands = DatabaseCommands()
         val input : Data = Data.Builder()
             .putString(commands.Clothing_DB, commands.Clothing_DB)
@@ -73,7 +65,7 @@ class UserClothingDisplayActivity : AppCompatActivity() {
                 val types : Array<String>? = workInfo.outputData.getStringArray(commands.Clothing_type)
                 val seasons : Array<String>? = workInfo.outputData.getStringArray(commands.Clothing_season)
                 val images : Array<String>? = workInfo.outputData.getStringArray(commands.Clothing_picture)
-
+                val colours : Array<String>? = workInfo.outputData.getStringArray(commands.Clothing_color)
 
                 if (images == null)
                 {
@@ -91,13 +83,17 @@ class UserClothingDisplayActivity : AppCompatActivity() {
                 {
                     Toast.makeText(applicationContext, "no ids", Toast.LENGTH_LONG).show()
                 }
+                else if (colours == null)
+                {
+                    Toast.makeText(applicationContext, "no colours", Toast.LENGTH_LONG).show()
+                }
                 else
                 {
 
                     try {
-                        val itemList: ArrayList<ClothingItem> = createItemListForAdapter(ids, types, seasons, images)
+                        val itemList: ArrayList<ClothingItem> = createItemListForAdapter(ids, types, seasons, images, colours)
 
-                        val rvAdapter : RecyclerView.Adapter<*> = ClothingAdapter(applicationContext, itemList)
+                        val rvAdapter : RecyclerView.Adapter<*> = ClothingAdapter(applicationContext, itemList, this)
 
                         clothingRV = findViewById<RecyclerView>(R.id.clothingRV).apply{
                             setHasFixedSize(false)
@@ -121,19 +117,32 @@ class UserClothingDisplayActivity : AppCompatActivity() {
 
     }
 
-    private fun createItemListForAdapter(ids : IntArray?, type : Array<String>?, season : Array<String>?, image : Array<String>?)
+    private fun createItemListForAdapter(
+        ids : IntArray?, type : Array<String>?, season : Array<String>?, image : Array<String>?, colours : Array<String>?
+    )
     : ArrayList<ClothingItem>
     {
         val itemList : ArrayList<ClothingItem> = ArrayList()
 
-        if (ids != null && type != null && season != null && image != null) {
+        if (ids != null && type != null && season != null && image != null && colours != null) {
             for ((i, id) in ids.withIndex()) {
 
-                    itemList.add(ClothingItem(id, type[i], season[i], image[i]))
+                    itemList.add(ClothingItem(id, type[i], season[i], image[i], colours[i]))
 
             }
         }
 
         return itemList
+    }
+
+    //from recycler view
+    override fun onEditClothing(id: Int, type: String, season: String, image: String, colour: String) {
+        val goTo = Intent(applicationContext, ViewImageActivity::class.java)
+        goTo.putExtra("id", id)
+        goTo.putExtra("image", image)
+        goTo.putExtra("colour", colour)
+        goTo.putExtra("type", type)
+        goTo.putExtra("season", season)
+        startActivity(goTo)
     }
 }

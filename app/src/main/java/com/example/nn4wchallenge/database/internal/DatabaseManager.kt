@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.work.Data
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import com.example.nn4wchallenge.database.external.DataTranslation
 import com.example.nn4wchallenge.database.internal.cartDatabaseCode.CartDatabaseHandler
 import com.example.nn4wchallenge.database.internal.clothingDatabaseCode.ClothingDatabaseHandler
 import com.example.nn4wchallenge.database.internal.userDatabaseCode.UserDatabaseHandler
@@ -75,6 +76,23 @@ class DatabaseManager (appContext: Context, workerParams: WorkerParameters)
         {
             val id : Int = inputData.getInt(commands.Clothing_ID, 0)
             handler.deleteFromDatabase(id)
+            return Result.success()
+        }
+        else if (inputData.getString(commands.Clothing_Update) == commands.Clothing_Update)
+        {
+            val id : Int = inputData.getInt(commands.Clothing_ID, 0)
+            val type : String = inputData.getString(commands.Clothing_type)!!
+            val season : String = inputData.getString(commands.Clothing_season)!!
+            val imageLocation : String = inputData.getString(commands.Clothing_picture)!!
+
+            val hexColour : String = inputData.getString(commands.Clothing_color)!!
+            val converter : DataTranslation = DataTranslation()
+            converter.stringToRGB(hexColour)
+            val red : Int = converter.redAmount
+            val green : Int = converter.greenAmount
+            val blue : Int = converter.blueAmount
+
+            handler.updateInDatabase(id, type, season, imageLocation, red, green, blue)
             return Result.success()
         }
         else

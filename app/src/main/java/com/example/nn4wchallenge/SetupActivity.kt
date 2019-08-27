@@ -176,13 +176,17 @@ class SetupActivity : AppCompatActivity() {
 
     private fun goToHomeScreen()
     {
-        val goTo = Intent(applicationContext, MainActivity::class.java)
+        //val goTo = Intent(applicationContext, MainActivity::class.java)
+        //startActivity(goTo)
+        val goTo = Intent(applicationContext, MatchActivity::class.java)
         startActivity(goTo)
     }
 
     private fun goToAddClothingScreen()
     {
-        val goTo = Intent(applicationContext, AddActivity::class.java)
+        //val goTo = Intent(applicationContext, AddActivity::class.java)
+        //startActivity(goTo)
+        val goTo = Intent(applicationContext, MatchActivity::class.java)
         startActivity(goTo)
     }
 

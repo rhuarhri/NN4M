@@ -1,5 +1,6 @@
 package com.example.nn4wchallenge
 
+/*
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -474,7 +475,7 @@ class AddActivity : AppCompatActivity() {
 
 
         }
-    }*/
+    }*
 
 
     //save state code
@@ -500,3 +501,4 @@ class AddActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState, outPersistentState)
     }
 }
+*/

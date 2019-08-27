@@ -39,12 +39,12 @@
     <LinearLayout
             android:orientation="horizontal"
             android:gravity="center"
-            android:layout_marginTop="30px"
+            android:layout_marginTop="16dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
         <Button
                 android:id="@+id/cancelBTN"
-                android:text="Cancel"
+                android:text="@string/cancel_button_text"
                 android:background="@drawable/rounded_btn"
                 android:layout_weight="0.5"
                 android:layout_width="wrap_content"
@@ -52,7 +52,7 @@
         <Button
                 android:id="@+id/okBTN"
                 android:background="@drawable/rounded_btn"
-                android:text="Apply"
+                android:text="@string/apply_button_text"
                 android:layout_weight="0.5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:textColor="@color/colorPrimaryText"/>

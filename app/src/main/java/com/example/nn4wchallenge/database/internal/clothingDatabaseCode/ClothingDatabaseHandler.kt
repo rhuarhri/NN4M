@@ -11,7 +11,7 @@ import java.io.File
 class ClothingDatabaseHandler(val context : Context) {
 
     private val commands : DatabaseCommands = DatabaseCommands()
-    private val convertToArray : DataTranslation = DataTranslation()
+    private val converter : DataTranslation = DataTranslation()
 
     fun addToDatabase(type : String, season : String, picture : String, redAmount : Int, greenAmount : Int, blueAmount: Int)
     {
@@ -40,6 +40,7 @@ class ClothingDatabaseHandler(val context : Context) {
         val foundTypes : ArrayList<String?> = ArrayList()
         val foundSeasons : ArrayList<String?> = ArrayList()
         val foundImages : ArrayList<String?> = ArrayList()
+        val foundColour : ArrayList<String?> = ArrayList()
 
         for (item in foundInDataBase)
         {
@@ -49,22 +50,44 @@ class ClothingDatabaseHandler(val context : Context) {
                 foundSeasons.add(item.clothingSeason)
                 foundImages.add(item.clothingImageLocation)
 
+            foundColour.add(converter.rgbToHexString(
+                item.clothingColorRed, item.clothingColorGreen, item.clothingColorBlue
+            ))
+
         }
 
-        val ids : IntArray = convertToArray.toIntArray(foundIds)
-        val types : Array<String> = convertToArray.toStringArray(foundTypes)
-        val season : Array<String> = convertToArray.toStringArray(foundSeasons)
-        val image : Array<String> = convertToArray.toStringArray(foundImages)
-
+        val ids : IntArray = converter.toIntArray(foundIds)
+        val types : Array<String> = converter.toStringArray(foundTypes)
+        val season : Array<String> = converter.toStringArray(foundSeasons)
+        val image : Array<String> = converter.toStringArray(foundImages)
+        val color : Array<String> = converter.toStringArray(foundColour)
 
         val output : Data = Data.Builder()
             .putIntArray(commands.Clothing_ID, ids)
             .putStringArray(commands.Clothing_type, types)
             .putStringArray(commands.Clothing_season, season)
             .putStringArray(commands.Clothing_picture, image)
+            .putStringArray(commands.Clothing_color, color)
             .build()
 
         return output
+    }
+
+    fun updateInDatabase(id : Int, type : String, season : String, picture : String, redAmount : Int, greenAmount : Int, blueAmount: Int)
+    {
+        val newClothing = Clothing()
+        newClothing.id = id
+        newClothing.clothingType = type
+        newClothing.clothingSeason = season
+        newClothing.clothingImageLocation = picture
+        newClothing.clothingColorRed = redAmount
+        newClothing.clothingColorGreen = greenAmount
+        newClothing.clothingColorBlue = blueAmount
+
+        val accessDB = Room.databaseBuilder(context, ClothingDatabase::class.java,
+            "user-clothes-database").build()
+
+        accessDB.clothingDao().update(newClothing)
     }
 
     fun deleteFromDatabase(clothingId : Int)
@@ -81,8 +104,4 @@ class ClothingDatabaseHandler(val context : Context) {
         accessDB.clothingDao().deleteById(clothingId)
     }
 
-    fun updateInDatabase()
-    {
-
-    }
 }

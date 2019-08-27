@@ -113,7 +113,7 @@ class ViewCartActivity : AppCompatActivity() {
         if (ids != null && name != null && price != null && image != null) {
             for ((i, id) in ids.withIndex()) {
 
-                itemList.add(ClothingItem(ids[i], name[i], price[i].toString(), image[i]))
+                itemList.add(ClothingItem(ids[i], name[i], price[i].toString(), image[i], ""))
 
             }
 

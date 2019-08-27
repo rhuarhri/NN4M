@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content" android:background="#fff">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <ImageView
+                android:layout_width="0dp"
+                android:layout_height="350dp" app:srcCompat="@drawable/no_image_icon"
+                android:id="@+id/imagePreviewIV" app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintHorizontal_bias="1.0" android:layout_marginTop="8dp"/>
+        <Button
+                android:layout_width="60dp"
+                android:layout_height="60dp" android:id="@+id/exitBTN"
+                app:layout_constraintTop_toTopOf="@+id/imagePreviewIV"
+                app:layout_constraintEnd_toEndOf="@+id/imagePreviewIV" android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp" android:background="@drawable/exit_icon"/>
+        <Button
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:id="@+id/likeBTN"
+                app:layout_constraintTop_toBottomOf="@+id/imagePreviewIV" app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="8dp" android:background="@drawable/rounded_btn"
+                android:foreground="@drawable/like_icon"/>
+        <Button
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:id="@+id/disLikeBTN"
+                app:layout_constraintTop_toBottomOf="@+id/imagePreviewIV" app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="8dp" android:foreground="@drawable/dislike_icon"
+                android:background="@drawable/rounded_btn"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

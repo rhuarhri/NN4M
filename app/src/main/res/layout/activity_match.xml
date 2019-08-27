@@ -39,54 +39,78 @@
             android:foreground="@drawable/owned_clothes_icon"/>
     <TextureView
             android:layout_width="0dp"
-            android:layout_height="300dp"
-            android:id="@+id/camerTV"
+            android:layout_height="0dp"
+            android:id="@+id/cameraTV"
             app:layout_constraintTop_toBottomOf="@+id/cartBTN" app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-            app:layout_constraintHorizontal_bias="0.0"/>
+            app:layout_constraintHorizontal_bias="0.0"
+            android:layout_marginBottom="8dp" app:layout_constraintBottom_toTopOf="@+id/cameraBTN"/>
     <Button
             android:layout_width="70dp"
             android:layout_height="60dp"
-            android:id="@+id/cameraBTN" android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/camerTV" app:layout_constraintStart_toEndOf="@+id/flashBTN"
+            android:id="@+id/cameraBTN"
+            app:layout_constraintStart_toEndOf="@+id/flashBTN"
             app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toStartOf="@+id/viewBTN"
-            android:background="@drawable/rounded_btn" android:foreground="@drawable/camera_icon"/>
+            android:background="@drawable/rounded_btn" android:foreground="@drawable/camera_icon"
+            app:layout_constraintBottom_toTopOf="@+id/productRV" android:layout_marginBottom="8dp"/>
     <Button
             android:layout_width="70dp"
             android:layout_height="60dp"
-            android:id="@+id/flashBTN" android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/camerTV" app:layout_constraintStart_toStartOf="parent"
+            android:id="@+id/flashBTN"
+            app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="8dp" app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintEnd_toStartOf="@+id/cameraBTN" android:background="@drawable/rounded_btn"/>
+            app:layout_constraintEnd_toStartOf="@+id/cameraBTN" android:background="@drawable/rounded_btn"
+            app:layout_constraintTop_toTopOf="@+id/cameraBTN"/>
     <Button
             android:layout_width="70dp"
             android:layout_height="60dp"
-            android:id="@+id/viewBTN" android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/camerTV" app:layout_constraintEnd_toEndOf="parent"
+            android:id="@+id/viewBTN"
+            app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="8dp" app:layout_constraintStart_toEndOf="@+id/cameraBTN"
             app:layout_constraintHorizontal_bias="0.5" android:background="@drawable/rounded_btn"
-            android:foreground="@drawable/view_icon"/>
-    <ImageView
-            android:layout_width="250dp"
-            android:layout_height="0dp" app:srcCompat="@drawable/no_image_icon"
-            android:id="@+id/matchesIV" android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/flashBTN" app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintVertical_bias="1.0"/>
+            android:foreground="@drawable/view_icon"
+            app:layout_constraintTop_toTopOf="@+id/cameraBTN"/>
+    <Button
+            android:layout_width="80dp"
+            android:layout_height="80dp" android:id="@+id/filterBTN"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            android:background="@drawable/rounded_btn" android:foreground="@drawable/filter_icon"
+            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="8dp"/>
     <Button
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:id="@+id/colourBTN"
-            app:layout_constraintTop_toTopOf="@+id/camerTV"
-            app:layout_constraintEnd_toEndOf="@+id/camerTV" android:layout_marginEnd="8dp"
-            android:background="@color/colorPrimaryText"/>
+            android:background="@color/colorPrimaryText"
+            app:layout_constraintStart_toStartOf="@+id/cameraTV" android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="@+id/cameraTV"/>
+    <androidx.recyclerview.widget.RecyclerView
+            android:layout_height="100dp" app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp" app:layout_constraintEnd_toStartOf="@+id/filterBTN"
+            android:layout_marginEnd="8dp" android:id="@+id/productRV" android:layout_width="0dp"/>
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="450dp" android:id="@+id/imagePreviewFRG"
+            app:layout_constraintBottom_toBottomOf="@+id/cameraBTN" app:layout_constraintStart_toStartOf="parent"
+            android:elevation="2dp">
+
+    </FrameLayout>
     <FrameLayout
             android:layout_width="0dp"
-            android:layout_height="0dp" app:layout_constraintTop_toBottomOf="@+id/cameraBTN"
+            android:layout_height="300dp"
             app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent" android:id="@+id/colourPickerFRG"
-            android:layout_marginTop="8dp">
+            android:elevation="2dp">
+
+    </FrameLayout>
+    <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp" android:id="@+id/saveInfoFRG"
+            android:elevation="2dp">
 
     </FrameLayout>
 

@@ -1,6 +1,6 @@
 package com.example.nn4wchallenge
 
-
+/*
 import android.content.Intent
 import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
@@ -196,3 +196,4 @@ class MainActivity : AppCompatActivity() {
         })
     }
 }
+*/

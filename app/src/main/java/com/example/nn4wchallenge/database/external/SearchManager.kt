@@ -27,11 +27,19 @@ class SearchManager  {
     {
         var image : String = ""
         var descriptionLocation : String = ""
+        var type : String = ""
+        var season : String = ""
 
         fun createPair(Image : String, DescriptionLocation : String)
         {
             image = Image
             descriptionLocation = DescriptionLocation
+        }
+
+        fun addAditionalInfo(Type : String, Season : String)
+        {
+            type = Type
+            season = Season
         }
     }
 
@@ -50,7 +58,7 @@ class SearchManager  {
 
     private var type : String = ""
 
-    private var dataConversion : DataTranslation = DataTranslation()
+    //private var dataConversion : DataTranslation = DataTranslation()
 
     private var matchClothing : ClothingMatcher = ClothingMatcher()
 
@@ -86,7 +94,13 @@ class SearchManager  {
             for (item in ClothingItems)
             {
                 if (item.season == ClothingInfo.clothingSeason) {
-                    if (matchesColor(item.colour)) {
+                    if (matchesColor(
+                            item.colour,
+                            ClothingInfo.clothingColorRed,
+                            ClothingInfo.clothingColorGreen,
+                            ClothingInfo.clothingColorBlue
+                        )
+                    ) {
                         if (matchesUserDescription(item)) {
                             if (matchClothing.matcher(ClothingInfo.clothingType, item.type)) {
                                 if (doesFit(item.type, item.maxSize.toInt(), item.minSize.toInt())) {
@@ -100,7 +114,42 @@ class SearchManager  {
                         }
                     }
                 }
+            }
 
+        }
+
+        //to ensure that the clothing data gets updated
+        clothingInfoAdded = false
+        return results
+    }
+
+    fun searchByColour(ClothingItems : ArrayList<SearchItem>, UserClothesColour : String) : ArrayList<MatchedPairs>
+    {
+        val results : ArrayList<MatchedPairs> = ArrayList()
+
+        val dataConversion : DataTranslation = DataTranslation()
+        dataConversion.stringToRGB(UserClothesColour)
+        val red : Int = dataConversion.redAmount
+        val green : Int = dataConversion.greenAmount
+        val blue : Int = dataConversion.blueAmount
+
+        if (!userInfoAdded)
+        {
+            throw IllegalArgumentException("setup search must happen before searching")
+        }
+        else
+        {
+
+            for (item in ClothingItems)
+            {
+                    if (matchesColor(item.colour, red, green, blue)) {
+                        if (matchesUserDescription(item)) {
+                                    val newPair = MatchedPairs()
+                                    newPair.createPair(item.imageURL, item.descriptionURL)
+                                    newPair.addAditionalInfo(item.type, item.season)
+                                    results.add(newPair)
+                        }
+                    }
 
             }
 
@@ -111,15 +160,34 @@ class SearchManager  {
         return results
     }
 
+    fun filterSearchResult(unFilteredItems : ArrayList<MatchedPairs>, type : String, season : String) : ArrayList<MatchedPairs>
+    {
+
+        val results : ArrayList<MatchedPairs> = ArrayList()
+
+        for (item in unFilteredItems)
+        {
+            if(item.type != "" && item.season != "") {
+                if (item.season == season) {
+                    if (matchClothing.matcher(item.type, type)) {
+                        results.add(item)
+                    }
+                }
+            }
+        }
+
+        return results
+    }
 
     //public for testing
-    fun matchesColor(colour : String) : Boolean
+    fun matchesColor(colour : String, matchRed : Int, matchGreen : Int, matchBlue : Int) : Boolean
     {
+        val dataConversion : DataTranslation = DataTranslation()
         dataConversion.stringToRGB(colour)
 
         val colourM = ColourMatcher()
 
-        colourM.matchColour(ClothingInfo.clothingColorRed, ClothingInfo.clothingColorGreen, ClothingInfo.clothingColorBlue)
+        colourM.matchColour(matchRed, matchGreen, matchBlue)
 
         return colourM.doesColourMatch(dataConversion.redAmount, dataConversion.greenAmount, dataConversion.blueAmount)
 

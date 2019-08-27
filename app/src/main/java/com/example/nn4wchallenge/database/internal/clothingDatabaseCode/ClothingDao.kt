@@ -1,9 +1,6 @@
 package com.example.nn4wchallenge.database.internal.clothingDatabaseCode
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 
 @Dao
 interface ClothingDao {
@@ -16,6 +13,9 @@ interface ClothingDao {
 
     @Insert
     fun insert(vararg newClothing: Clothing)
+
+    @Update
+    fun update(vararg newClothing: Clothing)
 
     @Delete
     fun delete(oldClothing: Clothing)

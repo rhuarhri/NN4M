@@ -22,6 +22,7 @@ class DatabaseCommands {
     val Clothing_red_color = "clothingRed"
     val Clothing_blue_color = "clothingBlue"
     val Clothing_green_color = "clothingGreen"
+    val Clothing_color = "clothingColor"
 
     //database id
     val Cart_DB = "cartDB"

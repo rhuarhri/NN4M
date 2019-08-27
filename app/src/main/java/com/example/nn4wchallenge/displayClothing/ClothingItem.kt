@@ -1,11 +1,12 @@
 package com.example.nn4wchallenge.displayClothing
 
-class ClothingItem(Id : Int, Title: String, Measurement : String, ImageLocation : String) {
+class ClothingItem(Id : Int, Title: String, Measurement : String, ImageLocation : String, colour : String) {
 
     var id : Int = 0
     var title : String = ""
     var measurement : String = ""
     var imageLocation : String = ""
+    var itemColour : String = ""
 
     init
     {
@@ -13,5 +14,6 @@ class ClothingItem(Id : Int, Title: String, Measurement : String, ImageLocation 
         title = Title
         measurement = Measurement
         imageLocation = ImageLocation
+        itemColour = colour
     }
 }

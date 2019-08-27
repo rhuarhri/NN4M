@@ -1,53 +1,380 @@
 package com.example.nn4wchallenge
 
-import android.app.Fragment
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.TextureView
 import android.widget.Button
-import android.widget.FrameLayout
 import android.widget.Toast
+import androidx.camera.core.ImageCapture
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import com.example.nn4wchallenge.cameraCode.CameraHandler
+import com.example.nn4wchallenge.database.MatchColourHandler
+import com.example.nn4wchallenge.database.external.DataTranslation
+import com.example.nn4wchallenge.database.internal.AddClothingHandler
+import com.example.nn4wchallenge.fragmentCode.*
+import com.example.nn4wchallenge.imageHandling.RemoveImageHandler
+import com.example.nn4wchallenge.imageHandling.SaveImageHandler
+import com.example.nn4wchallenge.slideShowCode.SlideShowAdapter
+import com.example.nn4wchallenge.slideShowCode.SlideShowListener
+import java.io.File
 
-class MatchActivity : AppCompatActivity(), colourPicker.OnHeadlineSelectedListener {
+class MatchActivity : AppCompatActivity(), fromFragment, SlideShowListener {
 
+    private var testValue : Int = 0
+    //private lateinit var testCV : CVHandler
+    private lateinit var testImage : Bitmap
+
+    private lateinit var cameraManger : CameraHandler
+    private lateinit var savedImage : SaveImageHandler
+    private lateinit var oldFile : String
+
+    private lateinit var userClothingBTN : Button
+    private lateinit var cartBTN : Button
     private lateinit var colourBTN : Button
-    private lateinit var colourPickerDisplay : FrameLayout
+    private lateinit var cameraBTN : Button
+    private lateinit var viewImageBTN : Button
+    private lateinit var filterBTN : Button
+    private lateinit var flashBTN : Button
+    private lateinit var cameraTV : TextureView
+    private lateinit var pictureRV : RecyclerView
+
+    //information about products the user can buy
+    private lateinit var imageURLList : Array<String?>
+    private lateinit var itemDescriptionURLList : Array<String?>
+    private lateinit var typeList : Array<String?>
+    private lateinit var seasonList : Array<String?>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_match)
 
-        //colourPickerDisplay = findViewById(R.id.colourPickerFRG)
+        testImage = BitmapFactory.decodeResource(applicationContext.resources, R.drawable.test_icon)
+
+
+        cartBTN = findViewById(R.id.cartBTN)
+        cartBTN.setOnClickListener {
+            val goToViewCartScreen = Intent(applicationContext, ViewCartActivity::class.java)
+            startActivity(goToViewCartScreen)
+        }
+
+        userClothingBTN = findViewById(R.id.clothingBTN)
+        userClothingBTN.setOnClickListener {
+            val goToUserClothingDisplayScreen = Intent(applicationContext, UserClothingDisplayActivity::class.java)
+            startActivity(goToUserClothingDisplayScreen)
+        }
+
+        val accessPermissions = PermissionsHandler(this, applicationContext)
+        savedImage = SaveImageHandler(applicationContext)
+        oldFile = savedImage.savedPhotoPath
+
+        cameraTV = findViewById(R.id.cameraTV)
+        if (accessPermissions.checkCameraPermission()) {
+
+            cameraManger = CameraHandler(this, cameraTV)
+
+            cameraBTN = findViewById(R.id.cameraBTN)
+
+            cameraBTN.setOnClickListener {
+
+                val photoFile = savedImage.getPhotoFile()
+
+                cameraManger.imageCapture.takePicture(photoFile, object : ImageCapture.OnImageSavedListener
+                {
+                    override fun onImageSaved(file: File) {
+                        if (savedImage.savedPhotoPath  != oldFile)
+                        {
+                            //delete file if already exists
+                            val imageRemover: RemoveImageHandler = RemoveImageHandler()
+                            imageRemover.removeImage(oldFile)
+                        }
+
+                        /*
+                        val openFragment: FragmentTransaction = supportFragmentManager.beginTransaction()
+                        openFragment.replace(R.id.saveInfoFRG, SaveImageNotification())
+                        openFragment.commit()*/
+
+                        oldFile = savedImage.savedPhotoPath
+
+                        Toast.makeText(applicationContext, "Image captured", Toast.LENGTH_LONG).show()
+
+
+
+                       // testCV.inputImage(savedImage.savedPhotoPath)
+                    }
+
+                    override fun onError(useCaseError: ImageCapture.UseCaseError, message: String, cause: Throwable?) {
+                        Toast.makeText(applicationContext, "image capture failed", Toast.LENGTH_SHORT).show()
+                    }
+
+                })
+
+            }
+        }
+
+        viewImageBTN = findViewById(R.id.viewBTN)
+        viewImageBTN.setOnClickListener {
+            if (savedImage.savedPhotoPath == "")
+            {
+                Toast.makeText(applicationContext, "no file path", Toast.LENGTH_LONG).show()
+            }
+            else if (!File(savedImage.savedPhotoPath).exists())
+            {
+                Toast.makeText(applicationContext, "no file", Toast.LENGTH_LONG).show()
+            }
+            else {
+                val fragIn : Bundle = Bundle()
+                fragIn.putString("file", savedImage.savedPhotoPath)
+
+                val previewImage: CapturedImagePreview = CapturedImagePreview()
+                previewImage.arguments = fragIn
+                val openFragment: FragmentTransaction = supportFragmentManager.beginTransaction()
+                openFragment.replace(R.id.imagePreviewFRG, previewImage)
+                openFragment.commit()
+            }
+        }
+
         colourBTN = findViewById(R.id.colourBTN)
         colourBTN.setOnClickListener {
 
-
-            val openFragment : FragmentTransaction = getSupportFragmentManager().beginTransaction()
+            val openFragment : FragmentTransaction = supportFragmentManager.beginTransaction()
             openFragment.replace(R.id.colourPickerFRG, colourPicker())
             openFragment.commit()
 
         }
-    }
 
+        filterBTN = findViewById(R.id.filterBTN)
+        filterBTN.setOnClickListener {
+            val openFragment : FragmentTransaction = supportFragmentManager.beginTransaction()
+            openFragment.replace(R.id.colourPickerFRG, FilterHandler())
+            openFragment.commit()
+        }
 
-    override fun onArticleSelected(colourHex: String) {
-        Toast.makeText(applicationContext, "Colour is $colourHex", Toast.LENGTH_LONG).show()
-        colourBTN.setBackgroundColor(Color.parseColor(colourHex))
-    }
+        pictureRV = findViewById(R.id.productRV)
 
-/*
-    override fun onAttachFragment(fragment: androidx.fragment.app.Fragment) {
-        if (fragment is colourPicker)
-        {
-            try {
-                fragment.callback = this
+        flashBTN = findViewById(R.id.flashBTN)
+        flashBTN.setOnClickListener {
+
+            /*
+            try{
+
+                var touchedRect: Rect = Rect()
+
+                touchedRect.x = 0
+                touchedRect.y = 0
+
+                touchedRect.width = testImage.width
+                touchedRect.height = testImage.height
+
+                //convert bitmap to mat for open cv
+                val testMat = Mat()
+                val imageBMP = testImage.copy(Bitmap.Config.ARGB_8888, true)
+                Utils.bitmapToMat(imageBMP, testMat)
             }
             catch(e : Exception)
             {
-                Toast.makeText(applicationContext, "error is ${e.toString()}", Toast.LENGTH_LONG).show()
-            }
+                Toast.makeText(applicationContext, "open cv error is ${e.toString()}", Toast.LENGTH_LONG).show()
+            }*/
+
+            //setupSearch()
+            //Toast.makeText(applicationContext, "found colour is ${testCV.redAmount} : ${testCV.greenAmount} : ${testCV.blueAmount}", Toast.LENGTH_LONG).show()
+        }
+
+
+    }
+
+    private fun setupSearch()
+    {
+
+        val testColour : String = "ff000000"
+        val input: Data = Data.Builder().putString("colour", testColour).build()
+
+        val searchWorkRequest = OneTimeWorkRequestBuilder<MatchColourHandler>()
+            .setInputData(input)
+            .build()
+
+        WorkManager.getInstance().enqueue(searchWorkRequest)
+
+        WorkManager.getInstance().getWorkInfoByIdLiveData(searchWorkRequest.id)
+            .observe(this, Observer { workInfo ->
+                if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED) {
+
+                    imageURLList = workInfo.outputData.getStringArray("images")!!
+                    itemDescriptionURLList = workInfo.outputData.getStringArray("descriptions")!!
+                    typeList = workInfo.outputData.getStringArray("type")!!
+                    seasonList = workInfo.outputData.getStringArray("season")!!
+
+                    if (imageURLList.size == 0)
+                    {
+                        Toast.makeText(applicationContext, "no result found", Toast.LENGTH_LONG).show()
+                    }
+                    else
+                    {
+                        setupRecyclerView(imageURLList as Array<String>)
+                    }
+
+                }
+
+                if (workInfo != null && workInfo.state == WorkInfo.State.FAILED) {
+                    val error: String? = workInfo.outputData.getString("error")
+
+                    Toast.makeText(applicationContext, "search error : ${error.toString()}", Toast.LENGTH_LONG)
+                        .show()
+                }
+            })
+    }
+
+    private fun filterResult(type : String, season : String )
+    {
+
+        val input : Data = Data.Builder()
+            .putStringArray("image", imageURLList)
+            .putStringArray("description", itemDescriptionURLList)
+            .putStringArray("type", typeList)
+            .putStringArray("season", seasonList)
+            .putString("userType", type)
+            .putString("userSeason", season)
+            .build()
+
+
+        val searchWorkRequest = OneTimeWorkRequestBuilder<MatchColourHandler>()
+            .setInputData(input)
+            .build()
+
+        WorkManager.getInstance().enqueue(searchWorkRequest)
+
+        WorkManager.getInstance().getWorkInfoByIdLiveData(searchWorkRequest.id)
+            .observe(this, Observer { workInfo ->
+                if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED) {
+
+                    imageURLList = workInfo.outputData.getStringArray("images")!!
+                    itemDescriptionURLList = workInfo.outputData.getStringArray("descriptions")!!
+                    typeList = workInfo.outputData.getStringArray("type")!!
+                    seasonList = workInfo.outputData.getStringArray("season")!!
+
+                    if (imageURLList.size == 0)
+                    {
+                        Toast.makeText(applicationContext, "no result found", Toast.LENGTH_LONG).show()
+                    }
+                    else
+                    {
+                        setupRecyclerView(imageURLList as Array<String>)
+                    }
+
+                }
+
+                if (workInfo != null && workInfo.state == WorkInfo.State.FAILED) {
+                    val error: String? = workInfo.outputData.getString("error")
+
+                    Toast.makeText(applicationContext, "search error : ${error.toString()}", Toast.LENGTH_LONG)
+                        .show()
+                }
+            })
+
+
+    }
+
+    private fun setupRecyclerView(images : Array<String>)
+    {
+
+        val rvAdapter: RecyclerView.Adapter<*> = SlideShowAdapter(applicationContext, images, this)
+
+        pictureRV.apply {
+
+            setHasFixedSize(false)
+            layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
+
+            adapter = rvAdapter
+        }
+
+    }
+
+//from fragment info
+    private var hexColour : String = "ff000000"
+    override fun onColourSelected(colourHex: String) {
+        hexColour = colourHex
+        colourBTN.setBackgroundColor(Color.parseColor("#$colourHex"))
+    }
+
+    private var type = "dress"
+    private var season = "summer"
+    override fun onFilterChange(type: String, season: String) {
+        this.type = type
+        this.season = season
+
+        if (type == null || type == "")
+        {
+            Toast.makeText(applicationContext, "search error : no type", Toast.LENGTH_LONG)
+                .show()
+        }
+        else if (season == null || season == "")
+        {
+            Toast.makeText(applicationContext, "search error : no season", Toast.LENGTH_LONG)
+                .show()
+        }
+        else {
+            filterResult(type, season)
         }
     }
-    */
+
+    private lateinit var addManager : AddClothingHandler
+    override fun onSaveImageGranted() {
+        addManager = AddClothingHandler(applicationContext)
+        if (savedImage.savedPhotoPath != "" && File(savedImage.savedPhotoPath).exists())
+        {
+            addManager.setPicture(savedImage.savedPhotoPath)
+            addManager.setClothingType(type)
+            addManager.setClothingSeason(season)
+            val converter : DataTranslation = DataTranslation()
+            converter.stringToRGB(hexColour)
+            addManager.setClothingColour(
+                converter.redAmount, converter.greenAmount, converter.blueAmount
+            )
+            addManager.saveClothingItem()
+        }
+
+    }
+
+    override fun onProductSelected() {
+
+        val descriptionURL : String? = itemDescriptionURLList[productPosition]
+
+        if (descriptionURL != null && descriptionURL != "") {
+            val goToItemDescriptionScreen = Intent(applicationContext, ItemDescriptionActivity::class.java)
+            goToItemDescriptionScreen.putExtra("description", descriptionURL)
+            startActivity(goToItemDescriptionScreen)
+        }
+    }
+
+    //from recyclerView
+    private var productPosition : Int = 0
+    override fun onItemClick(position: Int) {
+        Toast.makeText(applicationContext, "position is $position", Toast.LENGTH_LONG).show()
+        productPosition = position
+
+        val imageURL : String? = imageURLList[productPosition]
+
+        if(imageURL != null && imageURL != "") {
+            val fragIn: Bundle = Bundle()
+            fragIn.putString("position", imageURL)
+            testValue++
+
+            val previewImage: productImagePreview = productImagePreview()
+            previewImage.arguments = fragIn
+            val openFragment: FragmentTransaction = supportFragmentManager.beginTransaction()
+            openFragment.replace(R.id.imagePreviewFRG, previewImage)
+            openFragment.commit()
+        }
+    }
+
 }

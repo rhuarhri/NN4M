@@ -17,8 +17,12 @@ import com.example.nn4wchallenge.database.internal.DatabaseCommands
 import com.example.nn4wchallenge.database.internal.DatabaseManager
 import com.example.nn4wchallenge.imageHandling.RetrieveImageHandler
 import com.example.nn4wchallenge.slideShowCode.SlideShowAdapter
+import com.example.nn4wchallenge.slideShowCode.SlideShowListener
 
-class ItemDescriptionActivity : AppCompatActivity() {
+class ItemDescriptionActivity : AppCompatActivity(), SlideShowListener {
+    override fun onItemClick(position: Int) {
+        //do nothing
+    }
 
 
     private lateinit var imageHandler : RetrieveImageHandler
@@ -139,7 +143,7 @@ class ItemDescriptionActivity : AppCompatActivity() {
     private fun setupRecyclerView(images : Array<String>)
     {
 
-        val rvAdapter: RecyclerView.Adapter<*> = SlideShowAdapter(applicationContext, images)
+        val rvAdapter: RecyclerView.Adapter<*> = SlideShowAdapter(applicationContext, images, this)
 
         pictureRV.apply {
 
@@ -176,7 +180,7 @@ class ItemDescriptionActivity : AppCompatActivity() {
 
     private fun goToHomeScreen()
     {
-        val goTo = Intent(applicationContext, MainActivity::class.java)
-        startActivity(goTo)
+        /*val goTo = Intent(applicationContext, MainActivity::class.java)
+        startActivity(goTo)*/
     }
 }

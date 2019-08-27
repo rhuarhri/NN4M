@@ -1,8 +1,11 @@
 package com.example.nn4wchallenge.displayClothing
 
 import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
@@ -13,25 +16,46 @@ import com.example.nn4wchallenge.database.internal.DatabaseManager
 import com.example.nn4wchallenge.imageHandling.RetrieveImageHandler
 
 
-class ClothingAdapter (private var context : Context, private var itemList : ArrayList<ClothingItem>)
-    : RecyclerView.Adapter<ViewHolder>()
+class ClothingAdapter (
+    private var context : Context, private var itemList : ArrayList<ClothingItem>, private val clothingListener : ClothingListListener
+    )
+    : RecyclerView.Adapter<ClothingAdapter.clothingViewHolder>()
 {
     private val imageHandler : RetrieveImageHandler = RetrieveImageHandler(context)
     val commands : DatabaseCommands = DatabaseCommands()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    class clothingViewHolder(row : View) : ViewHolder(row)
+    {
+        var itemColourTXT : TextView
+
+        init{
+            this.itemColourTXT = row.findViewById(R.id.colourTXT)
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): clothingViewHolder {
         val myLayout = LayoutInflater.from(context)
         val foundView = myLayout.inflate(R.layout.clothing_item_layout, parent, false)
-        return ViewHolder(foundView)
+        return clothingViewHolder(foundView)
     }
 
     override fun getItemCount(): Int {
         return itemList.size
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: clothingViewHolder, position: Int) {
 
         imageHandler.recyclerViewImageHandler(holder.clothingIV, itemList[position].imageLocation, true)
+
+        holder.clothingIV.setOnClickListener {
+            val id = itemList[position].id
+            val type = itemList[position].title
+            val season = itemList[position].measurement
+            val image = itemList[position].imageLocation
+            val colour = itemList[position].itemColour
+
+            clothingListener.onEditClothing(id, type, season, image, colour)
+        }
 
         holder.itemNameTXT.text = itemList[position].title
 
@@ -50,6 +74,8 @@ class ClothingAdapter (private var context : Context, private var itemList : Arr
 
             WorkManager.getInstance().enqueue(deleteDataWorker)
         }
+
+            holder.itemColourTXT.setBackgroundColor(Color.parseColor("#${itemList[position].itemColour}"))
 
     }
 
