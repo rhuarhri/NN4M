@@ -1,24 +1,40 @@
 package com.example.nn4wchallenge.OpenCVCode
 
-/*
+
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import androidx.work.Data
+import androidx.work.Worker
+import androidx.work.WorkerParameters
+import com.example.nn4wchallenge.database.external.DataTranslation
+import org.opencv.android.BaseLoaderCallback
+import org.opencv.android.LoaderCallbackInterface
+import org.opencv.android.OpenCVLoader
+import org.opencv.android.Utils
 import org.opencv.core.*
 import org.opencv.imgcodecs.Imgcodecs
 import org.opencv.imgproc.Imgproc
 import java.io.File
 import java.io.FileInputStream
 
-class CVHandler {
+/*
+Looked into the possibility that this could be run on it's own thread
+however this proved problematic
+ */
+class CVHandler /*(appContext: Context, workerParams: WorkerParameters)
+    : Worker(appContext, workerParams)*/{
+
 
     private lateinit var usedImage : Bitmap
 
-     var redAmount = 0
-     var greenAmount = 0
-     var blueAmount = 0
+    private var redAmount : Int = 0
+    private var greenAmount : Int = 0
+    private var blueAmount : Int = 0
 
-    private var mBlobColorHsv: Scalar = Scalar(255.0)
-    private lateinit var mBlobColorRgba: Scalar
+
+    private var blobColorHsv: Scalar = Scalar(255.0)
+    private lateinit var blobColorRgba: Scalar
 
     // Lower and Upper bounds for range checking in HSV color space
     private val mLowerBound = Scalar(0.0)
@@ -33,24 +49,158 @@ class CVHandler {
     private var mDilatedMask = Mat()
     private var mHierarchy = Mat()
 
-    fun inputImage(filePath : String)
+    /*
+    private val mLoaderCallback = object : BaseLoaderCallback(applicationContext) {
+        override fun onManagerConnected(status: Int) {
+            when (status) {
+                LoaderCallbackInterface.SUCCESS -> {
+                    //success
+                    //loadedSuccess = true
+                    //openCVHandler = CVHandler()
+                }
+                else -> {
+                    super.onManagerConnected(status)
+                }
+            }
+        }
+    }*/
+
+    /*
+    override fun doWork(): Result {
+
+        val filePath : String? = inputData.getString("location")
+
+        if (!OpenCVLoader.initDebug()) {
+            //Internal OpenCV library not found. Using OpenCV Manager for initialization
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_4_0, applicationContext, mLoaderCallback)
+        } else {
+            //OpenCV library found inside package. Using it!
+            mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS)
+        }
+
+        if (filePath != null)
+        {
+            inputImage(filePath)
+
+            val converter : DataTranslation = DataTranslation()
+
+            val hexColour : String = converter.rgbToHexString(redAmount, greenAmount, blueAmount)
+
+            val output : Data = Data.Builder()
+                .putString("colour", hexColour)
+                .build()
+            return Result.failure(output)
+        }
+        else
+        {
+            val output : Data = Data.Builder()
+                .putString("error", "no file path")
+                .build()
+            return Result.failure(output)
+        }
+
+    }*/
+
+
+    public fun inputImage(filePath : String)
+    {
+
+        val origin: Mat = Imgcodecs.imread(filePath)
+
+        val allImageMat = Mat()
+
+        Imgproc.cvtColor(origin, allImageMat, Imgproc.COLOR_BGR2RGB)
+
+        val imageCentreRect: Rect = Rect()
+
+        imageCentreRect.x = ((allImageMat.width() / 2) - 60)
+        imageCentreRect.y = ((allImageMat.height() / 2) - 60)
+
+        imageCentreRect.width = 60
+        imageCentreRect.height = 60
+
+        val imageCentreRgba: Mat = allImageMat.submat(imageCentreRect)
+
+        val imageCentreHsv: Mat = Mat()
+
+        Imgproc.cvtColor(imageCentreRgba, imageCentreHsv, Imgproc.COLOR_RGB2HSV_FULL)
+
+        //touchedRegionHsv = mDetector.mDilatedMask
+
+        // Calculate average color
+        blobColorHsv = Core.sumElems(imageCentreHsv)
+        val pointCount = imageCentreRect.width * imageCentreRect.height
+        for (i in 0 until blobColorHsv.`val`.size) {
+            var value = blobColorHsv.`val`[i]
+            value /= pointCount
+            blobColorHsv.`val`.set(i, value)
+        }
+
+        blobColorRgba = convertScalarHsv2Rgba(blobColorHsv)
+
+        redAmount = blobColorRgba.`val`[0].toInt()
+        greenAmount = blobColorRgba.`val`[1].toInt()
+        blueAmount = blobColorRgba.`val`[2].toInt()
+
+
+    }
+
+    public fun getColour() : String
+    {
+        val converter : DataTranslation = DataTranslation()
+
+        return converter.rgbToHexString(redAmount, greenAmount, blueAmount)
+    }
+
+    /*
+    private fun inputBitmapImage(filePath : String)
     {
         val imageFile = File(filePath)
 
         val foundImage : Bitmap? = BitmapFactory.decodeStream(FileInputStream(imageFile), null, null)
 
         if (foundImage != null) {
-            usedImage = foundImage
+            usedImage = foundImage.copy(Bitmap.Config.ARGB_8888, true)
 
-            val origin: Mat = Imgcodecs.imread(filePath)
+            val imageCentreRect: Rect = Rect()
 
-            val imgRGB: Mat = Mat()
+            imageCentreRect.x = ((usedImage.width / 2) - 60)
+            imageCentreRect.y = ((usedImage.height / 2) - 60)
 
-            Imgproc.cvtColor(origin, imgRGB, Imgproc.COLOR_BGR2BGRA)
+            imageCentreRect.width = 60
+            imageCentreRect.height = 60
 
-            edgeDetector(imgRGB)
+            //convert bitmap to mat for open cv
+            val allImageMat = Mat()
+
+
+            Utils.bitmapToMat(usedImage, allImageMat)
+
+            val imageCentreRgba: Mat = allImageMat.submat(imageCentreRect)
+
+            val imageCentreHsv: Mat = Mat()
+
+            Imgproc.cvtColor(imageCentreRgba, imageCentreHsv, Imgproc.COLOR_RGB2HSV_FULL)
+
+            //touchedRegionHsv = mDetector.mDilatedMask
+
+            // Calculate average color of touched region
+            blobColorHsv = Core.sumElems(imageCentreHsv)
+            val pointCount = imageCentreRect.width * imageCentreRect.height
+            for (i in 0 until blobColorHsv.`val`.size) {
+                var value = blobColorHsv.`val`[i]
+                value /= pointCount
+                blobColorHsv.`val`.set(i, value)
+            }
+
+            blobColorRgba = convertScalarHsv2Rgba(blobColorHsv)
+
+            redAmount = blobColorRgba.`val`[0].toInt()
+            greenAmount = blobColorRgba.`val`[1].toInt()
+            blueAmount = blobColorRgba.`val`[2].toInt()
         }
-    }
+
+    }*/
 
     private fun edgeDetector(rgbaImage : Mat)
     {
@@ -87,20 +237,20 @@ class CVHandler {
             }
         }
 
-        mBlobColorHsv = Core.sumElems(mDilatedMask)
+        blobColorHsv = Core.sumElems(mDilatedMask)
 
         val pointCount = usedImage.width * usedImage.height
-        for (i in 0 until mBlobColorHsv.`val`.size) {
-            var value = mBlobColorHsv.`val`[i]
+        for (i in 0 until blobColorHsv.`val`.size) {
+            var value = blobColorHsv.`val`[i]
             value /= pointCount
-            mBlobColorHsv.`val`.set(i, value)
+            blobColorHsv.`val`.set(i, value)
         }
 
-        mBlobColorRgba = convertScalarHsv2Rgba(mBlobColorHsv)
+        blobColorRgba = convertScalarHsv2Rgba(blobColorHsv)
 
-        redAmount = mBlobColorRgba.`val`[0].toInt()
-        greenAmount = mBlobColorRgba.`val`[1].toInt()
-        blueAmount = mBlobColorRgba.`val`[2].toInt()
+        redAmount = blobColorRgba.`val`[0].toInt()
+        greenAmount = blobColorRgba.`val`[1].toInt()
+        blueAmount = blobColorRgba.`val`[2].toInt()
 
     }
 
@@ -112,4 +262,4 @@ class CVHandler {
         return Scalar(pointMatRgba.get(0, 0))
     }
 }
-        */
+        

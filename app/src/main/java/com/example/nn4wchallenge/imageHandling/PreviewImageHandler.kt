@@ -1,5 +1,6 @@
 package com.example.nn4wchallenge.imageHandling
 
+/*
 import android.app.Dialog
 import android.content.Context
 import android.graphics.Bitmap
@@ -91,3 +92,4 @@ class PreviewImageHandler(context : Context) {
         }
     }
 }
+        */

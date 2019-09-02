@@ -4,8 +4,10 @@ package com.example.nn4wchallenge
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
@@ -42,6 +44,9 @@ class WelcomeActivity : AppCompatActivity() {
     private lateinit var searchBTN: Button
     private lateinit var shoppingBTN: Button
 
+    private lateinit var timer : CountDownTimer
+    private lateinit var timerPB : ProgressBar
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_welcome)
@@ -52,33 +57,6 @@ class WelcomeActivity : AppCompatActivity() {
         promotionIV = findViewById(R.id.promotionIV)
         promotionHandler.setPromotionImage(this, promotionIV)
 
-        searchBTN = findViewById(R.id.quickSearchBTN)
-        searchBTN.setOnClickListener {
-
-            WorkManager.getInstance().getWorkInfoByIdLiveData(checkUserDatabaseWorker.id)
-                .observe(this, Observer { workInfo ->
-                    if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED)
-                    {
-                        val output : Boolean = workInfo.outputData.getBoolean("empty", true)
-
-                        if (output)
-                        {
-                            //setup required
-                            goToSetupScreen()
-                        }
-                        else
-                        {
-                            goToQuickSearch()
-                        }
-                    }
-                    //thread that check if data base is empty currently running or waiting to run
-                    else if (workInfo != null && (workInfo.state == WorkInfo.State.RUNNING || workInfo.state == WorkInfo.State.ENQUEUED))
-                    {
-                        //do nothing this prevents the user doing anything without information from the thread
-                    }
-                })
-
-        }
         shoppingBTN = findViewById(R.id.shopBTN)
         shoppingBTN.setOnClickListener {
 

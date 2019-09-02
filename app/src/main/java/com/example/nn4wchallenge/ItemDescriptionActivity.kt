@@ -111,18 +111,6 @@ class ItemDescriptionActivity : AppCompatActivity(), SlideShowListener {
 
                     if (imageURLs.isNotEmpty())
                     {
-                        /*
-                        itemImage = imageURLs[0]
-
-                        doAsync{
-                           val foundImage: Bitmap =  imageHandler.getBitmapFromURL(imageURLs[0], clothingIV.height, clothingIV.width)
-                            
-                            uiThread {
-                                clothingIV.setImageBitmap(foundImage)
-                            }
-                        }
-                        
-                        setupSeekBar()*/
 
                         setupRecyclerView(imageURLs)
                     }
@@ -173,14 +161,12 @@ class ItemDescriptionActivity : AppCompatActivity(), SlideShowListener {
 
         WorkManager.getInstance().enqueue(addToCartWorker)
 
-        Toast.makeText(applicationContext, "item added to cart", Toast.LENGTH_SHORT).show()
-
         goToHomeScreen()
     }
 
     private fun goToHomeScreen()
     {
-        /*val goTo = Intent(applicationContext, MainActivity::class.java)
-        startActivity(goTo)*/
+        val goTo = Intent(applicationContext, MatchActivity::class.java)
+        startActivity(goTo)
     }
 }

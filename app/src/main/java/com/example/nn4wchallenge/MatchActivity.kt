@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.TextureView
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.camera.core.ImageCapture
 import androidx.fragment.app.FragmentTransaction
@@ -18,27 +19,50 @@ import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
+import com.example.nn4wchallenge.OpenCVCode.CVHandler
 import com.example.nn4wchallenge.cameraCode.CameraHandler
 import com.example.nn4wchallenge.database.MatchColourHandler
 import com.example.nn4wchallenge.database.external.DataTranslation
 import com.example.nn4wchallenge.database.internal.AddClothingHandler
+import com.example.nn4wchallenge.database.internal.DatabaseCommands
+import com.example.nn4wchallenge.database.internal.DatabaseManager
 import com.example.nn4wchallenge.fragmentCode.*
 import com.example.nn4wchallenge.imageHandling.RemoveImageHandler
 import com.example.nn4wchallenge.imageHandling.SaveImageHandler
 import com.example.nn4wchallenge.slideShowCode.SlideShowAdapter
 import com.example.nn4wchallenge.slideShowCode.SlideShowListener
+import org.opencv.android.BaseLoaderCallback
+import org.opencv.android.LoaderCallbackInterface
+import org.opencv.android.OpenCVLoader
+import org.opencv.android.Utils
+import org.opencv.core.Mat
+import org.opencv.core.Rect
 import java.io.File
 
 class MatchActivity : AppCompatActivity(), fromFragment, SlideShowListener {
 
-    private var testValue : Int = 0
-    //private lateinit var testCV : CVHandler
-    private lateinit var testImage : Bitmap
+
+    private val mLoaderCallback = object : BaseLoaderCallback(this) {
+        override fun onManagerConnected(status: Int) {
+            when (status) {
+                LoaderCallbackInterface.SUCCESS -> {
+                    //success
+                    openCVHandler = CVHandler()
+                }
+                else -> {
+                    super.onManagerConnected(status)
+                }
+            }
+        }
+    }
+
+    private lateinit var openCVHandler : CVHandler
 
     private lateinit var cameraManger : CameraHandler
     private lateinit var savedImage : SaveImageHandler
     private lateinit var oldFile : String
 
+    private lateinit var totalCostTXT : TextView
     private lateinit var userClothingBTN : Button
     private lateinit var cartBTN : Button
     private lateinit var colourBTN : Button
@@ -59,8 +83,16 @@ class MatchActivity : AppCompatActivity(), fromFragment, SlideShowListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_match)
 
-        testImage = BitmapFactory.decodeResource(applicationContext.resources, R.drawable.test_icon)
+        if (!OpenCVLoader.initDebug()) {
+            //Internal OpenCV library not found. Using OpenCV Manager for initialization
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_4_0, this, mLoaderCallback)
+        } else {
+            //OpenCV library found inside package. Using it!
+            mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS)
+        }
 
+        totalCostTXT = findViewById(R.id.totalTXT)
+        setupTotalPrice()
 
         cartBTN = findViewById(R.id.cartBTN)
         cartBTN.setOnClickListener {
@@ -99,18 +131,16 @@ class MatchActivity : AppCompatActivity(), fromFragment, SlideShowListener {
                             imageRemover.removeImage(oldFile)
                         }
 
-                        /*
                         val openFragment: FragmentTransaction = supportFragmentManager.beginTransaction()
                         openFragment.replace(R.id.saveInfoFRG, SaveImageNotification())
-                        openFragment.commit()*/
+                        openFragment.commit()
 
                         oldFile = savedImage.savedPhotoPath
 
                         Toast.makeText(applicationContext, "Image captured", Toast.LENGTH_LONG).show()
 
+                        findColourInImage()
 
-
-                       // testCV.inputImage(savedImage.savedPhotoPath)
                     }
 
                     override fun onError(useCaseError: ImageCapture.UseCaseError, message: String, cause: Throwable?) {
@@ -165,39 +195,75 @@ class MatchActivity : AppCompatActivity(), fromFragment, SlideShowListener {
         flashBTN = findViewById(R.id.flashBTN)
         flashBTN.setOnClickListener {
 
-            /*
-            try{
 
-                var touchedRect: Rect = Rect()
-
-                touchedRect.x = 0
-                touchedRect.y = 0
-
-                touchedRect.width = testImage.width
-                touchedRect.height = testImage.height
-
-                //convert bitmap to mat for open cv
-                val testMat = Mat()
-                val imageBMP = testImage.copy(Bitmap.Config.ARGB_8888, true)
-                Utils.bitmapToMat(imageBMP, testMat)
-            }
-            catch(e : Exception)
-            {
-                Toast.makeText(applicationContext, "open cv error is ${e.toString()}", Toast.LENGTH_LONG).show()
-            }*/
-
-            //setupSearch()
-            //Toast.makeText(applicationContext, "found colour is ${testCV.redAmount} : ${testCV.greenAmount} : ${testCV.blueAmount}", Toast.LENGTH_LONG).show()
         }
-
 
     }
 
-    private fun setupSearch()
+
+    private fun findColourInImage()
+    {
+        if (OpenCVLoader.initDebug()) {
+            openCVHandler.inputImage(savedImage.savedPhotoPath)
+            hexColour = openCVHandler.getColour()
+            colourBTN.setBackgroundColor(Color.parseColor("#$hexColour"))
+            searchForProduct(hexColour)
+        }
+        else
+        {
+            Toast.makeText(applicationContext, "open cv not loaded", Toast.LENGTH_LONG).show()
+        }
+    }
+
+/*
+    private fun findColourInImage()
+    {
+        if (OpenCVLoader.initDebug()) {
+
+            val input: Data = Data.Builder().putString("location", savedImage.savedPhotoPath).build()
+
+            val colourSearchWorkRequest = OneTimeWorkRequestBuilder<CVHandler>()
+                .setInputData(input)
+                .build()
+
+            WorkManager.getInstance().enqueue(colourSearchWorkRequest)
+
+            WorkManager.getInstance().getWorkInfoByIdLiveData(colourSearchWorkRequest.id)
+                .observe(this, Observer { workInfo ->
+                    if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED) {
+
+                        val colour: String? = workInfo.outputData.getString("colour")
+
+                        if (colour != null) {
+                            hexColour = colour
+                            Toast.makeText(applicationContext, "found colour : ${colour}", Toast.LENGTH_LONG)
+                                .show()
+                            //colourBTN.setBackgroundColor(Color.parseColor("#$colour"))
+                            //searchForProduct(colour)
+                        }
+
+                    }
+
+                    if (workInfo != null && workInfo.state == WorkInfo.State.FAILED) {
+                        val error: String? = workInfo.outputData.getString("error")
+
+                        Toast.makeText(applicationContext, "search error : ${error.toString()}", Toast.LENGTH_LONG)
+                            .show()
+                    }
+                })
+
+        }
+        else
+        {
+            Toast.makeText(applicationContext, "open cv not loaded", Toast.LENGTH_LONG).show()
+        }
+
+    }*/
+
+    private fun searchForProduct(colour : String)
     {
 
-        val testColour : String = "ff000000"
-        val input: Data = Data.Builder().putString("colour", testColour).build()
+        val input: Data = Data.Builder().putString("colour", colour).build()
 
         val searchWorkRequest = OneTimeWorkRequestBuilder<MatchColourHandler>()
             .setInputData(input)
@@ -284,6 +350,30 @@ class MatchActivity : AppCompatActivity(), fromFragment, SlideShowListener {
 
     }
 
+    private fun setupTotalPrice()
+    {
+        val commands = DatabaseCommands()
+
+        val input : Data = Data.Builder()
+            .putString(commands.Cart_DB, commands.Cart_DB)
+            .putString(commands.Cart_Get_Prices, commands.Cart_Get_Prices)
+            .build()
+
+        val getTotalWorker = OneTimeWorkRequestBuilder<DatabaseManager>().setInputData(input).build()
+
+
+        WorkManager.getInstance().enqueue(getTotalWorker)
+
+        WorkManager.getInstance().getWorkInfoByIdLiveData(getTotalWorker.id).observe(this, Observer {
+                workInfo ->
+
+            val total = workInfo.outputData.getDouble(commands.Cart_total_price, 0.0)
+
+            totalCostTXT.text = "total $total"
+
+        })
+    }
+
     private fun setupRecyclerView(images : Array<String>)
     {
 
@@ -304,6 +394,7 @@ class MatchActivity : AppCompatActivity(), fromFragment, SlideShowListener {
     override fun onColourSelected(colourHex: String) {
         hexColour = colourHex
         colourBTN.setBackgroundColor(Color.parseColor("#$colourHex"))
+        searchForProduct(colourHex)
     }
 
     private var type = "dress"
@@ -367,7 +458,7 @@ class MatchActivity : AppCompatActivity(), fromFragment, SlideShowListener {
         if(imageURL != null && imageURL != "") {
             val fragIn: Bundle = Bundle()
             fragIn.putString("position", imageURL)
-            testValue++
+
 
             val previewImage: productImagePreview = productImagePreview()
             previewImage.arguments = fragIn

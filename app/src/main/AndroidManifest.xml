@@ -20,8 +20,6 @@
         </activity>
         <activity android:name=".MatchActivity">
         </activity>
-        <activity android:name=".QuickSearchActivity">
-        </activity>
         <activity android:name=".PurchaseActivity">
         </activity>
         <activity android:name=".UserClothingDisplayActivity">
@@ -29,8 +27,6 @@
         <activity android:name=".ItemDescriptionActivity">
         </activity>
         <activity android:name=".ViewCartActivity">
-        </activity>
-        <activity android:name=".AddActivity">
         </activity>
         <activity
                 android:name=".SetupActivity"
@@ -42,8 +38,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-        </activity>
-        <activity android:name=".MainActivity">
         </activity>
 
         <provider
