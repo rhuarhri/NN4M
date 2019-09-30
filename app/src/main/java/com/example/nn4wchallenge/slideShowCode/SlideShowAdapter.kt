@@ -9,7 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.nn4wchallenge.R
 import com.example.nn4wchallenge.imageHandling.RetrieveImageHandler
 
-class SlideShowAdapter(private val context : Context, private val images : Array<String>, private var slideShowListener : SlideShowListener)
+class SlideShowAdapter(private val context : Context, private val images : Array<String>,
+                       private val descriptions : Array<String>?, private var slideShowListener : SlideShowListener)
     : RecyclerView.Adapter<SlideShowViewHolder>()
 {
     private val imageHandler : RetrieveImageHandler = RetrieveImageHandler(context)
@@ -28,7 +29,9 @@ class SlideShowAdapter(private val context : Context, private val images : Array
         holder.clothingIV.maxWidth = holder.clothingIV.height
         imageHandler.recyclerViewImageHandler(holder.clothingIV, images[position], true)
         holder.clothingIV.setOnClickListener {
-            slideShowListener.onItemClick(position)
+            if (descriptions != null) {
+                slideShowListener.onItemClick(descriptions[position])
+            }
         }
 
     }

@@ -46,7 +46,7 @@ class SaveImageNotification : Fragment() {
         val cancelBTN : Button = view.findViewById(R.id.cancelSaveBTN)
         cancelBTN.setOnClickListener {
             timer.cancel()
-            fragmentManager!!.beginTransaction().remove(this).commit()
+            fragmentManager!!.beginTransaction().remove(this@SaveImageNotification).commit()
         }
 
         val cancelHelpBTN : Button = view.findViewById(R.id.cancelSaveInfoBTN)

@@ -7,6 +7,33 @@ class DataTranslation {
     var greenAmount = 0
     var blueAmount = 0
 
+    fun roundColourValue(RedAmount : Int, GreenAmount : Int, BlueAmount : Int)
+    {
+        redAmount = if (RedAmount >= 127) {
+            //round up
+            255
+        } else {
+            //round down
+            0
+        }
+
+        greenAmount = if (GreenAmount >= 127) {
+            //round up
+            255
+        } else {
+            //round down
+            0
+        }
+
+        blueAmount = if (BlueAmount >= 127) {
+            //round up
+            255
+        } else {
+            //round down
+            0
+        }
+    }
+
     fun stringToRGB(stringValue: String)
     {
 

@@ -22,20 +22,29 @@
                 android:layout_marginEnd="8dp" app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginStart="8dp" android:layout_marginTop="8dp" android:textSize="30sp"
                 android:textColor="@color/colorPrimaryText"/>
+
         <Button
+                android:id="@+id/likeBTN"
                 android:layout_width="80dp"
-                android:layout_height="80dp" android:id="@+id/likeBTN"
-                app:layout_constraintStart_toStartOf="parent"
+                android:layout_height="80dp"
                 android:layout_marginStart="8dp"
-                android:foreground="@drawable/like_icon" android:background="@drawable/rounded_btn"
-                app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toStartOf="@+id/dislikeBTN"
-                app:layout_constraintTop_toBottomOf="@+id/TitleTXT" android:layout_marginTop="8dp"/>
+                android:layout_marginTop="8dp"
+                android:background="@drawable/ic_like"
+                app:layout_constraintEnd_toStartOf="@+id/dislikeBTN"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/TitleTXT" />
+
         <Button
+                android:id="@+id/dislikeBTN"
                 android:layout_width="80dp"
-                android:layout_height="80dp" android:id="@+id/dislikeBTN"
-                app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-                android:background="@drawable/rounded_btn" android:foreground="@drawable/dislike_icon"
-                app:layout_constraintStart_toEndOf="@+id/likeBTN" app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintTop_toBottomOf="@+id/TitleTXT" android:layout_marginTop="8dp"/>
+                android:layout_height="80dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/ic_dislike"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/likeBTN"
+                app:layout_constraintTop_toBottomOf="@+id/TitleTXT" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

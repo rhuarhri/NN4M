@@ -31,19 +31,25 @@
                 android:layout_marginBottom="8dp" app:layout_constraintBottom_toTopOf="@+id/deleteBTN"
                 app:layout_constraintHorizontal_bias="0.5" android:textColor="@color/colorPrimaryText"
                 android:textAlignment="textStart" android:textSize="24sp"/>
+
         <Button
+                android:id="@+id/deleteBTN"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:id="@+id/deleteBTN" app:layout_constraintStart_toEndOf="@+id/clothingIV"
                 android:layout_marginStart="8dp"
-                android:background="@drawable/rounded_btn" android:foreground="@drawable/delete_icon"
-                app:layout_constraintTop_toBottomOf="@+id/measurementTXT"
-                android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="@+id/clothingIV"/>
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/ic_delete"
+                app:layout_constraintBottom_toBottomOf="@+id/clothingIV"
+                app:layout_constraintStart_toEndOf="@+id/clothingIV"
+                app:layout_constraintTop_toBottomOf="@+id/measurementTXT" />
+
         <Button
+                android:id="@+id/buyAllBTN"
                 android:layout_width="70dp"
-                android:layout_height="70dp" android:id="@+id/buyAllBTN"
-                app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="24dp"
-                app:layout_constraintBottom_toBottomOf="@+id/deleteBTN" android:background="@drawable/rounded_btn"
-                android:foreground="@drawable/pay_icon"/>
+                android:layout_height="70dp"
+                android:layout_marginEnd="24dp"
+                android:background="@drawable/ic_buy"
+                app:layout_constraintBottom_toBottomOf="@+id/deleteBTN"
+                app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

@@ -1,5 +1,5 @@
 package com.example.nn4wchallenge.slideShowCode
 
 interface SlideShowListener {
-    fun onItemClick(position : Int)
+    fun onItemClick(description : String)
 }

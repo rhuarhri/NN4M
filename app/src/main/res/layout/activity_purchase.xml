@@ -63,15 +63,20 @@
             app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
             android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/pinNumberTitleTXT"
             android:layout_marginEnd="8dp" app:layout_constraintEnd_toEndOf="parent"/>
+
     <Button
-            android:text="Enter"
-            android:layout_width="140dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/enterBTN" android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/pinNumberET" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-            android:textSize="24sp" android:textColor="@color/colorPrimaryText"
-            android:background="@drawable/rounded_btn"/>
+            android:id="@+id/enterBTN"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/ic_done"
+            android:textColor="@color/colorPrimaryText"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pinNumberET" />
     <TextView
             android:text="By purchasing you agree to the company's term and condition set out on www.somewebsite.com"
             android:layout_width="wrap_content"

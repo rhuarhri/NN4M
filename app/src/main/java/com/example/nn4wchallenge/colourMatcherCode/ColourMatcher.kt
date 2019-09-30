@@ -1,5 +1,7 @@
 package com.example.nn4wchallenge.colourMatcherCode
 
+import com.example.nn4wchallenge.database.external.DataTranslation
+
 class ColourMatcher {
 
     /*
@@ -202,27 +204,17 @@ class ColourMatcher {
     {
         val modifiedColour = Colour()
 
+        val colourConverter : DataTranslation = DataTranslation()
+
+        colourConverter.roundColourValue(redAmount, greenAmount, blueAmount)
+
         modifiedColour.createColour(
-            colourValueRound(redAmount),
-            colourValueRound(greenAmount),
-            colourValueRound(blueAmount)
+            colourConverter.redAmount,
+            colourConverter.greenAmount,
+            colourConverter.blueAmount
         )
 
         return modifiedColour
-    }
-
-    private fun colourValueRound(colourValue : Int) : Int
-    {
-        if (colourValue >= 127)
-        {
-            //round up
-            return 255
-        }
-        else
-        {
-            //round down
-            return 0
-        }
     }
 
 }

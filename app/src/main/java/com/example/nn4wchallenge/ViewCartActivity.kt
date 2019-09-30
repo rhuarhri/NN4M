@@ -78,6 +78,7 @@ class ViewCartActivity : AppCompatActivity() {
 
                     adapter = rvAdapter
                 }
+
             }
 
         })
@@ -108,6 +109,8 @@ class ViewCartActivity : AppCompatActivity() {
     private fun createItemListForAdapter(ids : IntArray?, name : Array<String>?, price : DoubleArray?, image : Array<String>?)
             : ArrayList<ClothingItem>
     {
+
+
         val itemList : ArrayList<ClothingItem> = ArrayList()
 
         if (ids != null && name != null && price != null && image != null) {
@@ -118,6 +121,8 @@ class ViewCartActivity : AppCompatActivity() {
             }
 
         }
+
+        totalTXT.text =
 
         return itemList
     }

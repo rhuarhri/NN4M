@@ -14,38 +14,47 @@
             app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp" app:layout_constraintBottom_toTopOf="@+id/cameraBTN"/>
+
     <Button
-            android:layout_width="80dp"
-            android:layout_height="80dp"
             android:id="@+id/cameraBTN"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:background="@drawable/rounded_btn"
-            android:foreground="@drawable/camera_icon"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintStart_toEndOf="@+id/editBTN" app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintEnd_toStartOf="@+id/saveBTN"/>
-    <Button
             android:layout_width="80dp"
             android:layout_height="80dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/ic_camera"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/saveBTN"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/editBTN" />
+
+    <Button
             android:id="@+id/editBTN"
-            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="8dp"
-            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
-            android:background="@drawable/rounded_btn" app:layout_constraintStart_toEndOf="@+id/fragLayout"
-            app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toStartOf="@+id/cameraBTN"
-            android:foreground="@drawable/filter_icon"/>
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/ic_tune"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/cameraBTN"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/fragLayout"
+            app:layout_constraintStart_toStartOf="parent" />
     <Button
             android:layout_width="80dp"
             android:layout_height="80dp" android:id="@+id/colourBTN" android:layout_marginBottom="16dp"
             app:layout_constraintBottom_toTopOf="@+id/editBTN" app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="8dp" android:background="@color/colorPrimaryText"/>
+
     <Button
+            android:id="@+id/saveBTN"
             android:layout_width="80dp"
-            android:layout_height="80dp" android:id="@+id/saveBTN"
-            app:layout_constraintStart_toEndOf="@+id/cameraBTN"
-            android:layout_marginStart="8dp" android:layout_marginBottom="8dp"
+            android:layout_height="80dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/ic_save"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-            android:foreground="@drawable/save_icon" android:background="@drawable/rounded_btn"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/cameraBTN" />
     <FrameLayout
             android:layout_width="0dp"
             android:layout_height="350dp" app:layout_constraintBottom_toBottomOf="parent"

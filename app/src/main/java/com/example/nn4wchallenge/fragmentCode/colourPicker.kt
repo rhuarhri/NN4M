@@ -59,13 +59,13 @@ class colourPicker : Fragment() {
         val cancelBTN : Button = view.findViewById(R.id.cancelBTN)
         cancelBTN.setOnClickListener {
 
-            fragmentManager!!.beginTransaction().remove(this).commit()
+            fragmentManager!!.beginTransaction().remove(this@colourPicker).commit()
         }
         val applyBTN : Button = view.findViewById(R.id.okBTN)
         applyBTN.setOnClickListener {
 
             callback.onColourSelected(hexColour)
-            fragmentManager!!.beginTransaction().remove(this).commit()
+            fragmentManager!!.beginTransaction().remove(this@colourPicker).commit()
         }
 
 

@@ -33,7 +33,6 @@ class MatchColourHandler (appContext: Context, workerParams: WorkerParameters)
     private lateinit var season : Array<String?>
 
 
-
     private var userClothingSeason : String = ""
     private var userClothingType : String = ""
 
@@ -67,7 +66,7 @@ class MatchColourHandler (appContext: Context, workerParams: WorkerParameters)
             catch(e : Exception)
             {
 
-                error = "colour failer"
+                error = "colour failed"
                 val output : Data = Data.Builder()
                     .putString("error", error)
                     .build()

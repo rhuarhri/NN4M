@@ -20,7 +20,7 @@ import com.example.nn4wchallenge.slideShowCode.SlideShowAdapter
 import com.example.nn4wchallenge.slideShowCode.SlideShowListener
 
 class ItemDescriptionActivity : AppCompatActivity(), SlideShowListener {
-    override fun onItemClick(position: Int) {
+    override fun onItemClick(description : String) {
         //do nothing
     }
 
@@ -111,7 +111,7 @@ class ItemDescriptionActivity : AppCompatActivity(), SlideShowListener {
 
                     if (imageURLs.isNotEmpty())
                     {
-
+                        itemImage = imageURLs[0]
                         setupRecyclerView(imageURLs)
                     }
 
@@ -131,7 +131,7 @@ class ItemDescriptionActivity : AppCompatActivity(), SlideShowListener {
     private fun setupRecyclerView(images : Array<String>)
     {
 
-        val rvAdapter: RecyclerView.Adapter<*> = SlideShowAdapter(applicationContext, images, this)
+        val rvAdapter: RecyclerView.Adapter<*> = SlideShowAdapter(applicationContext, images,null, this)
 
         pictureRV.apply {
 

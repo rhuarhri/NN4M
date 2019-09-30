@@ -2,24 +2,26 @@ package com.example.nn4wchallenge
 
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.TextureView
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
+//import android.widget.Toast
 import androidx.camera.core.ImageCapture
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
+import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import com.example.nn4wchallenge.OpenCVCode.CVHandler
 import com.example.nn4wchallenge.cameraCode.CameraHandler
 import com.example.nn4wchallenge.database.MatchColourHandler
 import com.example.nn4wchallenge.database.external.DataTranslation
@@ -28,35 +30,15 @@ import com.example.nn4wchallenge.database.internal.DatabaseCommands
 import com.example.nn4wchallenge.database.internal.DatabaseManager
 import com.example.nn4wchallenge.fragmentCode.*
 import com.example.nn4wchallenge.imageHandling.RemoveImageHandler
+import com.example.nn4wchallenge.imageHandling.RetrieveImageHandler
 import com.example.nn4wchallenge.imageHandling.SaveImageHandler
 import com.example.nn4wchallenge.slideShowCode.SlideShowAdapter
 import com.example.nn4wchallenge.slideShowCode.SlideShowListener
-import org.opencv.android.BaseLoaderCallback
-import org.opencv.android.LoaderCallbackInterface
-import org.opencv.android.OpenCVLoader
-import org.opencv.android.Utils
-import org.opencv.core.Mat
-import org.opencv.core.Rect
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import java.io.File
 
 class MatchActivity : AppCompatActivity(), fromFragment, SlideShowListener {
-
-
-    private val mLoaderCallback = object : BaseLoaderCallback(this) {
-        override fun onManagerConnected(status: Int) {
-            when (status) {
-                LoaderCallbackInterface.SUCCESS -> {
-                    //success
-                    openCVHandler = CVHandler()
-                }
-                else -> {
-                    super.onManagerConnected(status)
-                }
-            }
-        }
-    }
-
-    private lateinit var openCVHandler : CVHandler
 
     private lateinit var cameraManger : CameraHandler
     private lateinit var savedImage : SaveImageHandler
@@ -83,13 +65,7 @@ class MatchActivity : AppCompatActivity(), fromFragment, SlideShowListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_match)
 
-        if (!OpenCVLoader.initDebug()) {
-            //Internal OpenCV library not found. Using OpenCV Manager for initialization
-            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_4_0, this, mLoaderCallback)
-        } else {
-            //OpenCV library found inside package. Using it!
-            mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS)
-        }
+        val buttonAnim : Animation = AnimationUtils.loadAnimation(applicationContext, R.anim.button_click)
 
         totalCostTXT = findViewById(R.id.totalTXT)
         setupTotalPrice()
@@ -119,6 +95,8 @@ class MatchActivity : AppCompatActivity(), fromFragment, SlideShowListener {
 
             cameraBTN.setOnClickListener {
 
+                cameraBTN.startAnimation(buttonAnim)
+
                 val photoFile = savedImage.getPhotoFile()
 
                 cameraManger.imageCapture.takePicture(photoFile, object : ImageCapture.OnImageSavedListener
@@ -132,19 +110,20 @@ class MatchActivity : AppCompatActivity(), fromFragment, SlideShowListener {
                         }
 
                         val openFragment: FragmentTransaction = supportFragmentManager.beginTransaction()
+                        openFragment.setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                         openFragment.replace(R.id.saveInfoFRG, SaveImageNotification())
                         openFragment.commit()
 
                         oldFile = savedImage.savedPhotoPath
 
-                        Toast.makeText(applicationContext, "Image captured", Toast.LENGTH_LONG).show()
+                        imageCaptureSoundPlayer()
 
                         findColourInImage()
 
                     }
 
                     override fun onError(useCaseError: ImageCapture.UseCaseError, message: String, cause: Throwable?) {
-                        Toast.makeText(applicationContext, "image capture failed", Toast.LENGTH_SHORT).show()
+
                     }
 
                 })
@@ -156,11 +135,11 @@ class MatchActivity : AppCompatActivity(), fromFragment, SlideShowListener {
         viewImageBTN.setOnClickListener {
             if (savedImage.savedPhotoPath == "")
             {
-                Toast.makeText(applicationContext, "no file path", Toast.LENGTH_LONG).show()
+
             }
             else if (!File(savedImage.savedPhotoPath).exists())
             {
-                Toast.makeText(applicationContext, "no file", Toast.LENGTH_LONG).show()
+
             }
             else {
                 val fragIn : Bundle = Bundle()
@@ -169,6 +148,7 @@ class MatchActivity : AppCompatActivity(), fromFragment, SlideShowListener {
                 val previewImage: CapturedImagePreview = CapturedImagePreview()
                 previewImage.arguments = fragIn
                 val openFragment: FragmentTransaction = supportFragmentManager.beginTransaction()
+                openFragment.setCustomAnimations(R.anim.slide_right_left_in, R.anim.slide_left_right_out)
                 openFragment.replace(R.id.imagePreviewFRG, previewImage)
                 openFragment.commit()
             }
@@ -178,6 +158,7 @@ class MatchActivity : AppCompatActivity(), fromFragment, SlideShowListener {
         colourBTN.setOnClickListener {
 
             val openFragment : FragmentTransaction = supportFragmentManager.beginTransaction()
+            openFragment.setCustomAnimations(R.anim.slide_left_right_in, R.anim.slide_left_right_out)
             openFragment.replace(R.id.colourPickerFRG, colourPicker())
             openFragment.commit()
 
@@ -186,6 +167,7 @@ class MatchActivity : AppCompatActivity(), fromFragment, SlideShowListener {
         filterBTN = findViewById(R.id.filterBTN)
         filterBTN.setOnClickListener {
             val openFragment : FragmentTransaction = supportFragmentManager.beginTransaction()
+            openFragment.setCustomAnimations(R.anim.slide_right_left_in, R.anim.slide_left_right_out)
             openFragment.replace(R.id.colourPickerFRG, FilterHandler())
             openFragment.commit()
         }
@@ -193,72 +175,47 @@ class MatchActivity : AppCompatActivity(), fromFragment, SlideShowListener {
         pictureRV = findViewById(R.id.productRV)
 
         flashBTN = findViewById(R.id.flashBTN)
+
+
+
         flashBTN.setOnClickListener {
 
+            flashBTN.startAnimation(buttonAnim)
 
         }
 
     }
 
+    private fun imageCaptureSoundPlayer()
+    {
+        val sound : MediaPlayer = MediaPlayer.create(applicationContext, R.raw.image_capture_sound)
+        sound.start()
+    }
 
     private fun findColourInImage()
     {
-        if (OpenCVLoader.initDebug()) {
-            openCVHandler.inputImage(savedImage.savedPhotoPath)
-            hexColour = openCVHandler.getColour()
-            colourBTN.setBackgroundColor(Color.parseColor("#$hexColour"))
-            searchForProduct(hexColour)
-        }
-        else
-        {
-            Toast.makeText(applicationContext, "open cv not loaded", Toast.LENGTH_LONG).show()
+
+        val imageHandler : RetrieveImageHandler = RetrieveImageHandler(applicationContext)
+
+        doAsync {
+
+            val image : Bitmap = imageHandler.getBitmapFromFile(savedImage.savedPhotoPath, cameraTV.height, cameraTV.width)
+
+            uiThread {
+
+               Palette.from(image).generate(Palette.PaletteAsyncListener
+               {palette ->
+                   if (palette != null) {
+                       val mainColour : Int = palette.dominantSwatch!!.rgb
+                       colourBTN.setBackgroundColor(mainColour)
+                       searchForProduct(Integer.toHexString(mainColour))
+                   }
+               })
+
+            }
         }
     }
 
-/*
-    private fun findColourInImage()
-    {
-        if (OpenCVLoader.initDebug()) {
-
-            val input: Data = Data.Builder().putString("location", savedImage.savedPhotoPath).build()
-
-            val colourSearchWorkRequest = OneTimeWorkRequestBuilder<CVHandler>()
-                .setInputData(input)
-                .build()
-
-            WorkManager.getInstance().enqueue(colourSearchWorkRequest)
-
-            WorkManager.getInstance().getWorkInfoByIdLiveData(colourSearchWorkRequest.id)
-                .observe(this, Observer { workInfo ->
-                    if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED) {
-
-                        val colour: String? = workInfo.outputData.getString("colour")
-
-                        if (colour != null) {
-                            hexColour = colour
-                            Toast.makeText(applicationContext, "found colour : ${colour}", Toast.LENGTH_LONG)
-                                .show()
-                            //colourBTN.setBackgroundColor(Color.parseColor("#$colour"))
-                            //searchForProduct(colour)
-                        }
-
-                    }
-
-                    if (workInfo != null && workInfo.state == WorkInfo.State.FAILED) {
-                        val error: String? = workInfo.outputData.getString("error")
-
-                        Toast.makeText(applicationContext, "search error : ${error.toString()}", Toast.LENGTH_LONG)
-                            .show()
-                    }
-                })
-
-        }
-        else
-        {
-            Toast.makeText(applicationContext, "open cv not loaded", Toast.LENGTH_LONG).show()
-        }
-
-    }*/
 
     private fun searchForProduct(colour : String)
     {
@@ -282,11 +239,11 @@ class MatchActivity : AppCompatActivity(), fromFragment, SlideShowListener {
 
                     if (imageURLList.size == 0)
                     {
-                        Toast.makeText(applicationContext, "no result found", Toast.LENGTH_LONG).show()
+                        //Toast.makeText(applicationContext, "no result found", Toast.LENGTH_LONG).show()
                     }
                     else
                     {
-                        setupRecyclerView(imageURLList as Array<String>)
+                        setupRecyclerView(imageURLList as Array<String>, itemDescriptionURLList as Array<String>)
                     }
 
                 }
@@ -294,8 +251,8 @@ class MatchActivity : AppCompatActivity(), fromFragment, SlideShowListener {
                 if (workInfo != null && workInfo.state == WorkInfo.State.FAILED) {
                     val error: String? = workInfo.outputData.getString("error")
 
-                    Toast.makeText(applicationContext, "search error : ${error.toString()}", Toast.LENGTH_LONG)
-                        .show()
+                    //Toast.makeText(applicationContext, "search error : ${error.toString()}", Toast.LENGTH_LONG)
+                        //.show()
                 }
             })
     }
@@ -330,11 +287,11 @@ class MatchActivity : AppCompatActivity(), fromFragment, SlideShowListener {
 
                     if (imageURLList.size == 0)
                     {
-                        Toast.makeText(applicationContext, "no result found", Toast.LENGTH_LONG).show()
+                        //Toast.makeText(applicationContext, "no result found", Toast.LENGTH_LONG).show()
                     }
                     else
                     {
-                        setupRecyclerView(imageURLList as Array<String>)
+                        setupRecyclerView(imageURLList as Array<String>, itemDescriptionURLList as Array<String>)
                     }
 
                 }
@@ -342,8 +299,8 @@ class MatchActivity : AppCompatActivity(), fromFragment, SlideShowListener {
                 if (workInfo != null && workInfo.state == WorkInfo.State.FAILED) {
                     val error: String? = workInfo.outputData.getString("error")
 
-                    Toast.makeText(applicationContext, "search error : ${error.toString()}", Toast.LENGTH_LONG)
-                        .show()
+                    //Toast.makeText(applicationContext, "search error : ${error.toString()}", Toast.LENGTH_LONG)
+                        //.show()
                 }
             })
 
@@ -374,10 +331,10 @@ class MatchActivity : AppCompatActivity(), fromFragment, SlideShowListener {
         })
     }
 
-    private fun setupRecyclerView(images : Array<String>)
+    private fun setupRecyclerView(images : Array<String>, descriptions : Array<String>)
     {
 
-        val rvAdapter: RecyclerView.Adapter<*> = SlideShowAdapter(applicationContext, images, this)
+        val rvAdapter: RecyclerView.Adapter<*> = SlideShowAdapter(applicationContext, images, descriptions, this)
 
         pictureRV.apply {
 
@@ -405,13 +362,13 @@ class MatchActivity : AppCompatActivity(), fromFragment, SlideShowListener {
 
         if (type == null || type == "")
         {
-            Toast.makeText(applicationContext, "search error : no type", Toast.LENGTH_LONG)
-                .show()
+            //Toast.makeText(applicationContext, "search error : no type", Toast.LENGTH_LONG)
+                //.show()
         }
         else if (season == null || season == "")
         {
-            Toast.makeText(applicationContext, "search error : no season", Toast.LENGTH_LONG)
-                .show()
+            //Toast.makeText(applicationContext, "search error : no season", Toast.LENGTH_LONG)
+                //.show()
         }
         else {
             filterResult(type, season)
@@ -438,31 +395,35 @@ class MatchActivity : AppCompatActivity(), fromFragment, SlideShowListener {
 
     override fun onProductSelected() {
 
+        /*
         val descriptionURL : String? = itemDescriptionURLList[productPosition]
 
         if (descriptionURL != null && descriptionURL != "") {
             val goToItemDescriptionScreen = Intent(applicationContext, ItemDescriptionActivity::class.java)
             goToItemDescriptionScreen.putExtra("description", descriptionURL)
             startActivity(goToItemDescriptionScreen)
-        }
+        }*/
+
+        setupTotalPrice()
     }
 
     //from recyclerView
     private var productPosition : Int = 0
-    override fun onItemClick(position: Int) {
-        Toast.makeText(applicationContext, "position is $position", Toast.LENGTH_LONG).show()
-        productPosition = position
+    override fun onItemClick(description : String) {
+        //Toast.makeText(applicationContext, "position is $position", Toast.LENGTH_LONG).show()
+        //productPosition = position
 
-        val imageURL : String? = imageURLList[productPosition]
+        //val imageURL : String? = imageURLList[productPosition]
 
-        if(imageURL != null && imageURL != "") {
+        if(description != "") {
             val fragIn: Bundle = Bundle()
-            fragIn.putString("position", imageURL)
+            fragIn.putString("description", description)
 
 
             val previewImage: productImagePreview = productImagePreview()
             previewImage.arguments = fragIn
             val openFragment: FragmentTransaction = supportFragmentManager.beginTransaction()
+            openFragment.setCustomAnimations(R.anim.slide_bottom_top_in, R.anim.slide_bottom_top_out)
             openFragment.replace(R.id.imagePreviewFRG, previewImage)
             openFragment.commit()
         }

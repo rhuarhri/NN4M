@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.work.Data
@@ -27,9 +28,11 @@ class ClothingAdapter (
     class clothingViewHolder(row : View) : ViewHolder(row)
     {
         var itemColourTXT : TextView
+        var editItemBTN : Button
 
         init{
             this.itemColourTXT = row.findViewById(R.id.colourTXT)
+            this.editItemBTN = row.findViewById(R.id.editBTN)
         }
     }
 
@@ -48,13 +51,7 @@ class ClothingAdapter (
         imageHandler.recyclerViewImageHandler(holder.clothingIV, itemList[position].imageLocation, true)
 
         holder.clothingIV.setOnClickListener {
-            val id = itemList[position].id
-            val type = itemList[position].title
-            val season = itemList[position].measurement
-            val image = itemList[position].imageLocation
-            val colour = itemList[position].itemColour
 
-            clothingListener.onEditClothing(id, type, season, image, colour)
         }
 
         holder.itemNameTXT.text = itemList[position].title
@@ -76,6 +73,16 @@ class ClothingAdapter (
         }
 
             holder.itemColourTXT.setBackgroundColor(Color.parseColor("#${itemList[position].itemColour}"))
+
+        holder.editItemBTN.setOnClickListener{
+            val id = itemList[position].id
+            val type = itemList[position].title
+            val season = itemList[position].measurement
+            val image = itemList[position].imageLocation
+            val colour = itemList[position].itemColour
+
+            clothingListener.onEditClothing(id, type, season, image, colour)
+        }
 
     }
 
